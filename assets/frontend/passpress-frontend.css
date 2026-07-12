@@ -1,0 +1,300 @@
+.passpress-my-pass {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+}
+
+.passpress-pass-card {
+	display: flex;
+	gap: 20px;
+	align-items: center;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	padding: 20px;
+	background: #fff;
+	max-width: 420px;
+}
+
+.passpress-pass-card.passpress-status-frozen,
+.passpress-pass-card.passpress-status-suspended,
+.passpress-pass-card.passpress-status-expired,
+.passpress-pass-card.passpress-status-cancelled {
+	opacity: 0.6;
+	border-color: #d63638;
+}
+
+.passpress-pass-qr {
+	flex: 0 0 auto;
+	line-height: 0;
+}
+
+.passpress-pass-details h3 {
+	margin: 0 0 8px;
+}
+
+.passpress-pass-details p {
+	margin: 2px 0;
+}
+
+.passpress-plan-list-wrap {
+	--pp-ink: #14161a;
+	--pp-muted: #6b7280;
+	--pp-border: #e5e7eb;
+	--pp-accent: #ff5a1f;
+	--pp-check: #17803d;
+}
+
+.passpress-plan-header {
+	margin-bottom: 28px;
+}
+
+.passpress-plan-header h2 {
+	font-size: 2.2em;
+	font-weight: 800;
+	line-height: 1.1;
+	letter-spacing: -0.01em;
+	text-transform: uppercase;
+	color: var(--pp-ink);
+	margin: 0 0 10px;
+}
+
+.passpress-plan-subtext {
+	font-size: 1em;
+	color: var(--pp-muted);
+	margin: 0;
+}
+
+.passpress-plan-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	align-items: stretch;
+}
+
+.passpress-plan-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	border: 1px solid var(--pp-border);
+	border-radius: 14px;
+	padding: 24px 22px;
+	width: 260px;
+	background: #fff;
+	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+.passpress-plan-card-featured {
+	border: 2px solid var(--pp-accent);
+	box-shadow: 0 4px 14px rgba(255, 90, 31, 0.15);
+}
+
+.passpress-plan-badge {
+	position: absolute;
+	top: -12px;
+	left: 22px;
+	background: var(--pp-accent);
+	color: #fff;
+	font-size: 0.7em;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	padding: 4px 10px;
+	border-radius: 999px;
+}
+
+.passpress-plan-name {
+	font-size: 1.05em;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.01em;
+	color: var(--pp-ink);
+	margin: 4px 0 2px;
+}
+
+.passpress-plan-duration-label {
+	font-size: 0.75em;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	color: var(--pp-muted);
+	margin: 0 0 14px;
+}
+
+.passpress-plan-price {
+	font-size: 2em;
+	font-weight: 800;
+	color: var(--pp-ink);
+	margin: 0 0 14px;
+	line-height: 1;
+}
+
+.passpress-plan-duration {
+	font-size: 0.4em;
+	font-weight: 500;
+	color: var(--pp-muted);
+}
+
+.passpress-plan-description {
+	font-size: 0.9em;
+	color: var(--pp-muted);
+	margin-bottom: 12px;
+}
+
+.passpress-plan-features {
+	list-style: none;
+	margin: 0 0 20px;
+	padding: 0;
+	flex-grow: 1;
+}
+
+.passpress-plan-features li {
+	position: relative;
+	font-size: 0.88em;
+	color: #374151;
+	padding-left: 22px;
+	margin-bottom: 8px;
+	line-height: 1.35;
+}
+
+.passpress-plan-features li::before {
+	content: "\2713";
+	position: absolute;
+	left: 0;
+	top: 0;
+	color: var(--pp-check);
+	font-weight: 700;
+}
+
+.passpress-plan-cta-group {
+	margin-top: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.passpress-plan-btn {
+	display: block;
+	text-align: center;
+	font-size: 0.9em;
+	font-weight: 700;
+	text-decoration: none;
+	padding: 12px 16px;
+	border-radius: 8px;
+	background: var(--pp-ink);
+	color: #fff;
+	border: 1px solid var(--pp-ink);
+}
+
+.passpress-plan-btn:hover,
+.passpress-plan-btn:focus {
+	background: #000;
+	color: #fff;
+}
+
+.passpress-plan-btn-secondary {
+	background: #fff;
+	color: var(--pp-ink);
+}
+
+.passpress-plan-btn-secondary:hover,
+.passpress-plan-btn-secondary:focus {
+	background: #f3f4f6;
+	color: var(--pp-ink);
+}
+
+.passpress-plan-cta-fallback {
+	font-size: 0.9em;
+	color: var(--pp-muted);
+	margin: 0;
+}
+
+.passpress-checkout-notice {
+	padding: 12px 16px;
+	border-radius: 6px;
+	background: #eef;
+	margin: 12px 0;
+}
+
+.passpress-checkout-notice-success {
+	background: #d4edda;
+	color: #155724;
+}
+
+.passpress-checkout-notice-error {
+	background: #f8d7da;
+	color: #721c24;
+}
+
+.passpress-checkout-summary {
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	padding: 16px 20px;
+	margin: 16px 0;
+}
+
+.passpress-gateway-option {
+	display: block;
+	margin: 8px 0;
+}
+
+.passpress-booking-calendar {
+	max-width: 480px;
+}
+
+.passpress-booking-slots {
+	margin: 12px 0;
+}
+
+.passpress-slot {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 8px 12px;
+	border: 1px solid #ddd;
+	border-radius: 6px;
+	margin-bottom: 6px;
+}
+
+.passpress-slot-full {
+	opacity: 0.7;
+}
+
+.passpress-my-bookings {
+	margin-top: 24px;
+}
+
+.passpress-my-bookings table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.passpress-my-bookings th,
+.passpress-my-bookings td {
+	text-align: left;
+	padding: 6px 8px;
+	border-bottom: 1px solid #eee;
+}
+
+.passpress-invite-guest {
+	margin-top: 24px;
+	padding-top: 16px;
+	border-top: 1px solid #eee;
+}
+
+.passpress-class-card {
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	padding: 16px 20px;
+	margin-bottom: 20px;
+}
+
+.passpress-class-occurrences {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 10px;
+}
+
+.passpress-class-occurrences td {
+	padding: 6px 4px;
+	border-bottom: 1px solid #eee;
+}

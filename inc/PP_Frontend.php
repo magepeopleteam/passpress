@@ -1,0 +1,161 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Registers frontend assets and conditionally enqueues+localizes them.
+ *
+ * IMPORTANT: the enqueue+localize calls happen here, on 'wp_enqueue_scripts',
+ * detected via has_shortcode() on the current post — NOT inside the
+ * shortcode render callbacks themselves. On a block theme (full site
+ * editing), the site's block template pre-renders post content (running
+ * `the_content` / shortcodes, confirmed via debugging) BEFORE the
+ * `wp_enqueue_scripts` action fires. A wp_localize_script() call made from
+ * inside a shortcode callback gets silently discarded once the real
+ * wp_register_script() call for that handle runs afterward on
+ * 'wp_enqueue_scripts' — the script tag still prints, but its localized
+ * data never does. Detecting the shortcode early and localizing here avoids
+ * relying on shortcode-callback timing at all.
+ */
+class PP_Frontend {
+
+	public static function init() {
+		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'register_assets' ) );
+		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'maybe_enqueue_for_current_page' ), 20 );
+	}
+
+	public static function register_assets() {
+		wp_register_style( 'passpress-frontend', PASSPRESS_PLUGIN_URL . '/assets/frontend/passpress-frontend.css', array(), PASSPRESS_PLUGIN_VERSION );
+		wp_register_script( 'passpress-qrcodejs', PASSPRESS_PLUGIN_URL . '/assets/helper/qrcode/qrcode.min.js', array(), '0.0.2', true );
+		wp_register_script( 'passpress-my-pass', PASSPRESS_PLUGIN_URL . '/assets/frontend/passpress-my-pass.js', array( 'passpress-qrcodejs' ), PASSPRESS_PLUGIN_VERSION, true );
+		wp_register_script( 'passpress-booking', PASSPRESS_PLUGIN_URL . '/assets/frontend/passpress-booking.js', array(), PASSPRESS_PLUGIN_VERSION, true );
+		wp_register_script( 'passpress-my-bookings', PASSPRESS_PLUGIN_URL . '/assets/frontend/passpress-my-bookings.js', array(), PASSPRESS_PLUGIN_VERSION, true );
+		wp_register_script( 'passpress-invite-guest', PASSPRESS_PLUGIN_URL . '/assets/frontend/passpress-invite-guest.js', array(), PASSPRESS_PLUGIN_VERSION, true );
+		wp_register_script( 'passpress-class-schedule', PASSPRESS_PLUGIN_URL . '/assets/frontend/passpress-class-schedule.js', array(), PASSPRESS_PLUGIN_VERSION, true );
+	}
+
+	/**
+	 * Content-based detection, independent of whether the shortcode/block
+	 * render callback itself has run yet. Checks both the shortcode and its
+	 * Gutenberg block equivalent (inc/PP_Blocks.php) since a page can use
+	 * either surface.
+	 */
+	public static function maybe_enqueue_for_current_page() {
+		if ( ! is_singular() ) {
+			return;
+		}
+
+		$post = get_post();
+		if ( ! $post ) {
+			return;
+		}
+
+		if ( has_shortcode( $post->post_content, 'passpress_my_pass' ) || has_block( 'passpress/my-pass', $post ) ) {
+			self::enqueue_my_pass_assets();
+			self::enqueue_my_bookings_assets();
+			self::enqueue_invite_guest_assets();
+		}
+
+		if ( has_shortcode( $post->post_content, 'passpress_membership_plans' ) || has_block( 'passpress/plan-list', $post ) ) {
+			self::enqueue_plan_list_assets();
+		}
+
+		if ( has_shortcode( $post->post_content, 'passpress_booking_calendar' ) || has_block( 'passpress/booking-calendar', $post ) ) {
+			self::enqueue_booking_assets();
+		}
+
+		if ( has_shortcode( $post->post_content, 'passpress_class_schedule' ) || has_block( 'passpress/class-schedule', $post ) ) {
+			self::enqueue_class_schedule_assets();
+		}
+	}
+
+	public static function enqueue_my_pass_assets() {
+		wp_enqueue_style( 'passpress-frontend' );
+		wp_enqueue_script( 'passpress-my-pass' );
+		wp_localize_script(
+			'passpress-my-pass',
+			'PassPressPass',
+			array( 'qrSize' => (int) pp_get_setting( 'qr_size', 200 ) )
+		);
+	}
+
+	public static function enqueue_plan_list_assets() {
+		wp_enqueue_style( 'passpress-frontend' );
+	}
+
+	public static function enqueue_my_bookings_assets() {
+		wp_enqueue_script( 'passpress-my-bookings' );
+		wp_localize_script(
+			'passpress-my-bookings',
+			'PassPressMyBookings',
+			array(
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'pp_booking' ),
+			)
+		);
+	}
+
+	/**
+	 * facilityId is intentionally NOT part of this localized data — the
+	 * booking calendar JS reads it from each `.passpress-booking-calendar`
+	 * element's own `data-facility-id` attribute instead, so multiple
+	 * calendars (different facilities) on one page each work correctly
+	 * rather than sharing one global facility id.
+	 */
+	public static function enqueue_booking_assets() {
+		wp_enqueue_style( 'passpress-frontend' );
+		wp_enqueue_script( 'passpress-booking' );
+		wp_localize_script(
+			'passpress-booking',
+			'PassPressBooking',
+			array(
+				'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
+				'nonce'      => wp_create_nonce( 'pp_booking' ),
+				'loginUrl'   => wp_login_url( is_singular() ? get_permalink() : home_url( '/' ) ),
+				'isLoggedIn' => is_user_logged_in(),
+				'i18n'       => array(
+					'loading'  => __( 'Loading…', 'passpress' ),
+					'noSlots'  => __( 'No slots available on this date.', 'passpress' ),
+					'book'     => __( 'Book', 'passpress' ),
+					'waitlist' => __( 'Join Waitlist', 'passpress' ),
+					'open'     => __( 'open', 'passpress' ),
+					'error'    => __( 'Something went wrong. Please try again.', 'passpress' ),
+				),
+			)
+		);
+	}
+
+	public static function enqueue_invite_guest_assets() {
+		wp_enqueue_script( 'passpress-invite-guest' );
+		wp_localize_script(
+			'passpress-invite-guest',
+			'PassPressInviteGuest',
+			array(
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'pp_invite_guest' ),
+			)
+		);
+	}
+
+	public static function enqueue_class_schedule_assets() {
+		wp_enqueue_style( 'passpress-frontend' );
+		wp_enqueue_script( 'passpress-class-schedule' );
+		wp_localize_script(
+			'passpress-class-schedule',
+			'PassPressClassSchedule',
+			array(
+				'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
+				'nonce'      => wp_create_nonce( 'pp_booking' ),
+				'loginUrl'   => wp_login_url( is_singular() ? get_permalink() : home_url( '/' ) ),
+				'isLoggedIn' => is_user_logged_in(),
+				'i18n'       => array(
+					'book'     => __( 'Book', 'passpress' ),
+					'waitlist' => __( 'Join Waitlist', 'passpress' ),
+					'full'     => __( 'Full', 'passpress' ),
+					'error'    => __( 'Something went wrong. Please try again.', 'passpress' ),
+				),
+			)
+		);
+	}
+}
