@@ -82,5 +82,60 @@
 				$( '#pp-pin-code' ).val( '' ).trigger( 'focus' );
 			} );
 		} );
+
+		// New Plan modal (PassPress → Membership Plans).
+		var $modal = $( '#passpress-new-plan-modal' );
+		if ( $modal.length ) {
+			var $form   = $( '#passpress-new-plan-form' );
+			var $notice = $modal.find( '.passpress-modal-notice' );
+			var $submit = $( '#passpress-new-plan-submit' );
+
+			function openModal() {
+				$modal.show();
+				$( '#pp_new_plan_title' ).trigger( 'focus' );
+			}
+
+			function closeModal() {
+				$modal.hide();
+				$notice.hide();
+			}
+
+			$( '#passpress-new-plan-trigger' ).on( 'click', openModal );
+			$modal.find( '.passpress-modal-close, .passpress-modal-cancel' ).on( 'click', closeModal );
+
+			// Click on the dark overlay (not the modal box itself) closes it.
+			$modal.on( 'click', function ( e ) {
+				if ( e.target === this ) {
+					closeModal();
+				}
+			} );
+
+			$( document ).on( 'keydown', function ( e ) {
+				if ( 'Escape' === e.key && $modal.is( ':visible' ) ) {
+					closeModal();
+				}
+			} );
+
+			$form.on( 'submit', function ( e ) {
+				e.preventDefault();
+
+				$submit.prop( 'disabled', true );
+				$notice.hide();
+
+				$.post( PassPressScan.ajaxUrl, $form.serialize() + '&action=pp_create_plan' )
+					.done( function ( response ) {
+						if ( response.success ) {
+							window.location.href = response.data.reload_url;
+						} else {
+							$notice.text( ( response.data && response.data.message ) || 'Something went wrong.' ).show();
+							$submit.prop( 'disabled', false );
+						}
+					} )
+					.fail( function () {
+						$notice.text( 'Something went wrong. Please try again.' ).show();
+						$submit.prop( 'disabled', false );
+					} );
+			} );
+		}
 	} );
 } )( jQuery );

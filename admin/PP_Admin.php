@@ -29,6 +29,7 @@ class PP_Admin {
 		);
 
 		add_submenu_page( 'passpress', __( 'Dashboard', 'passpress' ), __( 'Dashboard', 'passpress' ), PP_Roles::CAP_SCAN, 'passpress', array( 'PP_Dashboard', 'render' ) );
+		add_submenu_page( 'passpress', __( 'Membership Plans', 'passpress' ), __( 'Membership Plans', 'passpress' ), PP_Roles::CAP_MANAGE, 'passpress-plans', array( 'PP_Plans_List', 'render' ) );
 		add_submenu_page( 'passpress', __( 'Memberships', 'passpress' ), __( 'Memberships', 'passpress' ), PP_Roles::CAP_MANAGE, 'passpress-memberships', array( 'PP_Memberships_List', 'render' ) );
 		add_submenu_page( 'passpress', __( 'Visitors', 'passpress' ), __( 'Visitors', 'passpress' ), PP_Roles::CAP_MANAGE, 'passpress-visitors', array( 'PP_Visitors_List', 'render' ) );
 		add_submenu_page( 'passpress', __( 'Bookings', 'passpress' ), __( 'Bookings', 'passpress' ), PP_Roles::CAP_MANAGE, 'passpress-bookings', array( 'PP_Bookings_List', 'render' ) );

@@ -92,6 +92,7 @@ require_once PASSPRESS_PLUGIN_DIR . '/inc/PP_Blocks.php';
 if ( is_admin() ) {
 	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Admin.php';
 	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Dashboard.php';
+	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Plans_List.php';
 	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Memberships_List.php';
 	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Visitors_List.php';
 	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Bookings_List.php';
