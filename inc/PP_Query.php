@@ -49,7 +49,57 @@ class PP_Query {
 	}
 
 	/**
-	 * @param array $args status, search, per_page, paged, member_type ('member'|'visitor'|'all', default 'member')
+	 * Per-status counts for the Members page stat tiles. Same member_type
+	 * exclusion of visitor passes as dashboard_stats() (see Phase 3 notes).
+	 *
+	 * @return array{active:int, frozen:int, suspended:int, expired:int, cancelled:int}
+	 */
+	public static function membership_status_counts( $member_type = 'member' ) {
+		global $wpdb;
+		$table  = self::memberships_table();
+		$counts = array();
+
+		foreach ( array( 'active', 'frozen', 'suspended', 'expired', 'cancelled' ) as $status ) {
+			if ( 'all' === $member_type ) {
+				$counts[ $status ] = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE status = %s", $status ) );
+			} else {
+				$counts[ $status ] = (int) $wpdb->get_var(
+					$wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE status = %s AND member_type = %s", $status, 'visitor' === $member_type ? 'visitor' : 'member' )
+				);
+			}
+		}
+
+		return $counts;
+	}
+
+	/**
+	 * Plan IDs whose plan_type meta is 'corporate' — used by get_memberships()'s
+	 * plan_scope filter. Not cached: this list only matters for an admin-facing
+	 * filter click, not a hot path.
+	 */
+	private static function corporate_plan_ids() {
+		$plans = get_posts(
+			array(
+				'post_type'      => 'pp_membership_plan',
+				'posts_per_page' => -1,
+				'post_status'    => 'any',
+				'fields'         => 'ids',
+				'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+					array(
+						'key'   => '_pp_plan_type',
+						'value' => 'corporate',
+					),
+				),
+			)
+		);
+		return array_map( 'absint', $plans );
+	}
+
+	/**
+	 * @param array $args status, search, per_page, paged,
+	 *                    member_type ('member'|'visitor'|'all', default 'member'),
+	 *                    plan_scope ('', 'corporate', 'individual' — 'individual'
+	 *                    means "on a plan whose type is anything but corporate")
 	 */
 	public static function get_memberships( $args = array() ) {
 		global $wpdb;
@@ -60,6 +110,7 @@ class PP_Query {
 			'per_page'    => 20,
 			'paged'       => 1,
 			'member_type' => 'member',
+			'plan_scope'  => '',
 		);
 		$args = wp_parse_args( $args, $defaults );
 
@@ -77,6 +128,17 @@ class PP_Query {
 		if ( 'all' !== $args['member_type'] ) {
 			$where[]  = 'member_type = %s';
 			$params[] = 'visitor' === $args['member_type'] ? 'visitor' : 'member';
+		}
+		if ( 'corporate' === $args['plan_scope'] || 'individual' === $args['plan_scope'] ) {
+			$corporate_ids = self::corporate_plan_ids();
+			if ( $corporate_ids ) {
+				$placeholders = implode( ',', array_fill( 0, count( $corporate_ids ), '%d' ) );
+				$operator     = 'corporate' === $args['plan_scope'] ? 'IN' : 'NOT IN';
+				$where[]  = "plan_id {$operator} ({$placeholders})";
+				$params   = array_merge( $params, $corporate_ids );
+			} elseif ( 'corporate' === $args['plan_scope'] ) {
+				$where[] = '1=0'; // No corporate plans exist at all — no rows can match.
+			}
 		}
 
 		$where_sql = implode( ' AND ', $where );

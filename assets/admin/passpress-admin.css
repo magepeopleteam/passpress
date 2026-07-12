@@ -314,3 +314,416 @@
 	display: flex;
 	gap: 8px;
 }
+
+/* Members page */
+
+.passpress-stat-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin: 16px 0 20px;
+}
+
+.passpress-stat-tile {
+	flex: 1 1 180px;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px;
+	background: #fff;
+	border: 1px solid #e5e7eb;
+	border-radius: 10px;
+	padding: 18px 20px;
+	text-decoration: none;
+	color: inherit;
+}
+
+.passpress-stat-tile.is-active {
+	border-color: #1d2327;
+	box-shadow: 0 0 0 1px #1d2327;
+}
+
+.passpress-stat-tile-label {
+	display: block;
+	font-size: 0.72em;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	color: #8c8f94;
+	margin-bottom: 6px;
+}
+
+.passpress-stat-tile-number {
+	display: block;
+	font-size: 1.8em;
+	font-weight: 700;
+	color: #1d2327;
+	line-height: 1;
+}
+
+.passpress-stat-tile-suspended .passpress-stat-tile-number {
+	color: #c0392b;
+}
+
+.passpress-stat-tile-cancelled .passpress-stat-tile-number {
+	color: #8c8f94;
+}
+
+.passpress-stat-tile-icon {
+	flex: 0 0 auto;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.passpress-stat-tile-icon .dashicons {
+	width: 20px;
+	height: 20px;
+	font-size: 20px;
+}
+
+.passpress-stat-tile-active .passpress-stat-tile-icon {
+	background: #dbeafe;
+	color: #1d4ed8;
+}
+
+.passpress-stat-tile-frozen .passpress-stat-tile-icon {
+	background: #e5edf9;
+	color: #4b6797;
+}
+
+.passpress-stat-tile-suspended .passpress-stat-tile-icon {
+	background: #fde3e1;
+	color: #c0392b;
+}
+
+.passpress-stat-tile-expired .passpress-stat-tile-icon {
+	background: #ececec;
+	color: #6b7280;
+}
+
+.passpress-stat-tile-cancelled .passpress-stat-tile-icon {
+	background: #ececec;
+	color: #6b7280;
+}
+
+.passpress-members-toolbar {
+	background: #fff;
+	border: 1px solid #e5e7eb;
+	border-radius: 10px;
+	padding: 16px 20px;
+	margin-bottom: 16px;
+}
+
+.passpress-members-toolbar-top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	flex-wrap: wrap;
+}
+
+.passpress-scope-tabs {
+	display: inline-flex;
+	background: #f3f4f6;
+	border-radius: 999px;
+	padding: 4px;
+	gap: 2px;
+}
+
+.passpress-scope-tab {
+	padding: 7px 16px;
+	border-radius: 999px;
+	font-size: 0.78em;
+	font-weight: 700;
+	letter-spacing: 0.03em;
+	color: #4b5563;
+	text-decoration: none;
+}
+
+.passpress-scope-tab.is-active {
+	background: #1d2327;
+	color: #fff;
+}
+
+.passpress-issue-membership {
+	position: relative;
+}
+
+.passpress-issue-btn {
+	display: inline-block;
+	cursor: pointer;
+	background: #1d2327;
+	border: 1px solid #1d2327;
+	color: #fff;
+	font-weight: 600;
+	font-size: 13px;
+	line-height: 2.15384615;
+	padding: 0 18px;
+	border-radius: 999px;
+	list-style: none;
+}
+
+.passpress-issue-btn::-webkit-details-marker {
+	display: none;
+}
+
+.passpress-issue-panel {
+	position: absolute;
+	right: 0;
+	top: calc(100% + 8px);
+	z-index: 20;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	padding: 16px 20px;
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+	min-width: 340px;
+}
+
+.passpress-members-search-form {
+	display: flex;
+	gap: 8px;
+	margin-top: 14px;
+}
+
+.passpress-members-search {
+	flex: 1 1 auto;
+	max-width: 320px;
+	padding: 7px 12px;
+	border-radius: 6px;
+	border: 1px solid #dcdcde;
+}
+
+.passpress-members-table {
+	width: 100%;
+	border-collapse: collapse;
+	background: #fff;
+	border: 1px solid #e5e7eb;
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.passpress-members-table th {
+	text-align: left;
+	font-size: 0.72em;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: #8c8f94;
+	font-weight: 600;
+	padding: 10px 16px;
+	border-bottom: 1px solid #e5e7eb;
+	background: #fafafa;
+}
+
+.passpress-members-table td {
+	padding: 14px 16px;
+	border-bottom: 1px solid #f0f0f1;
+	vertical-align: middle;
+	font-size: 0.92em;
+}
+
+.passpress-members-table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.passpress-member-cell {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.passpress-member-avatar {
+	flex: 0 0 auto;
+	width: 34px;
+	height: 34px;
+	border-radius: 50%;
+	color: #fff;
+	font-size: 11px;
+	font-weight: 700;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.passpress-avatar-color-0 { background: #1d2327; }
+.passpress-avatar-color-1 { background: #0d9488; }
+.passpress-avatar-color-2 { background: #7c3aed; }
+.passpress-avatar-color-3 { background: #2563eb; }
+.passpress-avatar-color-4 { background: #c2410c; }
+
+.passpress-member-info {
+	display: flex;
+	flex-direction: column;
+	line-height: 1.4;
+}
+
+.passpress-member-email {
+	font-size: 0.85em;
+	color: #6b7280;
+}
+
+.passpress-plan-pill {
+	display: inline-block;
+	padding: 4px 12px;
+	border-radius: 999px;
+	background: #eaf2fe;
+	color: #1d4ed8;
+	font-size: 0.85em;
+	font-weight: 600;
+}
+
+.passpress-status-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 3px 10px;
+	border-radius: 999px;
+	font-size: 0.8em;
+	font-weight: 600;
+}
+
+.passpress-status-dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: currentColor;
+	display: inline-block;
+}
+
+.passpress-status-pill-active {
+	background: #dcf5e4;
+	color: #146c34;
+}
+
+.passpress-status-pill-frozen {
+	background: #e5edf9;
+	color: #2952a3;
+}
+
+.passpress-status-pill-suspended {
+	background: #fbdedd;
+	color: #99251e;
+}
+
+.passpress-status-pill-expired {
+	background: #ececec;
+	color: #55595d;
+}
+
+.passpress-status-pill-cancelled {
+	background: #ececec;
+	color: #8c8f94;
+}
+
+.passpress-validity {
+	display: flex;
+	flex-direction: column;
+	line-height: 1.5;
+}
+
+.passpress-validity-until {
+	font-size: 0.85em;
+	color: #6b7280;
+}
+
+.passpress-expiring-soon {
+	font-size: 0.85em;
+	font-weight: 700;
+	color: #1d4ed8;
+}
+
+.passpress-row-menu-cell {
+	text-align: right;
+}
+
+.passpress-row-menu {
+	position: relative;
+	display: inline-block;
+}
+
+.passpress-row-menu summary {
+	cursor: pointer;
+	list-style: none;
+	color: #6b7280;
+	padding: 4px 10px;
+	font-weight: 700;
+	font-size: 1.1em;
+	border-radius: 4px;
+}
+
+.passpress-row-menu summary:hover {
+	background: #f3f4f6;
+}
+
+.passpress-row-menu summary::-webkit-details-marker {
+	display: none;
+}
+
+.passpress-row-menu-panel {
+	position: absolute;
+	right: 0;
+	top: 100%;
+	z-index: 15;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	padding: 6px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+	display: flex;
+	flex-direction: column;
+	min-width: 110px;
+}
+
+.passpress-row-menu-panel a {
+	padding: 5px 8px;
+	text-decoration: none;
+	border-radius: 4px;
+	white-space: nowrap;
+	color: #1d2327;
+}
+
+.passpress-row-menu-panel a:hover {
+	background: #f3f4f6;
+}
+
+.passpress-members-footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	margin-top: 14px;
+	flex-wrap: wrap;
+}
+
+.passpress-members-count {
+	color: #6b7280;
+	font-size: 0.9em;
+	margin: 0;
+}
+
+.passpress-members-pagination .page-numbers {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 30px;
+	height: 30px;
+	padding: 0 6px;
+	margin-left: 4px;
+	border-radius: 6px;
+	text-decoration: none;
+	color: #1d2327;
+	font-size: 0.85em;
+}
+
+.passpress-members-pagination .page-numbers.current {
+	background: #1d2327;
+	color: #fff;
+	font-weight: 700;
+}
+
+.passpress-members-pagination .page-numbers.dots {
+	color: #8c8f94;
+}
