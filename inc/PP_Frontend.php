@@ -23,6 +23,7 @@ class PP_Frontend {
 	public static function init() {
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'register_assets' ) );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'maybe_enqueue_for_current_page' ), 20 );
+		add_filter( 'body_class', array( __CLASS__, 'add_body_classes' ) );
 	}
 
 	public static function register_assets() {
@@ -39,8 +40,31 @@ class PP_Frontend {
 	 * Content-based detection, independent of whether the shortcode/block
 	 * render callback itself has run yet. Checks both the shortcode and its
 	 * Gutenberg block equivalent (inc/PP_Blocks.php) since a page can use
-	 * either surface.
+	 * either surface. Shared by maybe_enqueue_for_current_page() and
+	 * add_body_classes() so the two can't drift apart.
 	 */
+	private static function detect_features( $post ) {
+		$features = array();
+
+		if ( has_shortcode( $post->post_content, 'passpress_my_pass' ) || has_block( 'passpress/my-pass', $post ) ) {
+			$features[] = 'my-pass';
+		}
+
+		if ( has_shortcode( $post->post_content, 'passpress_membership_plans' ) || has_block( 'passpress/plan-list', $post ) ) {
+			$features[] = 'plan-list';
+		}
+
+		if ( has_shortcode( $post->post_content, 'passpress_booking_calendar' ) || has_block( 'passpress/booking-calendar', $post ) ) {
+			$features[] = 'booking-calendar';
+		}
+
+		if ( has_shortcode( $post->post_content, 'passpress_class_schedule' ) || has_block( 'passpress/class-schedule', $post ) ) {
+			$features[] = 'class-schedule';
+		}
+
+		return $features;
+	}
+
 	public static function maybe_enqueue_for_current_page() {
 		if ( ! is_singular() ) {
 			return;
@@ -51,23 +75,48 @@ class PP_Frontend {
 			return;
 		}
 
-		if ( has_shortcode( $post->post_content, 'passpress_my_pass' ) || has_block( 'passpress/my-pass', $post ) ) {
+		$features = self::detect_features( $post );
+
+		if ( in_array( 'my-pass', $features, true ) ) {
 			self::enqueue_my_pass_assets();
 			self::enqueue_my_bookings_assets();
 			self::enqueue_invite_guest_assets();
 		}
 
-		if ( has_shortcode( $post->post_content, 'passpress_membership_plans' ) || has_block( 'passpress/plan-list', $post ) ) {
+		if ( in_array( 'plan-list', $features, true ) ) {
 			self::enqueue_plan_list_assets();
 		}
 
-		if ( has_shortcode( $post->post_content, 'passpress_booking_calendar' ) || has_block( 'passpress/booking-calendar', $post ) ) {
+		if ( in_array( 'booking-calendar', $features, true ) ) {
 			self::enqueue_booking_assets();
 		}
 
-		if ( has_shortcode( $post->post_content, 'passpress_class_schedule' ) || has_block( 'passpress/class-schedule', $post ) ) {
+		if ( in_array( 'class-schedule', $features, true ) ) {
 			self::enqueue_class_schedule_assets();
 		}
+	}
+
+	/**
+	 * Adds a single `passpress-page` class so themes/CSS can target
+	 * PassPress pages without relying on specific post IDs or slugs.
+	 */
+	public static function add_body_classes( $classes ) {
+		if ( ! is_singular() ) {
+			return $classes;
+		}
+
+		$post = get_post();
+		if ( ! $post ) {
+			return $classes;
+		}
+
+		if ( empty( self::detect_features( $post ) ) ) {
+			return $classes;
+		}
+
+		$classes[] = 'passpress-page';
+
+		return $classes;
 	}
 
 	public static function enqueue_my_pass_assets() {

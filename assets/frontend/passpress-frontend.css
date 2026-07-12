@@ -44,6 +44,35 @@
 	--pp-check: #17803d;
 }
 
+.passpress-page .passpress-plan-list-wrap {
+	max-width: var(--wp--style--global--wide-size, 1440px) !important;
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+
+/*
+ * Scoped to .wp-block-post-title / :not(.wp-block-site-title) rather than
+ * bare h1/h2 — a blanket `.passpress-page h1/h2` also matches the theme's
+ * own site-title block in <header> (many block themes mark it up as an
+ * h1 or h2), widening/recentering it and breaking the actual site header.
+ *
+ * max-width uses --wp--style--global--wide-size (falls back to 1440px if a
+ * theme doesn't define it) instead of a fixed pixel value, so the plan
+ * grid/title line up edge-to-edge with the theme's own header row, which
+ * is aligned to that same "wide" width.
+ */
+.passpress-page .wp-block-post-title {
+	max-width: var(--wp--style--global--wide-size, 1440px) !important;
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+
+.passpress-page h2:not(.wp-block-site-title) {
+	max-width: var(--wp--style--global--wide-size, 1440px) !important;
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+
 .passpress-plan-header {
 	margin-bottom: 28px;
 }
@@ -175,7 +204,7 @@
 .passpress-plan-btn {
 	display: block;
 	text-align: center;
-	font-size: 0.9em;
+	font-size: 16px;
 	font-weight: 700;
 	text-decoration: none;
 	padding: 12px 16px;
