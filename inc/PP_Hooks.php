@@ -36,6 +36,7 @@ class PP_Hooks {
 		if ( is_admin() ) {
 			new PP_Admin();
 			PP_Plans_List::init();
+			PP_Memberships_List::init();
 			PP_Settings::init();
 			PP_Billing_Settings::init();
 			PP_Notification_Settings::init();

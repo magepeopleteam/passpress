@@ -272,7 +272,7 @@
 .passpress-modal {
 	position: relative;
 	background: #fff;
-	border-radius: 8px;
+	border-radius: 12px;
 	max-width: 560px;
 	width: 100%;
 	padding: 24px 28px 28px;
@@ -284,15 +284,12 @@
 }
 
 .passpress-modal-close {
-	position: absolute;
-	top: 12px;
-	right: 16px;
 	background: none;
 	border: none;
-	font-size: 24px;
+	font-size: 22px;
 	line-height: 1;
 	cursor: pointer;
-	color: #6b7280;
+	color: #9ca3af;
 	padding: 4px;
 }
 
@@ -313,6 +310,205 @@
 	margin-top: 8px;
 	display: flex;
 	gap: 8px;
+}
+
+/* New Membership Plan modal — bold navy labels, colored field values,
+   label-above-field layout (a deliberate departure from the default WP
+   form-table label-beside-field pattern). */
+
+.passpress-plan-modal {
+	max-width: 460px;
+	padding: 22px 26px 26px;
+}
+
+.pp-modal-header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 18px;
+}
+
+.pp-modal-header h2 {
+	margin: 0;
+	font-size: 1.2em;
+	font-weight: 700;
+	color: #16213a;
+}
+
+.pp-plan-form {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.pp-field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.pp-field-row {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
+}
+
+.pp-label {
+	font-size: 0.85em;
+	font-weight: 700;
+	color: #16213a;
+}
+
+.pp-label-row {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+}
+
+.pp-label-hint {
+	font-size: 0.78em;
+	font-weight: 600;
+	color: #3b6fe0;
+}
+
+.pp-input {
+	width: 100%;
+	box-sizing: border-box;
+	border: 1px solid #d8dce3;
+	border-radius: 8px;
+	padding: 9px 12px;
+	font-size: 0.9em;
+	color: #3b6fe0;
+	background: #fff;
+}
+
+.pp-input:focus {
+	outline: none;
+	border-color: #3b6fe0;
+	box-shadow: 0 0 0 3px rgba(59, 111, 224, 0.12);
+}
+
+.pp-input::placeholder {
+	color: #93a3c9;
+}
+
+textarea.pp-input {
+	color: #c2650c;
+	resize: vertical;
+}
+
+textarea.pp-input::placeholder {
+	color: #d8935c;
+}
+
+select.pp-input {
+	color: #c2650c;
+	font-weight: 600;
+	appearance: none;
+	background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236b7280'%3E%3Cpath d='M5.5 7.5l4.5 5 4.5-5z'/%3E%3C/svg%3E") no-repeat right 10px center;
+	background-size: 16px;
+	padding-right: 32px;
+}
+
+#pp_new_plan_type.pp-input {
+	color: #3b6fe0;
+}
+
+.pp-input-narrow {
+	max-width: 110px;
+	color: #b3401f;
+	font-weight: 600;
+}
+
+.pp-input-prefix-wrap {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	border: 1px solid #d8dce3;
+	border-radius: 8px;
+	padding: 0 12px;
+}
+
+.pp-input-prefix-wrap .pp-input {
+	border: none;
+	padding-left: 0;
+}
+
+.pp-input-prefix {
+	color: #3b6fe0;
+	font-weight: 600;
+}
+
+.pp-input-group {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.pp-input-group-time .pp-input {
+	color: #6b7280;
+}
+
+.pp-input-group-sep {
+	color: #9ca3af;
+}
+
+.pp-divider {
+	border: none;
+	border-top: 1px solid #eceef1;
+	margin: 2px 0;
+}
+
+.pp-checkbox-box {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	border: 1px dashed #d8dce3;
+	border-radius: 8px;
+	padding: 12px 14px;
+	font-size: 0.88em;
+	font-weight: 600;
+	color: #3b6fe0;
+	cursor: pointer;
+}
+
+.pp-modal-footer {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 4px;
+	padding-top: 16px;
+	border-top: 1px solid #eceef1;
+}
+
+.pp-btn-outline,
+.pp-btn-solid {
+	border-radius: 8px;
+	padding: 9px 20px;
+	font-size: 0.88em;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.pp-btn-outline {
+	background: #fff;
+	border: 1px solid #d8dce3;
+	color: #16213a;
+}
+
+.pp-btn-outline:hover {
+	background: #f9fafb;
+}
+
+.pp-btn-solid {
+	background: #16213a;
+	border: 1px solid #16213a;
+	color: #fff;
+}
+
+.pp-btn-solid:hover {
+	background: #0f1729;
 }
 
 /* Members page */
@@ -420,13 +616,17 @@
 .passpress-members-toolbar-top {
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
 	gap: 16px;
 	flex-wrap: wrap;
 }
 
+.passpress-members-toolbar-top .passpress-issue-membership {
+	margin-left: auto;
+}
+
 .passpress-scope-tabs {
 	display: inline-flex;
+	flex-wrap: wrap;
 	background: #f3f4f6;
 	border-radius: 999px;
 	padding: 4px;
@@ -452,6 +652,21 @@
 	position: relative;
 }
 
+/*
+ * .passpress-issue-membership is shared with PP_Visitors_List.php's plain
+ * "Register Walk-in Visitor" panel, which still relies on the original
+ * boxed styling defined near the top of this file (background/border/
+ * padding/margin). The Members page's version has its own boxed
+ * .passpress-issue-panel dropdown instead, so it opts out of that shared
+ * box via this modifier rather than changing the shared base rule.
+ */
+.passpress-issue-membership--compact {
+	background: none;
+	border: none;
+	padding: 0;
+	margin: 0;
+}
+
 .passpress-issue-btn {
 	display: inline-block;
 	cursor: pointer;
@@ -461,7 +676,7 @@
 	font-weight: 600;
 	font-size: 13px;
 	line-height: 2.15384615;
-	padding: 0 18px;
+	padding: 3px 18px 6px 18px;
 	border-radius: 999px;
 	list-style: none;
 }
@@ -477,16 +692,28 @@
 	z-index: 20;
 	background: #fff;
 	border: 1px solid #dcdcde;
-	border-radius: 8px;
-	padding: 16px 20px;
+	border-radius: 12px;
+	padding: 20px 22px 22px;
 	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-	min-width: 340px;
+	width: 320px;
+}
+
+.pp-issue-title {
+	margin: 0 0 16px;
+	font-size: 1.1em;
+	font-weight: 700;
+	color: #16213a;
+}
+
+.pp-btn-block {
+	width: 100%;
+	text-align: center;
 }
 
 .passpress-members-search-form {
 	display: flex;
 	gap: 8px;
-	margin-top: 14px;
+	margin-top: 0px !important;
 }
 
 .passpress-members-search {
@@ -495,6 +722,14 @@
 	padding: 7px 12px;
 	border-radius: 6px;
 	border: 1px solid #dcdcde;
+}
+
+#passpress-members-search-input {
+	border-radius: 10px;
+}
+
+.passpress-members-search-form button.button {
+	border-radius: 10px !important;
 }
 
 .passpress-members-table {

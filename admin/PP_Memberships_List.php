@@ -14,6 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class PP_Memberships_List {
 
+	public static function init() {
+		add_action( 'wp_ajax_pp_filter_members', array( __CLASS__, 'ajax_filter_members' ) );
+	}
+
 	public static function render() {
 		if ( ! current_user_can( PP_Roles::CAP_MANAGE ) ) {
 			wp_die( esc_html__( 'You do not have permission to access this page.', 'passpress' ) );
@@ -27,16 +31,7 @@ class PP_Memberships_List {
 		$plan_scope = isset( $_GET['plan_scope'] ) ? sanitize_key( $_GET['plan_scope'] ) : '';
 
 		$counts = PP_Query::membership_status_counts( 'member' );
-		$result = PP_Query::get_memberships(
-			array(
-				'status'      => $status,
-				'search'      => $search,
-				'paged'       => $paged,
-				'per_page'    => 10,
-				'member_type' => 'member',
-				'plan_scope'  => $plan_scope,
-			)
-		);
+		$result = self::get_filtered_result( $status, $search, $plan_scope, $paged );
 
 		settings_errors( 'passpress' );
 		?>
@@ -53,58 +48,71 @@ class PP_Memberships_List {
 
 			<div class="passpress-members-toolbar">
 				<div class="passpress-members-toolbar-top">
-					<div class="passpress-scope-tabs">
-						<?php foreach ( self::scope_tabs() as $key => $label ) : ?>
-							<a class="passpress-scope-tab<?php echo $plan_scope === $key ? ' is-active' : ''; ?>" href="<?php echo esc_url( self::filter_url( array( 'plan_scope' => $key, 'status' => $status, 's' => $search ) ) ); ?>">
-								<?php echo esc_html( $label ); ?>
+					<div class="passpress-scope-tabs" id="passpress-scope-tabs" data-nonce="<?php echo esc_attr( wp_create_nonce( 'pp_filter_members' ) ); ?>" data-status="<?php echo esc_attr( $status ); ?>" data-plan-scope="<?php echo esc_attr( $plan_scope ); ?>">
+						<?php foreach ( self::quick_filter_tabs() as $tab ) : ?>
+							<?php
+							if ( 'reset' === $tab['type'] ) {
+								$is_active      = ( '' === $plan_scope && '' === $status );
+								$new_status     = '';
+								$new_plan_scope = '';
+							} elseif ( 'plan_scope' === $tab['type'] ) {
+								$is_active      = ( $plan_scope === $tab['value'] );
+								$new_status     = $status;
+								$new_plan_scope = $tab['value'];
+							} else {
+								$is_active      = ( $status === $tab['value'] );
+								$new_status     = $tab['value'];
+								$new_plan_scope = $plan_scope;
+							}
+							$tab_url = self::filter_url( array( 'plan_scope' => $new_plan_scope, 'status' => $new_status, 's' => $search ) );
+							?>
+							<a class="passpress-scope-tab<?php echo $is_active ? ' is-active' : ''; ?>" href="<?php echo esc_url( $tab_url ); ?>" data-status="<?php echo esc_attr( $new_status ); ?>" data-plan-scope="<?php echo esc_attr( $new_plan_scope ); ?>">
+								<?php echo esc_html( $tab['label'] ); ?>
 							</a>
 						<?php endforeach; ?>
 					</div>
-					<details class="passpress-issue-membership">
+
+					<form method="get" class="passpress-members-search-form">
+						<input type="hidden" name="page" value="passpress-memberships">
+						<?php if ( $status ) : ?><input type="hidden" name="status" value="<?php echo esc_attr( $status ); ?>"><?php endif; ?>
+						<?php if ( $plan_scope ) : ?><input type="hidden" name="plan_scope" value="<?php echo esc_attr( $plan_scope ); ?>"><?php endif; ?>
+						<input type="search" name="s" id="passpress-members-search-input" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Search membership #…', 'passpress' ); ?>" class="passpress-members-search">
+						<button type="submit" class="button"><?php esc_html_e( 'Search', 'passpress' ); ?></button>
+					</form>
+
+					<details class="passpress-issue-membership passpress-issue-membership--compact">
 						<summary class="passpress-issue-btn"><?php esc_html_e( '+ Issue New Membership', 'passpress' ); ?></summary>
 						<div class="passpress-issue-panel">
-							<form method="post">
+							<h2 class="pp-issue-title"><?php esc_html_e( 'Issue Membership', 'passpress' ); ?></h2>
+							<form method="post" class="pp-plan-form">
 								<?php wp_nonce_field( 'pp_issue_membership' ); ?>
-								<table class="form-table">
-									<tr>
-										<th><label for="pp_user_id"><?php esc_html_e( 'Member', 'passpress' ); ?></label></th>
-										<td>
-											<?php
-											wp_dropdown_users(
-												array(
-													'name'             => 'user_id',
-													'id'               => 'pp_user_id',
-													'show_option_none' => __( 'Select a member', 'passpress' ),
-												)
-											);
-											?>
-										</td>
-									</tr>
-									<tr>
-										<th><label for="pp_plan_id"><?php esc_html_e( 'Plan', 'passpress' ); ?></label></th>
-										<td>
-											<select name="plan_id" id="pp_plan_id">
-												<option value=""><?php esc_html_e( 'Select a plan', 'passpress' ); ?></option>
-												<?php foreach ( self::get_plans() as $plan ) : ?>
-													<option value="<?php echo esc_attr( $plan->ID ); ?>"><?php echo esc_html( $plan->post_title ); ?></option>
-												<?php endforeach; ?>
-											</select>
-										</td>
-									</tr>
-								</table>
-								<?php submit_button( __( 'Issue Membership', 'passpress' ), 'primary', 'pp_issue_membership' ); ?>
+								<div class="pp-field">
+									<label class="pp-label" for="pp_user_id"><?php esc_html_e( 'Member', 'passpress' ); ?></label>
+									<?php
+									wp_dropdown_users(
+										array(
+											'name'             => 'user_id',
+											'id'               => 'pp_user_id',
+											'class'            => 'pp-input pp-input-select',
+											'show_option_none' => __( 'Select a member', 'passpress' ),
+										)
+									);
+									?>
+								</div>
+								<div class="pp-field">
+									<label class="pp-label" for="pp_plan_id"><?php esc_html_e( 'Plan', 'passpress' ); ?></label>
+									<select name="plan_id" id="pp_plan_id" class="pp-input pp-input-select">
+										<option value=""><?php esc_html_e( 'Select a plan', 'passpress' ); ?></option>
+										<?php foreach ( self::get_plans() as $plan ) : ?>
+											<option value="<?php echo esc_attr( $plan->ID ); ?>"><?php echo esc_html( $plan->post_title ); ?></option>
+										<?php endforeach; ?>
+									</select>
+								</div>
+								<button type="submit" name="pp_issue_membership" class="pp-btn-solid pp-btn-block"><?php esc_html_e( 'Issue Membership', 'passpress' ); ?></button>
 							</form>
 						</div>
 					</details>
 				</div>
-
-				<form method="get" class="passpress-members-search-form">
-					<input type="hidden" name="page" value="passpress-memberships">
-					<?php if ( $status ) : ?><input type="hidden" name="status" value="<?php echo esc_attr( $status ); ?>"><?php endif; ?>
-					<?php if ( $plan_scope ) : ?><input type="hidden" name="plan_scope" value="<?php echo esc_attr( $plan_scope ); ?>"><?php endif; ?>
-					<input type="search" name="s" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Search membership #…', 'passpress' ); ?>" class="passpress-members-search">
-					<button type="submit" class="button"><?php esc_html_e( 'Search', 'passpress' ); ?></button>
-				</form>
 			</div>
 
 			<table class="passpress-members-table">
@@ -119,14 +127,8 @@ class PP_Memberships_List {
 						<th></th>
 					</tr>
 				</thead>
-				<tbody>
-					<?php if ( empty( $result['items'] ) ) : ?>
-						<tr><td colspan="7"><?php esc_html_e( 'No members found.', 'passpress' ); ?></td></tr>
-					<?php else : ?>
-						<?php foreach ( $result['items'] as $membership ) : ?>
-							<?php self::render_row( $membership ); ?>
-						<?php endforeach; ?>
-					<?php endif; ?>
+				<tbody id="passpress-members-tbody">
+					<?php self::render_tbody_rows( $result ); ?>
 				</tbody>
 			</table>
 
@@ -135,17 +137,55 @@ class PP_Memberships_List {
 		<?php
 	}
 
-	private static function scope_tabs() {
+	/**
+	 * The combined quick-filter tab bar: "All Members" resets both filters,
+	 * the plan_scope tabs (Corporate/Individual) and the status tabs
+	 * (Active/Frozen/Suspended/Cancelled) each only touch their own filter,
+	 * preserving whatever the other one is currently set to — so "Corporate"
+	 * + "Frozen" can be combined by clicking one then the other.
+	 */
+	private static function quick_filter_tabs() {
 		return array(
-			''          => __( 'All Members', 'passpress' ),
-			'corporate' => __( 'Corporate', 'passpress' ),
-			'individual' => __( 'Individual', 'passpress' ),
+			array(
+				'label' => __( 'All Members', 'passpress' ),
+				'type'  => 'reset',
+			),
+			array(
+				'label' => __( 'Corporate', 'passpress' ),
+				'type'  => 'plan_scope',
+				'value' => 'corporate',
+			),
+			array(
+				'label' => __( 'Individual', 'passpress' ),
+				'type'  => 'plan_scope',
+				'value' => 'individual',
+			),
+			array(
+				'label' => __( 'Active', 'passpress' ),
+				'type'  => 'status',
+				'value' => 'active',
+			),
+			array(
+				'label' => __( 'Frozen', 'passpress' ),
+				'type'  => 'status',
+				'value' => 'frozen',
+			),
+			array(
+				'label' => __( 'Suspended', 'passpress' ),
+				'type'  => 'status',
+				'value' => 'suspended',
+			),
+			array(
+				'label' => __( 'Cancelled', 'passpress' ),
+				'type'  => 'status',
+				'value' => 'cancelled',
+			),
 		);
 	}
 
 	private static function render_stat_tile( $key, $label, $count, $dashicon, $current_status ) {
 		?>
-		<a class="passpress-stat-tile passpress-stat-tile-<?php echo esc_attr( $key ); ?><?php echo $current_status === $key ? ' is-active' : ''; ?>" href="<?php echo esc_url( self::filter_url( array( 'status' => $current_status === $key ? '' : $key ) ) ); ?>">
+		<a class="passpress-stat-tile passpress-stat-tile-<?php echo esc_attr( $key ); ?><?php echo $current_status === $key ? ' is-active' : ''; ?>" data-status="<?php echo esc_attr( $key ); ?>" href="<?php echo esc_url( self::filter_url( array( 'status' => $current_status === $key ? '' : $key ) ) ); ?>">
 			<div class="passpress-stat-tile-text">
 				<span class="passpress-stat-tile-label"><?php echo esc_html( strtoupper( $label ) ); ?></span>
 				<span class="passpress-stat-tile-number"><?php echo esc_html( number_format_i18n( $count ) ); ?></span>
@@ -253,6 +293,65 @@ class PP_Memberships_List {
 		return add_query_arg( array_merge( array( 'page' => 'passpress-memberships' ), array_filter( $args, function( $v ) { return '' !== $v; } ) ), admin_url( 'admin.php' ) );
 	}
 
+	private static function get_filtered_result( $status, $search, $plan_scope, $paged ) {
+		return PP_Query::get_memberships(
+			array(
+				'status'      => $status,
+				'search'      => $search,
+				'paged'       => $paged,
+				'per_page'    => 10,
+				'member_type' => 'member',
+				'plan_scope'  => $plan_scope,
+			)
+		);
+	}
+
+	private static function render_tbody_rows( $result ) {
+		if ( empty( $result['items'] ) ) {
+			echo '<tr><td colspan="7">' . esc_html__( 'No members found.', 'passpress' ) . '</td></tr>';
+			return;
+		}
+		foreach ( $result['items'] as $membership ) {
+			self::render_row( $membership );
+		}
+	}
+
+	/**
+	 * Backs the JS-driven quick-filter tabs + pagination (see
+	 * assets/admin/passpress-admin.js) — same query/render logic as
+	 * render()'s initial page load, just returned as HTML fragments instead
+	 * of a full page, so switching tabs/pages doesn't reload the screen.
+	 */
+	public static function ajax_filter_members() {
+		check_ajax_referer( 'pp_filter_members', 'nonce' );
+
+		if ( ! current_user_can( PP_Roles::CAP_MANAGE ) ) {
+			wp_send_json_error( array( 'message' => __( 'You do not have permission to do this.', 'passpress' ) ) );
+		}
+
+		$status     = isset( $_POST['status'] ) ? sanitize_key( $_POST['status'] ) : '';
+		$search     = isset( $_POST['s'] ) ? sanitize_text_field( wp_unslash( $_POST['s'] ) ) : '';
+		$plan_scope = isset( $_POST['plan_scope'] ) ? sanitize_key( $_POST['plan_scope'] ) : '';
+		$paged      = isset( $_POST['paged'] ) ? max( 1, absint( $_POST['paged'] ) ) : 1;
+
+		$result = self::get_filtered_result( $status, $search, $plan_scope, $paged );
+
+		ob_start();
+		self::render_tbody_rows( $result );
+		$rows_html = ob_get_clean();
+
+		ob_start();
+		self::render_pagination( $result, $status, $search, $paged, $plan_scope );
+		$footer_html = ob_get_clean();
+
+		wp_send_json_success(
+			array(
+				'rows'   => $rows_html,
+				'footer' => $footer_html,
+			)
+		);
+	}
+
 	private static function action_url( $id, $action ) {
 		return wp_nonce_url(
 			add_query_arg(
@@ -283,7 +382,7 @@ class PP_Memberships_List {
 		$first = $result['total'] ? ( ( $paged - 1 ) * $result['per_page'] ) + 1 : 0;
 		$last  = min( $result['total'], $paged * $result['per_page'] );
 		?>
-		<div class="passpress-members-footer">
+		<div class="passpress-members-footer" id="passpress-members-footer">
 			<p class="passpress-members-count">
 				<?php
 				printf(
@@ -301,7 +400,7 @@ class PP_Memberships_List {
 					echo wp_kses_post(
 						paginate_links(
 							array(
-								'base'      => add_query_arg( 'paged', '%#%' ),
+								'base'      => add_query_arg( 'paged', '%#%', admin_url( 'admin.php?page=passpress-memberships' ) ),
 								'format'    => '',
 								'current'   => $paged,
 								'total'     => $total_pages,

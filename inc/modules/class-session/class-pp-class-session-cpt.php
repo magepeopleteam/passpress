@@ -20,6 +20,8 @@ class PP_Class_Session_CPT {
 		add_action( 'init', array( $this, 'register' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
 		add_action( 'save_post_pp_class_session', array( $this, 'save_meta' ) );
+		add_filter( 'manage_pp_class_session_posts_columns', array( $this, 'add_columns' ) );
+		add_action( 'manage_pp_class_session_posts_custom_column', array( $this, 'render_column' ), 10, 2 );
 	}
 
 	public function register() {
@@ -181,6 +183,68 @@ class PP_Class_Session_CPT {
 		}
 		if ( isset( $_POST['_pp_end_time'] ) ) {
 			update_post_meta( $post_id, '_pp_end_time', sanitize_text_field( wp_unslash( $_POST['_pp_end_time'] ) ) );
+		}
+	}
+
+	/**
+	 * Adds one column per Class Details field to the native list table
+	 * (edit.php?post_type=pp_class_session) — inserted right after Title,
+	 * before the built-in Date column.
+	 */
+	public function add_columns( $columns ) {
+		$new_columns = array();
+
+		foreach ( $columns as $key => $label ) {
+			$new_columns[ $key ] = $label;
+
+			if ( 'title' === $key ) {
+				$new_columns['pp_class_type']   = __( 'Class Type', 'passpress' );
+				$new_columns['pp_instructor']   = __( 'Instructor', 'passpress' );
+				$new_columns['pp_facility']     = __( 'Facility / Room', 'passpress' );
+				$new_columns['pp_capacity']     = __( 'Capacity', 'passpress' );
+				$new_columns['pp_day_of_week']  = __( 'Day of Week', 'passpress' );
+				$new_columns['pp_class_time']   = __( 'Time', 'passpress' );
+			}
+		}
+
+		return $new_columns;
+	}
+
+	public function render_column( $column, $post_id ) {
+		switch ( $column ) {
+			case 'pp_class_type':
+				$type  = get_post_meta( $post_id, '_pp_class_type', true );
+				$types = self::class_types();
+				echo esc_html( isset( $types[ $type ] ) ? $types[ $type ] : '—' );
+				break;
+
+			case 'pp_instructor':
+				$instructor_id = (int) get_post_meta( $post_id, '_pp_instructor_id', true );
+				$user          = $instructor_id ? get_userdata( $instructor_id ) : false;
+				echo esc_html( $user ? $user->display_name : '—' );
+				break;
+
+			case 'pp_facility':
+				$facility_id = (int) get_post_meta( $post_id, '_pp_facility_id', true );
+				echo $facility_id ? esc_html( get_the_title( $facility_id ) ) : '—';
+				break;
+
+			case 'pp_capacity':
+				$capacity = get_post_meta( $post_id, '_pp_capacity', true );
+				echo esc_html( '' !== $capacity ? (int) $capacity : '—' );
+				break;
+
+			case 'pp_day_of_week':
+				$day_of_week = (int) get_post_meta( $post_id, '_pp_day_of_week', true );
+				$weekdays    = self::weekdays();
+				echo esc_html( isset( $weekdays[ $day_of_week ] ) ? $weekdays[ $day_of_week ] : '—' );
+				break;
+
+			case 'pp_class_time':
+				$start = get_post_meta( $post_id, '_pp_start_time', true );
+				$end   = get_post_meta( $post_id, '_pp_end_time', true );
+				echo ( $start && $end ) ? esc_html( $start . '–' . $end ) : '—';
+				break;
 		}
 	}
 }

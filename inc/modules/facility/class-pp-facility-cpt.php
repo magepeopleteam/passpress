@@ -15,6 +15,8 @@ class PP_Facility_CPT {
 		add_action( 'init', array( $this, 'register' ) );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
 		add_action( 'save_post_pp_facility', array( $this, 'save_meta' ) );
+		add_filter( 'manage_pp_facility_posts_columns', array( $this, 'add_columns' ) );
+		add_action( 'manage_pp_facility_posts_custom_column', array( $this, 'render_column' ), 10, 2 );
 	}
 
 	public function register() {
@@ -193,5 +195,116 @@ class PP_Facility_CPT {
 
 		$staff_ids = isset( $_POST['_pp_staff_ids'] ) && is_array( $_POST['_pp_staff_ids'] ) ? array_map( 'absint', $_POST['_pp_staff_ids'] ) : array();
 		update_post_meta( $post_id, '_pp_staff_ids', $staff_ids );
+	}
+
+	/**
+	 * Adds one column per Facility Details / Booking Settings field to the
+	 * native list table (edit.php?post_type=pp_facility) — inserted right
+	 * after Title, before the built-in Date column.
+	 */
+	public function add_columns( $columns ) {
+		$new_columns = array();
+
+		foreach ( $columns as $key => $label ) {
+			$new_columns[ $key ] = $label;
+
+			if ( 'title' === $key ) {
+				$new_columns['pp_facility_type']    = __( 'Type', 'passpress' );
+				$new_columns['pp_capacity']         = __( 'Capacity', 'passpress' );
+				$new_columns['pp_booking_required'] = __( 'Booking Required', 'passpress' );
+				$new_columns['pp_slot_duration']    = __( 'Slot Duration', 'passpress' );
+				$new_columns['pp_buffer']           = __( 'Buffer', 'passpress' );
+				$new_columns['pp_hours']            = __( 'Open Hours', 'passpress' );
+				$new_columns['pp_days_open']        = __( 'Days Open', 'passpress' );
+				$new_columns['pp_cancellation']     = __( 'Cancellation Lead', 'passpress' );
+				$new_columns['pp_staff']            = __( 'Assigned Staff', 'passpress' );
+			}
+		}
+
+		return $new_columns;
+	}
+
+	public function render_column( $column, $post_id ) {
+		switch ( $column ) {
+			case 'pp_facility_type':
+				$type  = get_post_meta( $post_id, '_pp_facility_type', true );
+				$types = self::facility_types();
+				echo esc_html( isset( $types[ $type ] ) ? $types[ $type ] : '—' );
+				break;
+
+			case 'pp_capacity':
+				$capacity = get_post_meta( $post_id, '_pp_capacity', true );
+				echo esc_html( '' !== $capacity ? (int) $capacity : '—' );
+				break;
+
+			case 'pp_booking_required':
+				$required = get_post_meta( $post_id, '_pp_booking_required', true );
+				echo esc_html( $required ? __( 'Yes', 'passpress' ) : __( 'No', 'passpress' ) );
+				break;
+
+			case 'pp_slot_duration':
+				$duration = get_post_meta( $post_id, '_pp_slot_duration', true );
+				/* translators: %d: minutes */
+				echo $duration ? esc_html( sprintf( __( '%d min', 'passpress' ), (int) $duration ) ) : '—';
+				break;
+
+			case 'pp_buffer':
+				$buffer = get_post_meta( $post_id, '_pp_buffer_minutes', true );
+				/* translators: %d: minutes */
+				echo '' !== $buffer ? esc_html( sprintf( __( '%d min', 'passpress' ), (int) $buffer ) ) : '—';
+				break;
+
+			case 'pp_hours':
+				$open  = get_post_meta( $post_id, '_pp_open_time', true );
+				$close = get_post_meta( $post_id, '_pp_close_time', true );
+				echo ( $open && $close ) ? esc_html( $open . '–' . $close ) : '—';
+				break;
+
+			case 'pp_days_open':
+				$days = get_post_meta( $post_id, '_pp_days_open', true );
+				$days = is_array( $days ) ? array_unique( array_map( 'intval', $days ) ) : array();
+
+				if ( 7 === count( $days ) ) {
+					esc_html_e( 'Daily', 'passpress' );
+				} elseif ( $days ) {
+					$weekdays = self::weekdays();
+					sort( $days );
+					$labels = array_map(
+						function( $day_num ) use ( $weekdays ) {
+							return isset( $weekdays[ $day_num ] ) ? mb_substr( $weekdays[ $day_num ], 0, 3 ) : '';
+						},
+						$days
+					);
+					echo esc_html( implode( ', ', array_filter( $labels ) ) );
+				} else {
+					echo '—';
+				}
+				break;
+
+			case 'pp_cancellation':
+				$hours = get_post_meta( $post_id, '_pp_cancellation_lead_hours', true );
+				/* translators: %d: hours */
+				echo '' !== $hours ? esc_html( sprintf( _n( '%d hour', '%d hours', (int) $hours, 'passpress' ), (int) $hours ) ) : '—';
+				break;
+
+			case 'pp_staff':
+				$staff_ids = get_post_meta( $post_id, '_pp_staff_ids', true );
+				$staff_ids = is_array( $staff_ids ) ? $staff_ids : array();
+
+				if ( ! $staff_ids ) {
+					echo '—';
+					break;
+				}
+
+				$names = array();
+				foreach ( $staff_ids as $staff_id ) {
+					$user = get_userdata( $staff_id );
+					if ( $user ) {
+						$names[] = $user->display_name;
+					}
+				}
+				echo esc_html( implode( ', ', $names ) );
+				break;
+		}
 	}
 }
