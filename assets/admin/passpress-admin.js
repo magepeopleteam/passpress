@@ -850,6 +850,39 @@
 			} );
 		}
 
+		// Register visitor modal (PassPress → Visitors).
+		var $visitorModal = $( '#passpress-register-visitor-modal' );
+		if ( $visitorModal.length ) {
+			function openVisitorModal() {
+				$visitorModal.prop( 'hidden', false ).css( 'display', 'flex' );
+				$( 'body' ).addClass( 'passpress-modal-open' );
+				window.setTimeout( function () {
+					$( '#pp_visitor_name' ).trigger( 'focus' );
+				}, 30 );
+			}
+
+			function closeVisitorModal() {
+				$visitorModal.prop( 'hidden', true ).css( 'display', 'none' );
+				$( 'body' ).removeClass( 'passpress-modal-open' );
+			}
+
+			$( '#passpress-register-visitor-trigger' ).on( 'click', function ( e ) {
+				e.preventDefault();
+				openVisitorModal();
+			} );
+			$visitorModal.find( '.passpress-modal-close, .passpress-modal-cancel' ).on( 'click', closeVisitorModal );
+			$visitorModal.on( 'click', function ( e ) {
+				if ( e.target === this ) {
+					closeVisitorModal();
+				}
+			} );
+			$( document ).on( 'keydown', function ( e ) {
+				if ( 'Escape' === e.key && ! $visitorModal.prop( 'hidden' ) ) {
+					closeVisitorModal();
+				}
+			} );
+		}
+
 		// Quick-filter tabs + pagination, AJAX-driven (PassPress → Memberships)
 		// — clicking a tab or a page number re-fetches just the table/footer
 		// instead of reloading the whole screen. The URL is kept in sync via

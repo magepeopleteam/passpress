@@ -5,10 +5,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Register walk-in visitors, finalize member-submitted guest invitations,
- * and view visitor pass history. Row actions (renew/freeze/suspend/
- * reactivate/cancel) reuse the exact same PP_Membership_Renewal /
- * PP_Membership_Status calls PP_Memberships_List uses — a visitor pass is a
- * real pp_memberships row, so nothing membership-specific needed duplicating.
+ * and view visitor pass history. Row actions (renew/cancel) reuse
+ * PP_Membership_Renewal / PP_Membership_Status — a visitor pass is a real
+ * pp_memberships row.
  */
 class PP_Visitors_List {
 
@@ -23,139 +22,211 @@ class PP_Visitors_List {
 		$search = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
 		$paged  = isset( $_GET['paged'] ) ? max( 1, absint( $_GET['paged'] ) ) : 1;
 
-		$result       = PP_Visitor::get_history( array( 'status' => $status, 'search' => $search, 'paged' => $paged, 'per_page' => 20 ) );
-		$invitations  = PP_Visitor::get_pending_invitations();
+		$result      = PP_Visitor::get_history( array( 'status' => $status, 'search' => $search, 'paged' => $paged, 'per_page' => 20 ) );
+		$invitations = PP_Visitor::get_pending_invitations();
+		$plans       = self::get_plans();
+		$items       = isset( $result['items'] ) ? $result['items'] : array();
 
 		settings_errors( 'passpress' );
 		?>
-		<div class="wrap passpress-wrap">
-			<h1><?php esc_html_e( 'Visitors', 'passpress' ); ?></h1>
-
-			<details class="passpress-issue-membership" open>
-				<summary><?php esc_html_e( 'Register Walk-in Visitor', 'passpress' ); ?></summary>
-				<form method="post">
-					<?php wp_nonce_field( 'pp_register_visitor' ); ?>
-					<table class="form-table">
-						<tr>
-							<th><label for="pp_visitor_name"><?php esc_html_e( 'Name', 'passpress' ); ?></label></th>
-							<td><input type="text" id="pp_visitor_name" name="visitor_name" class="regular-text" required></td>
-						</tr>
-						<tr>
-							<th><label for="pp_visitor_email"><?php esc_html_e( 'Email (optional)', 'passpress' ); ?></label></th>
-							<td><input type="email" id="pp_visitor_email" name="visitor_email" class="regular-text"></td>
-						</tr>
-						<tr>
-							<th><label for="pp_visitor_phone"><?php esc_html_e( 'Phone (optional)', 'passpress' ); ?></label></th>
-							<td><input type="text" id="pp_visitor_phone" name="visitor_phone" class="regular-text"></td>
-						</tr>
-						<tr>
-							<th><label for="pp_visitor_plan_id"><?php esc_html_e( 'Pass Type', 'passpress' ); ?></label></th>
-							<td>
-								<select name="plan_id" id="pp_visitor_plan_id" required>
-									<option value=""><?php esc_html_e( 'Select a pass type', 'passpress' ); ?></option>
-									<?php foreach ( self::get_plans() as $plan ) : ?>
-										<option value="<?php echo esc_attr( $plan->ID ); ?>"><?php echo esc_html( $plan->post_title ); ?></option>
-									<?php endforeach; ?>
-								</select>
-							</td>
-						</tr>
-					</table>
-					<?php submit_button( __( 'Register & Issue Pass', 'passpress' ), 'primary', 'pp_register_visitor' ); ?>
-				</form>
-			</details>
+		<div class="wrap passpress-wrap passpress-visitors-page">
+			<div class="passpress-visitors-page-header">
+				<div class="passpress-visitors-page-copy">
+					<p class="passpress-visitors-page-eyebrow"><?php esc_html_e( 'Front desk', 'passpress' ); ?></p>
+					<h1><?php esc_html_e( 'Visitors', 'passpress' ); ?></h1>
+					<p class="passpress-visitors-page-desc"><?php esc_html_e( 'Register walk-ins, finalize guest invites, and manage visitor passes.', 'passpress' ); ?></p>
+				</div>
+				<button type="button" class="passpress-visitors-register-btn" id="passpress-register-visitor-trigger">
+					<?php esc_html_e( 'Register visitor', 'passpress' ); ?>
+				</button>
+			</div>
 
 			<?php if ( $invitations ) : ?>
-				<h2><?php esc_html_e( 'Pending Guest Invitations', 'passpress' ); ?></h2>
-				<table class="wp-list-table widefat fixed striped">
-					<thead>
-						<tr>
-							<th><?php esc_html_e( 'Guest', 'passpress' ); ?></th>
-							<th><?php esc_html_e( 'Email', 'passpress' ); ?></th>
-							<th><?php esc_html_e( 'Invited By', 'passpress' ); ?></th>
-							<th><?php esc_html_e( 'Issue Pass', 'passpress' ); ?></th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php foreach ( $invitations as $guest ) : $host = PP_Visitor::get_host( $guest->ID ); ?>
-							<tr>
-								<td><?php echo esc_html( $guest->display_name ); ?></td>
-								<td><?php echo esc_html( str_ends_with( $guest->user_email, '@passpress.invalid' ) ? '—' : $guest->user_email ); ?></td>
-								<td><?php echo esc_html( $host ? $host->display_name : '—' ); ?></td>
-								<td>
-									<form method="post" style="display:flex;gap:6px;">
-										<?php wp_nonce_field( 'pp_finalize_invitation_' . $guest->ID ); ?>
-										<input type="hidden" name="guest_user_id" value="<?php echo esc_attr( $guest->ID ); ?>">
-										<select name="plan_id" required>
-											<option value=""><?php esc_html_e( 'Select a pass type', 'passpress' ); ?></option>
-											<?php foreach ( self::get_plans() as $plan ) : ?>
-												<option value="<?php echo esc_attr( $plan->ID ); ?>"><?php echo esc_html( $plan->post_title ); ?></option>
-											<?php endforeach; ?>
-										</select>
-										<button type="submit" name="pp_finalize_invitation" value="1" class="button"><?php esc_html_e( 'Issue', 'passpress' ); ?></button>
-									</form>
-								</td>
-							</tr>
-						<?php endforeach; ?>
-					</tbody>
-				</table>
+				<section class="passpress-visitors-invites">
+					<div class="passpress-visitors-invites-header">
+						<p class="passpress-visitors-invites-eyebrow"><?php esc_html_e( 'Invitations', 'passpress' ); ?></p>
+						<h2><?php esc_html_e( 'Pending guest invitations', 'passpress' ); ?></h2>
+					</div>
+					<div class="passpress-visitors-table-wrap">
+						<table class="passpress-visitors-table">
+							<thead>
+								<tr>
+									<th><?php esc_html_e( 'Guest', 'passpress' ); ?></th>
+									<th><?php esc_html_e( 'Email', 'passpress' ); ?></th>
+									<th><?php esc_html_e( 'Invited by', 'passpress' ); ?></th>
+									<th><?php esc_html_e( 'Issue pass', 'passpress' ); ?></th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php foreach ( $invitations as $guest ) : ?>
+									<?php $host = PP_Visitor::get_host( $guest->ID ); ?>
+									<tr>
+										<td>
+											<div class="passpress-visitors-person">
+												<span class="passpress-visitors-avatar"><?php echo esc_html( self::initials( $guest->display_name ) ); ?></span>
+												<strong><?php echo esc_html( $guest->display_name ); ?></strong>
+											</div>
+										</td>
+										<td>
+											<?php echo esc_html( str_ends_with( $guest->user_email, '@passpress.invalid' ) ? '—' : $guest->user_email ); ?>
+										</td>
+										<td><?php echo esc_html( $host ? $host->display_name : '—' ); ?></td>
+										<td>
+											<form method="post" class="passpress-visitors-issue-form">
+												<?php wp_nonce_field( 'pp_finalize_invitation_' . $guest->ID ); ?>
+												<input type="hidden" name="guest_user_id" value="<?php echo esc_attr( (string) $guest->ID ); ?>">
+												<select name="plan_id" class="pp-input pp-input-select" required>
+													<option value=""><?php esc_html_e( 'Select a pass type', 'passpress' ); ?></option>
+													<?php foreach ( $plans as $plan ) : ?>
+														<option value="<?php echo esc_attr( (string) $plan->ID ); ?>"><?php echo esc_html( $plan->post_title ); ?></option>
+													<?php endforeach; ?>
+												</select>
+												<button type="submit" name="pp_finalize_invitation" value="1" class="passpress-visitors-issue-btn"><?php esc_html_e( 'Issue', 'passpress' ); ?></button>
+											</form>
+										</td>
+									</tr>
+								<?php endforeach; ?>
+							</tbody>
+						</table>
+					</div>
+				</section>
 			<?php endif; ?>
 
-			<h2><?php esc_html_e( 'Visitor Pass History', 'passpress' ); ?></h2>
-
-			<ul class="subsubsub">
-				<?php foreach ( self::status_filters() as $key => $label ) : ?>
-					<li>
-						<a href="<?php echo esc_url( add_query_arg( 'status', $key, admin_url( 'admin.php?page=passpress-visitors' ) ) ); ?>" class="<?php echo $status === $key ? 'current' : ''; ?>">
-							<?php echo esc_html( $label ); ?>
-						</a>
-						<?php if ( 'cancelled' !== $key ) : ?> | <?php endif; ?>
-					</li>
-				<?php endforeach; ?>
-			</ul>
-
-			<form method="get">
-				<input type="hidden" name="page" value="passpress-visitors">
-				<?php if ( $status ) : ?><input type="hidden" name="status" value="<?php echo esc_attr( $status ); ?>"><?php endif; ?>
-				<p class="search-box">
-					<input type="search" name="s" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Search pass #', 'passpress' ); ?>">
-					<?php submit_button( __( 'Search', 'passpress' ), '', '', false ); ?>
-				</p>
-			</form>
-
-			<table class="wp-list-table widefat fixed striped">
-				<thead>
-					<tr>
-						<th><?php esc_html_e( 'Pass #', 'passpress' ); ?></th>
-						<th><?php esc_html_e( 'Visitor', 'passpress' ); ?></th>
-						<th><?php esc_html_e( 'Host', 'passpress' ); ?></th>
-						<th><?php esc_html_e( 'Pass Type', 'passpress' ); ?></th>
-						<th><?php esc_html_e( 'Status', 'passpress' ); ?></th>
-						<th><?php esc_html_e( 'Expiry', 'passpress' ); ?></th>
-						<th><?php esc_html_e( 'PIN', 'passpress' ); ?></th>
-						<th><?php esc_html_e( 'Actions', 'passpress' ); ?></th>
-					</tr>
-				</thead>
-				<tbody>
-					<?php if ( empty( $result['items'] ) ) : ?>
-						<tr><td colspan="8"><?php esc_html_e( 'No visitor passes found.', 'passpress' ); ?></td></tr>
-					<?php else : ?>
-						<?php foreach ( $result['items'] as $membership ) :
-							$host = PP_Visitor::get_host( $membership->user_id );
-							?>
-							<tr>
-								<td><?php echo esc_html( $membership->membership_number ); ?></td>
-								<td><?php echo esc_html( self::user_name( $membership->user_id ) ); ?></td>
-								<td><?php echo esc_html( $host ? $host->display_name : '—' ); ?></td>
-								<td><?php echo esc_html( get_the_title( $membership->plan_id ) ); ?></td>
-								<td><span class="passpress-badge passpress-badge-<?php echo esc_attr( $membership->status ); ?>"><?php echo esc_html( pp_status_label( $membership->status ) ); ?></span></td>
-								<td><?php echo esc_html( pp_format_date( $membership->expiry_date ) ); ?></td>
-								<td><?php echo esc_html( $membership->pin_code ); ?></td>
-								<td><?php self::render_row_actions( $membership ); ?></td>
-							</tr>
+			<div class="passpress-visitors-toolbar">
+				<div class="passpress-visitors-toolbar-top">
+					<div class="passpress-visitors-tabs">
+						<?php foreach ( self::status_filters() as $key => $label ) : ?>
+							<a
+								class="passpress-visitors-tab<?php echo $status === $key ? ' is-active' : ''; ?>"
+								href="<?php echo esc_url( add_query_arg( array( 'page' => 'passpress-visitors', 'status' => $key, 's' => $search ), admin_url( 'admin.php' ) ) ); ?>"
+							>
+								<?php echo esc_html( $label ); ?>
+							</a>
 						<?php endforeach; ?>
-					<?php endif; ?>
-				</tbody>
-			</table>
+					</div>
+
+					<form method="get" class="passpress-visitors-search-form">
+						<input type="hidden" name="page" value="passpress-visitors">
+						<?php if ( $status ) : ?>
+							<input type="hidden" name="status" value="<?php echo esc_attr( $status ); ?>">
+						<?php endif; ?>
+						<input type="search" name="s" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Search pass #…', 'passpress' ); ?>" class="passpress-visitors-search">
+						<button type="submit" class="passpress-visitors-search-btn"><?php esc_html_e( 'Search', 'passpress' ); ?></button>
+					</form>
+				</div>
+			</div>
+
+			<?php if ( empty( $items ) ) : ?>
+				<div class="passpress-visitors-empty">
+					<p class="passpress-visitors-empty-eyebrow"><?php esc_html_e( 'History', 'passpress' ); ?></p>
+					<h2 class="passpress-visitors-empty-title"><?php esc_html_e( 'No visitor passes found', 'passpress' ); ?></h2>
+					<p class="passpress-visitors-empty-desc"><?php esc_html_e( 'Register a walk-in or issue a pass from a pending invitation to get started.', 'passpress' ); ?></p>
+				</div>
+			<?php else : ?>
+				<div class="passpress-visitors-table-wrap">
+					<table class="passpress-visitors-table">
+						<thead>
+							<tr>
+								<th><?php esc_html_e( 'Pass #', 'passpress' ); ?></th>
+								<th><?php esc_html_e( 'Visitor', 'passpress' ); ?></th>
+								<th><?php esc_html_e( 'Host', 'passpress' ); ?></th>
+								<th><?php esc_html_e( 'Pass type', 'passpress' ); ?></th>
+								<th><?php esc_html_e( 'Status', 'passpress' ); ?></th>
+								<th><?php esc_html_e( 'Expiry', 'passpress' ); ?></th>
+								<th><?php esc_html_e( 'PIN', 'passpress' ); ?></th>
+								<th><span class="screen-reader-text"><?php esc_html_e( 'Actions', 'passpress' ); ?></span></th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php foreach ( $items as $membership ) : ?>
+								<?php
+								$host      = PP_Visitor::get_host( $membership->user_id );
+								$visitor   = self::user_name( $membership->user_id );
+								$user      = get_userdata( $membership->user_id );
+								$email     = $user && ! str_ends_with( $user->user_email, '@passpress.invalid' ) ? $user->user_email : '';
+								?>
+								<tr>
+									<td><code class="passpress-visitors-code"><?php echo esc_html( $membership->membership_number ); ?></code></td>
+									<td>
+										<div class="passpress-visitors-person">
+											<span class="passpress-visitors-avatar"><?php echo esc_html( self::initials( $visitor ) ); ?></span>
+											<span class="passpress-visitors-person-info">
+												<strong><?php echo esc_html( $visitor ); ?></strong>
+												<?php if ( $email ) : ?>
+													<span><?php echo esc_html( $email ); ?></span>
+												<?php endif; ?>
+											</span>
+										</div>
+									</td>
+									<td><?php echo esc_html( $host ? $host->display_name : '—' ); ?></td>
+									<td><span class="passpress-visitors-plan"><?php echo esc_html( get_the_title( $membership->plan_id ) ); ?></span></td>
+									<td>
+										<span class="passpress-visitors-status passpress-visitors-status-<?php echo esc_attr( $membership->status ); ?>">
+											<span class="passpress-visitors-status-dot"></span>
+											<?php echo esc_html( pp_status_label( $membership->status ) ); ?>
+										</span>
+									</td>
+									<td><?php echo esc_html( pp_format_date( $membership->expiry_date ) ); ?></td>
+									<td><code class="passpress-visitors-pin"><?php echo esc_html( $membership->pin_code ); ?></code></td>
+									<td class="passpress-visitors-actions-cell"><?php self::render_row_actions( $membership ); ?></td>
+								</tr>
+							<?php endforeach; ?>
+						</tbody>
+					</table>
+				</div>
+			<?php endif; ?>
+
+			<?php self::render_register_modal( $plans ); ?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * @param WP_Post[] $plans
+	 */
+	private static function render_register_modal( $plans ) {
+		?>
+		<div id="passpress-register-visitor-modal" class="passpress-modal-overlay" hidden>
+			<div class="passpress-modal passpress-visitor-modal" role="dialog" aria-modal="true" aria-labelledby="passpress-register-visitor-title">
+				<div class="pp-modal-header">
+					<div>
+						<p class="pp-modal-eyebrow"><?php esc_html_e( 'Walk-in', 'passpress' ); ?></p>
+						<h2 id="passpress-register-visitor-title"><?php esc_html_e( 'Register visitor', 'passpress' ); ?></h2>
+					</div>
+					<button type="button" class="passpress-modal-close" aria-label="<?php esc_attr_e( 'Close', 'passpress' ); ?>">&times;</button>
+				</div>
+
+				<form method="post" class="pp-plan-form">
+					<?php wp_nonce_field( 'pp_register_visitor' ); ?>
+					<div class="pp-field">
+						<label class="pp-label" for="pp_visitor_name"><?php esc_html_e( 'Name', 'passpress' ); ?></label>
+						<input type="text" id="pp_visitor_name" name="visitor_name" class="pp-input" placeholder="<?php esc_attr_e( 'Alex Rivera', 'passpress' ); ?>" required>
+					</div>
+					<div class="pp-field-row">
+						<div class="pp-field">
+							<label class="pp-label" for="pp_visitor_email"><?php esc_html_e( 'Email', 'passpress' ); ?> <span class="pp-label-hint"><?php esc_html_e( 'optional', 'passpress' ); ?></span></label>
+							<input type="email" id="pp_visitor_email" name="visitor_email" class="pp-input" placeholder="<?php esc_attr_e( 'alex@email.com', 'passpress' ); ?>">
+						</div>
+						<div class="pp-field">
+							<label class="pp-label" for="pp_visitor_phone"><?php esc_html_e( 'Phone', 'passpress' ); ?> <span class="pp-label-hint"><?php esc_html_e( 'optional', 'passpress' ); ?></span></label>
+							<input type="text" id="pp_visitor_phone" name="visitor_phone" class="pp-input" placeholder="<?php esc_attr_e( '+1 555 0100', 'passpress' ); ?>">
+						</div>
+					</div>
+					<div class="pp-field">
+						<label class="pp-label" for="pp_visitor_plan_id"><?php esc_html_e( 'Pass type', 'passpress' ); ?></label>
+						<select name="plan_id" id="pp_visitor_plan_id" class="pp-input pp-input-select" required>
+							<option value=""><?php esc_html_e( 'Select a pass type', 'passpress' ); ?></option>
+							<?php foreach ( $plans as $plan ) : ?>
+								<option value="<?php echo esc_attr( (string) $plan->ID ); ?>"><?php echo esc_html( $plan->post_title ); ?></option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+					<div class="pp-modal-footer">
+						<button type="button" class="pp-btn-outline passpress-modal-cancel"><?php esc_html_e( 'Cancel', 'passpress' ); ?></button>
+						<button type="submit" name="pp_register_visitor" class="pp-btn-solid"><?php esc_html_e( 'Register & issue pass', 'passpress' ); ?></button>
+					</div>
+				</form>
+			</div>
 		</div>
 		<?php
 	}
@@ -170,7 +241,15 @@ class PP_Visitors_List {
 	}
 
 	private static function get_plans() {
-		return get_posts( array( 'post_type' => 'pp_membership_plan', 'posts_per_page' => -1, 'post_status' => 'publish' ) );
+		return get_posts(
+			array(
+				'post_type'      => 'pp_membership_plan',
+				'posts_per_page' => -1,
+				'post_status'    => 'publish',
+				'orderby'        => 'title',
+				'order'          => 'ASC',
+			)
+		);
 	}
 
 	private static function user_name( $user_id ) {
@@ -178,26 +257,41 @@ class PP_Visitors_List {
 		return $user ? $user->display_name : __( 'Unknown', 'passpress' );
 	}
 
-	private static function render_row_actions( $membership ) {
-		$actions = array();
-		foreach ( array(
-			'renew'      => __( 'Renew', 'passpress' ),
-			'cancel'     => __( 'Cancel', 'passpress' ),
-		) as $action => $label ) {
-			$url = wp_nonce_url(
-				add_query_arg(
-					array(
-						'page'      => 'passpress-visitors',
-						'pp_action' => $action,
-						'id'        => $membership->id,
-					),
-					admin_url( 'admin.php' )
-				),
-				'pp_visitor_action_' . $membership->id
-			);
-			$actions[] = '<a href="' . esc_url( $url ) . '">' . esc_html( $label ) . '</a>';
+	private static function initials( $name ) {
+		$parts = preg_split( '/\s+/', trim( (string) $name ) );
+		if ( ! $parts ) {
+			return '?';
 		}
-		echo wp_kses_post( implode( ' | ', $actions ) );
+		$first = mb_substr( $parts[0], 0, 1 );
+		$last  = count( $parts ) > 1 ? mb_substr( $parts[ count( $parts ) - 1 ], 0, 1 ) : '';
+		return strtoupper( $first . $last );
+	}
+
+	private static function render_row_actions( $membership ) {
+		$actions = array(
+			'renew'  => __( 'Renew', 'passpress' ),
+			'cancel' => __( 'Cancel', 'passpress' ),
+		);
+		?>
+		<div class="passpress-visitors-actions">
+			<?php foreach ( $actions as $action => $label ) : ?>
+				<?php
+				$url = wp_nonce_url(
+					add_query_arg(
+						array(
+							'page'      => 'passpress-visitors',
+							'pp_action' => $action,
+							'id'        => $membership->id,
+						),
+						admin_url( 'admin.php' )
+					),
+					'pp_visitor_action_' . $membership->id
+				);
+				?>
+				<a class="passpress-visitors-action passpress-visitors-action-<?php echo esc_attr( $action ); ?>" href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( $label ); ?></a>
+			<?php endforeach; ?>
+		</div>
+		<?php
 	}
 
 	private static function maybe_handle_actions() {

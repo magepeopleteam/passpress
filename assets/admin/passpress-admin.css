@@ -2382,6 +2382,1976 @@ select.pp-input {
 	}
 }
 
+/* Visitors page */
+
+.passpress-visitors-page {
+	--pp-vis-ink: #0f172a;
+	--pp-vis-muted: #64748b;
+	--pp-vis-line: #e2e8f0;
+	--pp-vis-accent: #ff875f;
+	--pp-vis-accent-deep: #ff6b3d;
+	max-width: 1200px;
+}
+
+.passpress-visitors-page-header {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 16px;
+	margin: 18px 0 22px;
+	padding-bottom: 18px;
+	border-bottom: 1px solid var(--pp-vis-line);
+}
+
+.passpress-visitors-page-eyebrow,
+.passpress-visitors-invites-eyebrow,
+.passpress-visitors-empty-eyebrow {
+	margin: 0 0 6px;
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--pp-vis-accent-deep);
+}
+
+.passpress-visitors-page-header h1 {
+	margin: 0 0 6px;
+	padding: 0;
+	font-size: 1.75rem;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	color: var(--pp-vis-ink);
+	line-height: 1.2;
+}
+
+.passpress-visitors-page-desc,
+.passpress-visitors-empty-desc {
+	margin: 0;
+	font-size: 0.92rem;
+	color: var(--pp-vis-muted);
+	line-height: 1.45;
+}
+
+.passpress-visitors-register-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: none;
+	border-radius: 10px;
+	padding: 10px 16px;
+	background: var(--pp-vis-accent);
+	color: #fff;
+	font-size: 0.9rem;
+	font-weight: 800;
+	line-height: 1.2;
+	cursor: pointer;
+	white-space: nowrap;
+}
+
+.passpress-visitors-register-btn:hover,
+.passpress-visitors-register-btn:focus {
+	background: var(--pp-vis-accent-deep);
+	color: #fff;
+}
+
+.passpress-visitors-invites {
+	margin: 0 0 18px;
+}
+
+.passpress-visitors-invites-header {
+	margin-bottom: 12px;
+}
+
+.passpress-visitors-invites-header h2 {
+	margin: 0;
+	font-size: 1.15rem;
+	font-weight: 800;
+	color: var(--pp-vis-ink);
+}
+
+.passpress-visitors-toolbar {
+	background: #fff;
+	border: 1px solid var(--pp-vis-line);
+	border-radius: 14px;
+	padding: 14px 16px;
+	margin-bottom: 14px;
+}
+
+.passpress-visitors-toolbar-top {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+
+.passpress-visitors-tabs {
+	display: inline-flex;
+	flex-wrap: wrap;
+	background: #f8fafc;
+	border: 1px solid var(--pp-vis-line);
+	border-radius: 999px;
+	padding: 4px;
+	gap: 2px;
+}
+
+.passpress-visitors-tab {
+	padding: 7px 14px;
+	border-radius: 999px;
+	font-size: 0.8rem;
+	font-weight: 700;
+	color: #475569;
+	text-decoration: none;
+}
+
+.passpress-visitors-tab:hover {
+	color: var(--pp-vis-ink);
+}
+
+.passpress-visitors-tab.is-active {
+	background: var(--pp-vis-ink);
+	color: #fff;
+}
+
+.passpress-visitors-search-form {
+	display: flex;
+	gap: 8px;
+	margin-left: auto;
+	margin-top: 0 !important;
+}
+
+.passpress-visitors-search {
+	min-width: 180px;
+	max-width: 260px;
+	padding: 9px 12px;
+	border-radius: 10px;
+	border: 1px solid #d8dee8;
+	font-size: 0.9rem;
+	color: var(--pp-vis-ink);
+	background: #fff;
+}
+
+.passpress-visitors-search:focus {
+	outline: none;
+	border-color: #94a3b8;
+	box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.2);
+}
+
+.passpress-visitors-search-btn {
+	border: 1px solid #d8dee8;
+	border-radius: 10px;
+	padding: 9px 14px;
+	background: #fff;
+	color: var(--pp-vis-ink);
+	font-size: 0.88rem;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.passpress-visitors-search-btn:hover {
+	background: #f8fafc;
+}
+
+.passpress-visitors-empty {
+	padding: 28px 24px;
+	border: 1px dashed var(--pp-vis-line);
+	border-radius: 16px;
+	background:
+		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.14) 0%, transparent 55%),
+		linear-gradient(180deg, #fffaf8 0%, #ffffff 70%);
+}
+
+.passpress-visitors-empty-title {
+	margin: 0 0 8px;
+	font-size: 1.35rem;
+	font-weight: 800;
+	color: var(--pp-vis-ink);
+}
+
+.passpress-visitors-table-wrap {
+	background: #fff;
+	border: 1px solid var(--pp-vis-line);
+	border-radius: 14px;
+	overflow: hidden;
+}
+
+.passpress-visitors-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.passpress-visitors-table th {
+	text-align: left;
+	font-size: 0.72rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--pp-vis-muted);
+	font-weight: 700;
+	padding: 12px 14px;
+	border-bottom: 1px solid var(--pp-vis-line);
+	background: #f8fafc;
+}
+
+.passpress-visitors-table td {
+	padding: 14px;
+	border-bottom: 1px solid #f1f5f9;
+	vertical-align: middle;
+	font-size: 0.9rem;
+	color: var(--pp-vis-ink);
+}
+
+.passpress-visitors-table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.passpress-visitors-table tbody tr:hover td {
+	background: #fffaf8;
+}
+
+.passpress-visitors-person {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-width: 0;
+}
+
+.passpress-visitors-avatar {
+	flex: 0 0 auto;
+	width: 34px;
+	height: 34px;
+	border-radius: 12px;
+	background: #0f172a;
+	color: #fff;
+	font-size: 11px;
+	font-weight: 800;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.passpress-visitors-person-info {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	line-height: 1.35;
+}
+
+.passpress-visitors-person-info strong {
+	font-weight: 700;
+}
+
+.passpress-visitors-person-info span {
+	font-size: 0.78rem;
+	color: var(--pp-vis-muted);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.passpress-visitors-code,
+.passpress-visitors-pin {
+	display: inline-block;
+	padding: 4px 8px;
+	border-radius: 8px;
+	background: #f1f5f9;
+	color: var(--pp-vis-ink);
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	font-size: 0.85rem;
+	font-weight: 700;
+}
+
+.passpress-visitors-pin {
+	background: #0f172a;
+	color: #fff;
+	letter-spacing: 0.12em;
+}
+
+.passpress-visitors-plan {
+	display: inline-block;
+	padding: 5px 10px;
+	border-radius: 999px;
+	background: #fff1eb;
+	color: var(--pp-vis-accent-deep);
+	font-size: 0.8rem;
+	font-weight: 700;
+}
+
+.passpress-visitors-status {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 10px;
+	border-radius: 999px;
+	font-size: 0.78rem;
+	font-weight: 700;
+}
+
+.passpress-visitors-status-dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: currentColor;
+}
+
+.passpress-visitors-status-active {
+	background: #eaf7ee;
+	color: #146c34;
+}
+
+.passpress-visitors-status-expired {
+	background: #f1f5f9;
+	color: #475569;
+}
+
+.passpress-visitors-status-cancelled {
+	background: #fdecea;
+	color: #99251e;
+}
+
+.passpress-visitors-issue-form {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+	margin: 0;
+}
+
+.passpress-visitors-issue-form .pp-input {
+	min-width: 160px;
+	width: auto;
+}
+
+.passpress-visitors-issue-btn {
+	border: none;
+	border-radius: 8px;
+	padding: 8px 12px;
+	background: var(--pp-vis-accent);
+	color: #fff;
+	font-size: 0.8rem;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+.passpress-visitors-issue-btn:hover {
+	background: var(--pp-vis-accent-deep);
+}
+
+.passpress-visitors-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.passpress-visitors-action {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 6px 10px;
+	border-radius: 8px;
+	font-size: 0.75rem;
+	font-weight: 800;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.passpress-visitors-action-renew {
+	background: #eaf7ee;
+	color: #146c34;
+}
+
+.passpress-visitors-action-renew:hover {
+	background: #d8f3e1;
+	color: #146c34;
+}
+
+.passpress-visitors-action-cancel {
+	background: #fdecea;
+	color: #99251e;
+}
+
+.passpress-visitors-action-cancel:hover {
+	background: #f9d9d6;
+	color: #99251e;
+}
+
+.passpress-visitor-modal {
+	max-width: 480px;
+}
+
+@media screen and (max-width: 782px) {
+	.passpress-visitors-page-header {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.passpress-visitors-register-btn {
+		width: 100%;
+	}
+
+	.passpress-visitors-search-form {
+		margin-left: 0;
+		width: 100%;
+	}
+
+	.passpress-visitors-search {
+		max-width: none;
+		flex: 1 1 auto;
+	}
+
+	.passpress-visitors-table-wrap {
+		overflow-x: auto;
+	}
+
+	.passpress-visitors-table {
+		min-width: 860px;
+	}
+}
+
+/* Activity Log page */
+
+.passpress-activity-page {
+	--pp-act-ink: #0f172a;
+	--pp-act-muted: #64748b;
+	--pp-act-line: #e2e8f0;
+	--pp-act-accent: #ff875f;
+	--pp-act-accent-deep: #ff6b3d;
+	max-width: 1200px;
+}
+
+.passpress-activity-page-header {
+	margin: 18px 0 22px;
+	padding-bottom: 18px;
+	border-bottom: 1px solid var(--pp-act-line);
+}
+
+.passpress-activity-page-eyebrow,
+.passpress-activity-empty-eyebrow {
+	margin: 0 0 6px;
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--pp-act-accent-deep);
+}
+
+.passpress-activity-page-header h1 {
+	margin: 0 0 6px;
+	padding: 0;
+	font-size: 1.75rem;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	color: var(--pp-act-ink);
+	line-height: 1.2;
+}
+
+.passpress-activity-page-desc,
+.passpress-activity-empty-desc {
+	margin: 0;
+	font-size: 0.92rem;
+	color: var(--pp-act-muted);
+	line-height: 1.45;
+}
+
+.passpress-activity-empty {
+	padding: 28px 24px;
+	border: 1px dashed var(--pp-act-line);
+	border-radius: 16px;
+	background:
+		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.14) 0%, transparent 55%),
+		linear-gradient(180deg, #fffaf8 0%, #ffffff 70%);
+}
+
+.passpress-activity-empty-title {
+	margin: 0 0 8px;
+	font-size: 1.35rem;
+	font-weight: 800;
+	color: var(--pp-act-ink);
+}
+
+.passpress-activity-table-wrap {
+	background: #fff;
+	border: 1px solid var(--pp-act-line);
+	border-radius: 14px;
+	overflow: hidden;
+}
+
+.passpress-activity-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.passpress-activity-table th {
+	text-align: left;
+	font-size: 0.72rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--pp-act-muted);
+	font-weight: 700;
+	padding: 12px 14px;
+	border-bottom: 1px solid var(--pp-act-line);
+	background: #f8fafc;
+}
+
+.passpress-activity-table td {
+	padding: 14px;
+	border-bottom: 1px solid #f1f5f9;
+	vertical-align: middle;
+	font-size: 0.9rem;
+	color: var(--pp-act-ink);
+}
+
+.passpress-activity-table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.passpress-activity-table tbody tr:hover td {
+	background: #fffaf8;
+}
+
+.passpress-activity-when {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	line-height: 1.35;
+	min-width: 120px;
+}
+
+.passpress-activity-when strong {
+	font-weight: 700;
+}
+
+.passpress-activity-when span {
+	font-size: 0.8rem;
+	color: var(--pp-act-muted);
+}
+
+.passpress-activity-event {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 5px 10px;
+	border-radius: 999px;
+	font-size: 0.78rem;
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+.passpress-activity-event-dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: currentColor;
+}
+
+.passpress-activity-event-membership {
+	background: #eaf7ee;
+	color: #146c34;
+}
+
+.passpress-activity-event-billing {
+	background: #e8eefc;
+	color: #1d4ed8;
+}
+
+.passpress-activity-event-visitor {
+	background: #fff1eb;
+	color: var(--pp-act-accent-deep);
+}
+
+.passpress-activity-event-booking,
+.passpress-activity-event-class {
+	background: #f3e8ff;
+	color: #6b21a8;
+}
+
+.passpress-activity-event-facility,
+.passpress-activity-event-plan {
+	background: #ecfeff;
+	color: #0e7490;
+}
+
+.passpress-activity-event-system {
+	background: #f1f5f9;
+	color: #475569;
+}
+
+.passpress-activity-message {
+	margin: 0;
+	max-width: 520px;
+	line-height: 1.45;
+	color: #334155;
+}
+
+.passpress-activity-person {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-width: 0;
+}
+
+.passpress-activity-avatar {
+	flex: 0 0 auto;
+	width: 34px;
+	height: 34px;
+	border-radius: 12px;
+	background: #0f172a;
+	color: #fff;
+	font-size: 11px;
+	font-weight: 800;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.passpress-activity-person strong {
+	font-weight: 700;
+}
+
+@media screen and (max-width: 782px) {
+	.passpress-activity-table-wrap {
+		overflow-x: auto;
+	}
+
+	.passpress-activity-table {
+		min-width: 760px;
+	}
+}
+
+/* Reports page */
+
+.passpress-reports-page {
+	--pp-rep-ink: #0f172a;
+	--pp-rep-muted: #64748b;
+	--pp-rep-line: #e2e8f0;
+	--pp-rep-accent: #ff875f;
+	--pp-rep-accent-deep: #ff6b3d;
+	max-width: 1200px;
+}
+
+.passpress-reports-page-header {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 16px;
+	margin: 18px 0 22px;
+	padding-bottom: 18px;
+	border-bottom: 1px solid var(--pp-rep-line);
+}
+
+.passpress-reports-page-eyebrow,
+.passpress-reports-card-eyebrow,
+.passpress-reports-empty-eyebrow {
+	margin: 0 0 6px;
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--pp-rep-accent-deep);
+}
+
+.passpress-reports-page-header h1 {
+	margin: 0 0 6px;
+	padding: 0;
+	font-size: 1.75rem;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	color: var(--pp-rep-ink);
+	line-height: 1.2;
+}
+
+.passpress-reports-page-desc,
+.passpress-reports-renewal-desc,
+.passpress-reports-empty-desc {
+	margin: 0;
+	font-size: 0.92rem;
+	color: var(--pp-rep-muted);
+	line-height: 1.45;
+}
+
+.passpress-reports-peak-link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 10px;
+	padding: 10px 16px;
+	background: var(--pp-rep-accent);
+	color: #fff;
+	font-size: 0.9rem;
+	font-weight: 800;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.passpress-reports-peak-link:hover,
+.passpress-reports-peak-link:focus {
+	background: var(--pp-rep-accent-deep);
+	color: #fff;
+}
+
+.passpress-reports-toolbar {
+	display: flex;
+	align-items: flex-end;
+	gap: 12px;
+	flex-wrap: wrap;
+	background: #fff;
+	border: 1px solid var(--pp-rep-line);
+	border-radius: 14px;
+	padding: 14px 16px;
+	margin: 0 0 14px;
+}
+
+.passpress-reports-date-fields {
+	display: flex;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.passpress-reports-date-field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin: 0;
+}
+
+.passpress-reports-date-field span {
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--pp-rep-muted);
+}
+
+.passpress-reports-date-field input[type="date"] {
+	min-width: 160px;
+	padding: 9px 12px;
+	border-radius: 10px;
+	border: 1px solid #d8dee8;
+	font-size: 0.9rem;
+	color: var(--pp-rep-ink);
+	background: #fff;
+	line-height: 1.2;
+}
+
+.passpress-reports-date-field input[type="date"]:focus {
+	outline: none;
+	border-color: #94a3b8;
+	box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.2);
+}
+
+.passpress-reports-update-btn {
+	border: 1px solid #d8dee8;
+	border-radius: 10px;
+	padding: 9px 16px;
+	background: #0f172a;
+	color: #fff;
+	font-size: 0.88rem;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+.passpress-reports-update-btn:hover {
+	background: #1e293b;
+}
+
+.passpress-reports-stat-row {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 12px;
+	margin-bottom: 14px;
+}
+
+.passpress-reports-stat {
+	background: #fff;
+	border: 1px solid var(--pp-rep-line);
+	border-radius: 14px;
+	padding: 16px 18px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.passpress-reports-stat-label {
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--pp-rep-muted);
+}
+
+.passpress-reports-stat-number {
+	font-size: 1.65rem;
+	font-weight: 800;
+	letter-spacing: -0.03em;
+	color: var(--pp-rep-ink);
+	line-height: 1;
+}
+
+.passpress-reports-stat-number.is-revenue {
+	color: #146c34;
+}
+
+.passpress-reports-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 14px;
+	margin-bottom: 14px;
+}
+
+.passpress-reports-card {
+	background: #fff;
+	border: 1px solid var(--pp-rep-line);
+	border-radius: 16px;
+	padding: 18px 18px 12px;
+	min-width: 0;
+}
+
+.passpress-reports-card-header,
+.passpress-reports-section-header {
+	margin-bottom: 14px;
+}
+
+.passpress-reports-card-header {
+	padding-bottom: 12px;
+	border-bottom: 1px solid #f1f5f9;
+}
+
+.passpress-reports-card-header h2,
+.passpress-reports-section-header h2,
+.passpress-reports-renewal-copy h2 {
+	margin: 0;
+	font-size: 1.15rem;
+	font-weight: 800;
+	color: var(--pp-rep-ink);
+}
+
+.passpress-reports-bar-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.passpress-reports-bar-row {
+	display: grid;
+	grid-template-columns: 110px minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 0;
+	border-bottom: 1px solid #f8fafc;
+}
+
+.passpress-reports-bar-row:last-child {
+	border-bottom: none;
+}
+
+.passpress-reports-bar-day {
+	font-size: 0.8rem;
+	font-weight: 700;
+	color: var(--pp-rep-ink);
+}
+
+.passpress-reports-bar-track {
+	height: 8px;
+	border-radius: 999px;
+	background: #f1f5f9;
+	overflow: hidden;
+}
+
+.passpress-reports-bar-fill {
+	display: block;
+	height: 100%;
+	border-radius: 999px;
+	min-width: 0;
+	background: linear-gradient(90deg, #ff9b7a 0%, var(--pp-rep-accent) 100%);
+}
+
+.passpress-reports-bar-fill-growth {
+	background: linear-gradient(90deg, #0f172a 0%, #334155 100%);
+}
+
+.passpress-reports-bar-value {
+	font-size: 0.82rem;
+	font-weight: 800;
+	color: var(--pp-rep-ink);
+	white-space: nowrap;
+	text-align: right;
+}
+
+.passpress-reports-card-empty {
+	padding: 12px 0 8px;
+}
+
+.passpress-reports-card-empty p {
+	margin: 0;
+	font-size: 0.9rem;
+	color: var(--pp-rep-muted);
+	line-height: 1.5;
+}
+
+.passpress-reports-renewal {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 20px;
+	background: #fff;
+	border: 1px solid var(--pp-rep-line);
+	border-radius: 16px;
+	padding: 18px 20px;
+	margin-bottom: 14px;
+}
+
+.passpress-reports-renewal-copy h2 {
+	margin-bottom: 6px;
+}
+
+.passpress-reports-renewal-rate {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 4px;
+	flex: 0 0 auto;
+}
+
+.passpress-reports-renewal-value {
+	font-size: 2rem;
+	font-weight: 800;
+	letter-spacing: -0.03em;
+	color: var(--pp-rep-ink);
+	line-height: 1;
+}
+
+.passpress-reports-renewal-label {
+	font-size: 0.75rem;
+	font-weight: 700;
+	color: var(--pp-rep-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.passpress-reports-section {
+	margin-bottom: 14px;
+	min-width: 0;
+}
+
+.passpress-reports-empty {
+	padding: 24px 20px;
+	border: 1px dashed var(--pp-rep-line);
+	border-radius: 16px;
+	background:
+		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.14) 0%, transparent 55%),
+		linear-gradient(180deg, #fffaf8 0%, #ffffff 70%);
+}
+
+.passpress-reports-empty-title {
+	margin: 0 0 8px;
+	font-size: 1.15rem;
+	font-weight: 800;
+	color: var(--pp-rep-ink);
+}
+
+.passpress-reports-table-wrap {
+	background: #fff;
+	border: 1px solid var(--pp-rep-line);
+	border-radius: 14px;
+	overflow: hidden;
+}
+
+.passpress-reports-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.passpress-reports-table th {
+	text-align: left;
+	font-size: 0.72rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--pp-rep-muted);
+	font-weight: 700;
+	padding: 12px 14px;
+	border-bottom: 1px solid var(--pp-rep-line);
+	background: #f8fafc;
+}
+
+.passpress-reports-table td {
+	padding: 14px;
+	border-bottom: 1px solid #f1f5f9;
+	vertical-align: middle;
+	font-size: 0.9rem;
+	color: var(--pp-rep-ink);
+}
+
+.passpress-reports-table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.passpress-reports-table tbody tr:hover td {
+	background: #fffaf8;
+}
+
+.passpress-reports-person {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-width: 0;
+}
+
+.passpress-reports-avatar {
+	flex: 0 0 auto;
+	width: 34px;
+	height: 34px;
+	border-radius: 12px;
+	background: #0f172a;
+	color: #fff;
+	font-size: 11px;
+	font-weight: 800;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.passpress-reports-person strong {
+	font-weight: 700;
+}
+
+.passpress-reports-pill {
+	display: inline-block;
+	padding: 5px 10px;
+	border-radius: 999px;
+	background: #fff1eb;
+	color: var(--pp-rep-accent-deep);
+	font-size: 0.8rem;
+	font-weight: 700;
+}
+
+.passpress-reports-status {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 10px;
+	border-radius: 999px;
+	font-size: 0.78rem;
+	font-weight: 700;
+}
+
+.passpress-reports-status-dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: currentColor;
+}
+
+.passpress-reports-status-paid {
+	background: #eaf7ee;
+	color: #146c34;
+}
+
+.passpress-reports-status-pending {
+	background: #fff7ed;
+	color: #b45309;
+}
+
+.passpress-reports-status-failed,
+.passpress-reports-status-cancelled {
+	background: #fdecea;
+	color: #99251e;
+}
+
+.passpress-reports-status-refunded {
+	background: #e8eefc;
+	color: #1d4ed8;
+}
+
+@media screen and (max-width: 960px) {
+	.passpress-reports-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media screen and (max-width: 782px) {
+	.passpress-reports-page-header {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.passpress-reports-peak-link {
+		width: 100%;
+	}
+
+	.passpress-reports-stat-row {
+		grid-template-columns: 1fr;
+	}
+
+	.passpress-reports-renewal {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.passpress-reports-renewal-rate {
+		align-items: flex-start;
+	}
+
+	.passpress-reports-bar-row {
+		grid-template-columns: 1fr;
+		gap: 6px;
+	}
+
+	.passpress-reports-table-wrap {
+		overflow-x: auto;
+	}
+
+	.passpress-reports-table {
+		min-width: 560px;
+	}
+}
+
+/* Attendance page */
+
+.passpress-attendance-page {
+	--pp-att-ink: #0f172a;
+	--pp-att-muted: #64748b;
+	--pp-att-line: #e2e8f0;
+	--pp-att-accent: #ff875f;
+	--pp-att-accent-deep: #ff6b3d;
+	max-width: 1200px;
+}
+
+.passpress-attendance-page-header {
+	margin: 18px 0 22px;
+	padding-bottom: 18px;
+	border-bottom: 1px solid var(--pp-att-line);
+}
+
+.passpress-attendance-page-eyebrow,
+.passpress-attendance-card-eyebrow,
+.passpress-attendance-empty-eyebrow {
+	margin: 0 0 6px;
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--pp-att-accent-deep);
+}
+
+.passpress-attendance-page-header h1 {
+	margin: 0 0 6px;
+	padding: 0;
+	font-size: 1.75rem;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	color: var(--pp-att-ink);
+	line-height: 1.2;
+}
+
+.passpress-attendance-page-desc,
+.passpress-attendance-card-desc,
+.passpress-attendance-empty-desc {
+	margin: 0;
+	font-size: 0.92rem;
+	color: var(--pp-att-muted);
+	line-height: 1.45;
+}
+
+.passpress-attendance-stat-row {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 12px;
+	margin-bottom: 16px;
+}
+
+.passpress-attendance-stat {
+	background: #fff;
+	border: 1px solid var(--pp-att-line);
+	border-radius: 14px;
+	padding: 16px 18px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.passpress-attendance-stat-label {
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--pp-att-muted);
+}
+
+.passpress-attendance-stat-number {
+	font-size: 1.75rem;
+	font-weight: 800;
+	letter-spacing: -0.03em;
+	color: var(--pp-att-ink);
+	line-height: 1;
+}
+
+.passpress-attendance-stat-number.is-today {
+	color: var(--pp-att-accent-deep);
+}
+
+.passpress-attendance-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 14px;
+	margin-bottom: 16px;
+}
+
+.passpress-attendance-card {
+	background: #fff;
+	border: 1px solid var(--pp-att-line);
+	border-radius: 16px;
+	padding: 18px 18px 12px;
+	min-width: 0;
+}
+
+.passpress-attendance-card-header {
+	margin-bottom: 14px;
+	padding-bottom: 12px;
+	border-bottom: 1px solid #f1f5f9;
+}
+
+.passpress-attendance-card-header h2 {
+	margin: 0 0 4px;
+	font-size: 1.15rem;
+	font-weight: 800;
+	color: var(--pp-att-ink);
+}
+
+.passpress-attendance-daily-list,
+.passpress-attendance-peak-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.passpress-attendance-daily-row {
+	padding: 10px 0;
+	border-bottom: 1px solid #f8fafc;
+}
+
+.passpress-attendance-daily-row:last-child,
+.passpress-attendance-peak-row:last-child {
+	border-bottom: none;
+}
+
+.passpress-attendance-daily-row.is-today .passpress-attendance-daily-meta strong {
+	color: var(--pp-att-accent-deep);
+}
+
+.passpress-attendance-daily-meta {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 8px;
+}
+
+.passpress-attendance-daily-meta strong {
+	font-size: 0.9rem;
+	font-weight: 700;
+	color: var(--pp-att-ink);
+}
+
+.passpress-attendance-daily-meta span {
+	font-size: 0.85rem;
+	font-weight: 800;
+	color: var(--pp-att-ink);
+}
+
+.passpress-attendance-bar-track {
+	height: 8px;
+	border-radius: 999px;
+	background: #f1f5f9;
+	overflow: hidden;
+}
+
+.passpress-attendance-bar-fill {
+	display: block;
+	height: 100%;
+	border-radius: 999px;
+	background: linear-gradient(90deg, #ff9b7a 0%, var(--pp-att-accent) 100%);
+	min-width: 0;
+}
+
+.passpress-attendance-bar-fill.is-peak {
+	background: linear-gradient(90deg, #0f172a 0%, #334155 100%);
+}
+
+.passpress-attendance-peak-row {
+	display: grid;
+	grid-template-columns: 92px minmax(0, 1fr) 40px;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 0;
+	border-bottom: 1px solid #f8fafc;
+}
+
+.passpress-attendance-peak-hour {
+	font-size: 0.8rem;
+	font-weight: 700;
+	color: var(--pp-att-ink);
+	font-variant-numeric: tabular-nums;
+}
+
+.passpress-attendance-peak-count {
+	text-align: right;
+	font-size: 0.85rem;
+	font-weight: 800;
+	color: var(--pp-att-ink);
+}
+
+.passpress-attendance-card-empty {
+	padding: 18px 4px 12px;
+}
+
+.passpress-attendance-card-empty p {
+	margin: 0;
+	font-size: 0.9rem;
+	color: var(--pp-att-muted);
+	line-height: 1.5;
+}
+
+.passpress-attendance-late {
+	margin-top: 4px;
+}
+
+.passpress-attendance-late-header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+	margin-bottom: 14px;
+}
+
+.passpress-attendance-late-header h2 {
+	margin: 0 0 6px;
+	font-size: 1.2rem;
+	font-weight: 800;
+	color: var(--pp-att-ink);
+}
+
+.passpress-attendance-late-header .passpress-attendance-card-desc {
+	max-width: 640px;
+}
+
+.passpress-attendance-late-range {
+	flex: 0 0 auto;
+	padding: 6px 10px;
+	border-radius: 999px;
+	background: #fff1eb;
+	color: var(--pp-att-accent-deep);
+	font-size: 0.75rem;
+	font-weight: 800;
+	white-space: nowrap;
+}
+
+.passpress-attendance-empty {
+	padding: 28px 24px;
+	border: 1px dashed var(--pp-att-line);
+	border-radius: 16px;
+	background:
+		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.14) 0%, transparent 55%),
+		linear-gradient(180deg, #fffaf8 0%, #ffffff 70%);
+}
+
+.passpress-attendance-empty-title {
+	margin: 0 0 8px;
+	font-size: 1.25rem;
+	font-weight: 800;
+	color: var(--pp-att-ink);
+}
+
+.passpress-attendance-table-wrap {
+	background: #fff;
+	border: 1px solid var(--pp-att-line);
+	border-radius: 14px;
+	overflow: hidden;
+}
+
+.passpress-attendance-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.passpress-attendance-table th {
+	text-align: left;
+	font-size: 0.72rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--pp-att-muted);
+	font-weight: 700;
+	padding: 12px 14px;
+	border-bottom: 1px solid var(--pp-att-line);
+	background: #f8fafc;
+}
+
+.passpress-attendance-table td {
+	padding: 14px;
+	border-bottom: 1px solid #f1f5f9;
+	vertical-align: middle;
+	font-size: 0.9rem;
+	color: var(--pp-att-ink);
+}
+
+.passpress-attendance-table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.passpress-attendance-table tbody tr:hover td {
+	background: #fffaf8;
+}
+
+.passpress-attendance-when strong {
+	font-weight: 700;
+}
+
+.passpress-attendance-class {
+	display: inline-block;
+	padding: 5px 10px;
+	border-radius: 999px;
+	background: #fff1eb;
+	color: var(--pp-att-accent-deep);
+	font-size: 0.8rem;
+	font-weight: 700;
+}
+
+.passpress-attendance-person {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-width: 0;
+}
+
+.passpress-attendance-avatar {
+	flex: 0 0 auto;
+	width: 34px;
+	height: 34px;
+	border-radius: 12px;
+	background: #0f172a;
+	color: #fff;
+	font-size: 11px;
+	font-weight: 800;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.passpress-attendance-person strong {
+	font-weight: 700;
+}
+
+.passpress-attendance-scheduled {
+	font-variant-numeric: tabular-nums;
+	font-weight: 700;
+	color: var(--pp-att-muted);
+}
+
+.passpress-attendance-late-pill {
+	display: inline-flex;
+	align-items: center;
+	padding: 4px 10px;
+	border-radius: 999px;
+	background: #fff7ed;
+	color: #b45309;
+	font-size: 0.78rem;
+	font-weight: 800;
+}
+
+@media screen and (max-width: 960px) {
+	.passpress-attendance-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media screen and (max-width: 782px) {
+	.passpress-attendance-stat-row {
+		grid-template-columns: 1fr;
+	}
+
+	.passpress-attendance-late-header {
+		flex-direction: column;
+	}
+
+	.passpress-attendance-table-wrap {
+		overflow-x: auto;
+	}
+
+	.passpress-attendance-table {
+		min-width: 720px;
+	}
+}
+
+/* Bookings page */
+
+.passpress-bookings-page {
+	--pp-bk-ink: #0f172a;
+	--pp-bk-muted: #64748b;
+	--pp-bk-line: #e2e8f0;
+	--pp-bk-accent: #ff875f;
+	--pp-bk-accent-deep: #ff6b3d;
+	max-width: 1200px;
+}
+
+.passpress-bookings-page-header {
+	margin: 18px 0 22px;
+	padding-bottom: 18px;
+	border-bottom: 1px solid var(--pp-bk-line);
+}
+
+.passpress-bookings-page-eyebrow,
+.passpress-bookings-empty-eyebrow {
+	margin: 0 0 6px;
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--pp-bk-accent-deep);
+}
+
+.passpress-bookings-page-header h1 {
+	margin: 0 0 6px;
+	padding: 0;
+	font-size: 1.75rem;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	color: var(--pp-bk-ink);
+	line-height: 1.2;
+}
+
+.passpress-bookings-page-desc,
+.passpress-bookings-empty-desc {
+	margin: 0;
+	font-size: 0.92rem;
+	color: var(--pp-bk-muted);
+	line-height: 1.45;
+}
+
+.passpress-bookings-stat-row {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 12px;
+	margin-bottom: 14px;
+}
+
+.passpress-bookings-stat {
+	background: #fff;
+	border: 1px solid var(--pp-bk-line);
+	border-radius: 14px;
+	padding: 14px 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.passpress-bookings-stat-label {
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--pp-bk-muted);
+}
+
+.passpress-bookings-stat-number {
+	font-size: 1.55rem;
+	font-weight: 800;
+	letter-spacing: -0.03em;
+	color: var(--pp-bk-ink);
+	line-height: 1;
+}
+
+.passpress-bookings-stat-number.is-confirmed {
+	color: #146c34;
+}
+
+.passpress-bookings-stat-number.is-completed {
+	color: #1d4ed8;
+}
+
+.passpress-bookings-stat-number.is-no-show {
+	color: #b45309;
+}
+
+.passpress-bookings-stat-number.is-cancelled {
+	color: #99251e;
+}
+
+.passpress-bookings-toolbar {
+	background: #fff;
+	border: 1px solid var(--pp-bk-line);
+	border-radius: 14px;
+	padding: 14px 16px;
+	margin-bottom: 14px;
+}
+
+.passpress-bookings-toolbar-top {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+
+.passpress-bookings-tabs {
+	display: inline-flex;
+	flex-wrap: wrap;
+	background: #f8fafc;
+	border: 1px solid var(--pp-bk-line);
+	border-radius: 999px;
+	padding: 4px;
+	gap: 2px;
+}
+
+.passpress-bookings-tab {
+	padding: 7px 14px;
+	border-radius: 999px;
+	font-size: 0.8rem;
+	font-weight: 700;
+	color: #475569;
+	text-decoration: none;
+}
+
+.passpress-bookings-tab:hover {
+	color: var(--pp-bk-ink);
+}
+
+.passpress-bookings-tab.is-active {
+	background: var(--pp-bk-ink);
+	color: #fff;
+}
+
+.passpress-bookings-filters {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+	margin: 0 0 0 auto;
+}
+
+.passpress-bookings-select {
+	min-width: 140px;
+	padding: 9px 12px;
+	border-radius: 10px;
+	border: 1px solid #d8dee8;
+	font-size: 0.88rem;
+	color: var(--pp-bk-ink);
+	background: #fff;
+	line-height: 1.2;
+}
+
+.passpress-bookings-select:focus {
+	outline: none;
+	border-color: #94a3b8;
+	box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.2);
+}
+
+.passpress-bookings-filter-btn {
+	border: 1px solid #d8dee8;
+	border-radius: 10px;
+	padding: 9px 14px;
+	background: #fff;
+	color: var(--pp-bk-ink);
+	font-size: 0.88rem;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.passpress-bookings-filter-btn:hover {
+	background: #f8fafc;
+}
+
+.passpress-bookings-empty {
+	padding: 28px 24px;
+	border: 1px dashed var(--pp-bk-line);
+	border-radius: 16px;
+	background:
+		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.14) 0%, transparent 55%),
+		linear-gradient(180deg, #fffaf8 0%, #ffffff 70%);
+}
+
+.passpress-bookings-empty-title {
+	margin: 0 0 8px;
+	font-size: 1.35rem;
+	font-weight: 800;
+	color: var(--pp-bk-ink);
+}
+
+.passpress-bookings-table-wrap {
+	background: #fff;
+	border: 1px solid var(--pp-bk-line);
+	border-radius: 14px;
+	overflow: hidden;
+}
+
+.passpress-bookings-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.passpress-bookings-table th {
+	text-align: left;
+	font-size: 0.72rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--pp-bk-muted);
+	font-weight: 700;
+	padding: 12px 14px;
+	border-bottom: 1px solid var(--pp-bk-line);
+	background: #f8fafc;
+}
+
+.passpress-bookings-table td {
+	padding: 14px;
+	border-bottom: 1px solid #f1f5f9;
+	vertical-align: middle;
+	font-size: 0.9rem;
+	color: var(--pp-bk-ink);
+}
+
+.passpress-bookings-table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.passpress-bookings-table tbody tr:hover td {
+	background: #fffaf8;
+}
+
+.passpress-bookings-session {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 0;
+}
+
+.passpress-bookings-session-type {
+	display: inline-flex;
+	align-self: flex-start;
+	padding: 3px 8px;
+	border-radius: 999px;
+	background: #fff1eb;
+	color: var(--pp-bk-accent-deep);
+	font-size: 0.7rem;
+	font-weight: 800;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.passpress-bookings-session strong {
+	font-weight: 700;
+}
+
+.passpress-bookings-person {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-width: 0;
+}
+
+.passpress-bookings-avatar {
+	flex: 0 0 auto;
+	width: 34px;
+	height: 34px;
+	border-radius: 12px;
+	background: #0f172a;
+	color: #fff;
+	font-size: 11px;
+	font-weight: 800;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.passpress-bookings-person-info {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	line-height: 1.35;
+}
+
+.passpress-bookings-person-info strong {
+	font-weight: 700;
+}
+
+.passpress-bookings-person-info span {
+	font-size: 0.78rem;
+	color: var(--pp-bk-muted);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.passpress-bookings-when {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	line-height: 1.35;
+}
+
+.passpress-bookings-when strong {
+	font-weight: 700;
+}
+
+.passpress-bookings-when span,
+.passpress-bookings-checkin {
+	font-size: 0.82rem;
+	color: var(--pp-bk-muted);
+}
+
+.passpress-bookings-empty-cell {
+	color: #94a3b8;
+}
+
+.passpress-bookings-status {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 10px;
+	border-radius: 999px;
+	font-size: 0.78rem;
+	font-weight: 700;
+}
+
+.passpress-bookings-status-dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: currentColor;
+}
+
+.passpress-bookings-status-confirmed {
+	background: #eaf7ee;
+	color: #146c34;
+}
+
+.passpress-bookings-status-completed {
+	background: #e8eefc;
+	color: #1d4ed8;
+}
+
+.passpress-bookings-status-no_show {
+	background: #fff7ed;
+	color: #b45309;
+}
+
+.passpress-bookings-status-cancelled {
+	background: #fdecea;
+	color: #99251e;
+}
+
+.passpress-bookings-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	justify-content: flex-end;
+}
+
+.passpress-bookings-action {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 6px 10px;
+	border-radius: 8px;
+	font-size: 0.75rem;
+	font-weight: 800;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.passpress-bookings-action-complete {
+	background: #eaf7ee;
+	color: #146c34;
+}
+
+.passpress-bookings-action-complete:hover {
+	background: #d8f3e1;
+	color: #146c34;
+}
+
+.passpress-bookings-action-no_show {
+	background: #fff7ed;
+	color: #b45309;
+}
+
+.passpress-bookings-action-no_show:hover {
+	background: #ffedd5;
+	color: #b45309;
+}
+
+.passpress-bookings-action-cancel {
+	background: #fdecea;
+	color: #99251e;
+}
+
+.passpress-bookings-action-cancel:hover {
+	background: #f9d9d6;
+	color: #99251e;
+}
+
+.passpress-bookings-footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	flex-wrap: wrap;
+	margin-top: 12px;
+}
+
+.passpress-bookings-count {
+	margin: 0;
+	font-size: 0.85rem;
+	color: var(--pp-bk-muted);
+}
+
+.passpress-bookings-pagination .page-numbers {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 32px;
+	height: 32px;
+	padding: 0 8px;
+	margin: 0 2px;
+	border-radius: 8px;
+	border: 1px solid var(--pp-bk-line);
+	background: #fff;
+	color: var(--pp-bk-ink);
+	font-size: 0.85rem;
+	font-weight: 700;
+	text-decoration: none;
+}
+
+.passpress-bookings-pagination .page-numbers.current,
+.passpress-bookings-pagination .page-numbers:hover {
+	background: var(--pp-bk-ink);
+	border-color: var(--pp-bk-ink);
+	color: #fff;
+}
+
+@media screen and (max-width: 1100px) {
+	.passpress-bookings-stat-row {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media screen and (max-width: 782px) {
+	.passpress-bookings-stat-row {
+		grid-template-columns: 1fr;
+	}
+
+	.passpress-bookings-filters {
+		margin-left: 0;
+		width: 100%;
+	}
+
+	.passpress-bookings-select {
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
+	.passpress-bookings-table-wrap {
+		overflow-x: auto;
+	}
+
+	.passpress-bookings-table {
+		min-width: 860px;
+	}
+}
+
 /* Unified Settings page (sidebar + content) */
 
 .passpress-settings-page > h1 {

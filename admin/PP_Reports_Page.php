@@ -20,6 +20,7 @@ class PP_Reports_Page {
 		$start_date = isset( $_GET['start_date'] ) ? sanitize_text_field( wp_unslash( $_GET['start_date'] ) ) : gmdate( 'Y-m-d', strtotime( $end_date . ' -29 days' ) );
 
 		$settings = pp_get_settings();
+		$symbol   = isset( $settings['currency_symbol'] ) ? $settings['currency_symbol'] : '$';
 
 		$revenue     = PP_Reports::get_revenue( $start_date, $end_date );
 		$growth      = PP_Reports::get_membership_growth( $start_date, $end_date );
@@ -29,154 +30,341 @@ class PP_Reports_Page {
 		$plans       = PP_Reports::get_popular_plans();
 		$payments    = PP_Reports::get_payment_report( $start_date, $end_date );
 		$instructors = PP_Reports::get_trainer_performance( $start_date, $end_date );
-		?>
-		<div class="wrap passpress-wrap">
-			<h1><?php esc_html_e( 'Reports', 'passpress' ); ?></h1>
 
-			<form method="get" style="margin-bottom:16px;">
+		$renewal_display = null === $renewal['rate_percent'] ? '—' : $renewal['rate_percent'] . '%';
+		?>
+		<div class="wrap passpress-wrap passpress-reports-page">
+			<div class="passpress-reports-page-header">
+				<div class="passpress-reports-page-copy">
+					<p class="passpress-reports-page-eyebrow"><?php esc_html_e( 'Analytics', 'passpress' ); ?></p>
+					<h1><?php esc_html_e( 'Reports', 'passpress' ); ?></h1>
+					<p class="passpress-reports-page-desc"><?php esc_html_e( 'Revenue, growth, facility usage, and payment activity for the selected date range.', 'passpress' ); ?></p>
+				</div>
+				<a class="passpress-reports-peak-link" href="<?php echo esc_url( admin_url( 'admin.php?page=passpress-attendance' ) ); ?>">
+					<?php esc_html_e( 'Peak hours →', 'passpress' ); ?>
+				</a>
+			</div>
+
+			<form method="get" class="passpress-reports-toolbar">
 				<input type="hidden" name="page" value="passpress-reports">
-				<label><?php esc_html_e( 'From', 'passpress' ); ?> <input type="date" name="start_date" value="<?php echo esc_attr( $start_date ); ?>"></label>
-				<label><?php esc_html_e( 'To', 'passpress' ); ?> <input type="date" name="end_date" value="<?php echo esc_attr( $end_date ); ?>"></label>
-				<?php submit_button( __( 'Update', 'passpress' ), '', '', false ); ?>
-				<a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=passpress-attendance' ) ); ?>"><?php esc_html_e( 'Peak Hours →', 'passpress' ); ?></a>
+				<div class="passpress-reports-date-fields">
+					<label class="passpress-reports-date-field">
+						<span><?php esc_html_e( 'From', 'passpress' ); ?></span>
+						<input type="date" name="start_date" value="<?php echo esc_attr( $start_date ); ?>">
+					</label>
+					<label class="passpress-reports-date-field">
+						<span><?php esc_html_e( 'To', 'passpress' ); ?></span>
+						<input type="date" name="end_date" value="<?php echo esc_attr( $end_date ); ?>">
+					</label>
+				</div>
+				<button type="submit" class="passpress-reports-update-btn"><?php esc_html_e( 'Update', 'passpress' ); ?></button>
 			</form>
 
-			<div class="passpress-stat-tiles">
-				<div class="passpress-stat-tile">
-					<span class="passpress-stat-number"><?php echo esc_html( $settings['currency_symbol'] . number_format_i18n( $revenue['total'], 2 ) ); ?></span>
-					<span class="passpress-stat-label"><?php esc_html_e( 'Revenue', 'passpress' ); ?></span>
+			<div class="passpress-reports-stat-row">
+				<div class="passpress-reports-stat">
+					<span class="passpress-reports-stat-label"><?php esc_html_e( 'Revenue', 'passpress' ); ?></span>
+					<span class="passpress-reports-stat-number is-revenue"><?php echo esc_html( $symbol . number_format_i18n( $revenue['total'], 2 ) ); ?></span>
 				</div>
-				<div class="passpress-stat-tile">
-					<span class="passpress-stat-number"><?php echo esc_html( $growth['total'] ); ?></span>
-					<span class="passpress-stat-label"><?php esc_html_e( 'New Members', 'passpress' ); ?></span>
+				<div class="passpress-reports-stat">
+					<span class="passpress-reports-stat-label"><?php esc_html_e( 'New members', 'passpress' ); ?></span>
+					<span class="passpress-reports-stat-number"><?php echo esc_html( number_format_i18n( $growth['total'] ) ); ?></span>
 				</div>
-				<div class="passpress-stat-tile">
-					<span class="passpress-stat-number"><?php echo esc_html( null === $renewal['rate_percent'] ? '—' : $renewal['rate_percent'] . '%' ); ?></span>
-					<span class="passpress-stat-label"><?php esc_html_e( 'Renewal Rate', 'passpress' ); ?></span>
+				<div class="passpress-reports-stat">
+					<span class="passpress-reports-stat-label"><?php esc_html_e( 'Renewal rate', 'passpress' ); ?></span>
+					<span class="passpress-reports-stat-number"><?php echo esc_html( $renewal_display ); ?></span>
 				</div>
 			</div>
 
-			<h2><?php esc_html_e( 'Revenue by Day', 'passpress' ); ?></h2>
-			<?php self::render_bar_table( $revenue['by_day'], function ( $v ) use ( $settings ) { return $settings['currency_symbol'] . number_format_i18n( $v, 2 ); } ); ?>
+			<div class="passpress-reports-grid">
+				<section class="passpress-reports-card">
+					<div class="passpress-reports-card-header">
+						<p class="passpress-reports-card-eyebrow"><?php esc_html_e( 'Money', 'passpress' ); ?></p>
+						<h2><?php esc_html_e( 'Revenue by day', 'passpress' ); ?></h2>
+					</div>
+					<?php
+					self::render_bar_list(
+						$revenue['by_day'],
+						function ( $v ) use ( $symbol ) {
+							return $symbol . number_format_i18n( $v, 2 );
+						},
+						'revenue'
+					);
+					?>
+				</section>
 
-			<h2><?php esc_html_e( 'Membership Growth', 'passpress' ); ?></h2>
-			<?php self::render_bar_table( $growth['by_day'] ); ?>
+				<section class="passpress-reports-card">
+					<div class="passpress-reports-card-header">
+						<p class="passpress-reports-card-eyebrow"><?php esc_html_e( 'Growth', 'passpress' ); ?></p>
+						<h2><?php esc_html_e( 'Membership growth', 'passpress' ); ?></h2>
+					</div>
+					<?php self::render_bar_list( $growth['by_day'], null, 'growth' ); ?>
+				</section>
+			</div>
 
-			<h2><?php esc_html_e( 'Renewal Rate', 'passpress' ); ?></h2>
-			<p>
-				<?php
-				printf(
-					/* translators: 1: renewed count, 2: lapsed count */
-					esc_html__( '%1$d renewed, %2$d lapsed without renewing in this window.', 'passpress' ),
-					(int) $renewal['renewed'],
-					(int) $renewal['lapsed']
-				);
-				?>
-			</p>
+			<section class="passpress-reports-renewal">
+				<div class="passpress-reports-renewal-copy">
+					<p class="passpress-reports-card-eyebrow"><?php esc_html_e( 'Retention', 'passpress' ); ?></p>
+					<h2><?php esc_html_e( 'Renewal rate', 'passpress' ); ?></h2>
+					<p class="passpress-reports-renewal-desc">
+						<?php
+						printf(
+							/* translators: 1: renewed count, 2: lapsed count */
+							esc_html__( '%1$d renewed, %2$d lapsed without renewing in this window.', 'passpress' ),
+							(int) $renewal['renewed'],
+							(int) $renewal['lapsed']
+						);
+						?>
+					</p>
+				</div>
+				<div class="passpress-reports-renewal-rate">
+					<span class="passpress-reports-renewal-value"><?php echo esc_html( $renewal_display ); ?></span>
+					<span class="passpress-reports-renewal-label"><?php esc_html_e( 'of eligible cycles', 'passpress' ); ?></span>
+				</div>
+			</section>
 
-			<h2><?php esc_html_e( 'Expired Members', 'passpress' ); ?></h2>
-			<table class="wp-list-table widefat fixed striped">
-				<thead><tr><th><?php esc_html_e( 'Member', 'passpress' ); ?></th><th><?php esc_html_e( 'Plan', 'passpress' ); ?></th><th><?php esc_html_e( 'Expired On', 'passpress' ); ?></th></tr></thead>
-				<tbody>
+			<div class="passpress-reports-grid passpress-reports-grid-tables">
+				<section class="passpress-reports-section">
+					<div class="passpress-reports-section-header">
+						<p class="passpress-reports-card-eyebrow"><?php esc_html_e( 'Members', 'passpress' ); ?></p>
+						<h2><?php esc_html_e( 'Expired members', 'passpress' ); ?></h2>
+					</div>
 					<?php if ( ! $expired ) : ?>
-						<tr><td colspan="3"><?php esc_html_e( 'No expired members.', 'passpress' ); ?></td></tr>
+						<?php self::render_empty( __( 'No expired members', 'passpress' ), __( 'Members who lapse will appear in this list.', 'passpress' ) ); ?>
 					<?php else : ?>
-						<?php foreach ( $expired as $m ) : $user = get_userdata( $m->user_id ); ?>
-							<tr>
-								<td><?php echo esc_html( $user ? $user->display_name : __( 'Unknown', 'passpress' ) ); ?></td>
-								<td><?php echo esc_html( get_the_title( $m->plan_id ) ); ?></td>
-								<td><?php echo esc_html( pp_format_date( $m->expiry_date ) ); ?></td>
-							</tr>
-						<?php endforeach; ?>
+						<div class="passpress-reports-table-wrap">
+							<table class="passpress-reports-table">
+								<thead>
+									<tr>
+										<th><?php esc_html_e( 'Member', 'passpress' ); ?></th>
+										<th><?php esc_html_e( 'Plan', 'passpress' ); ?></th>
+										<th><?php esc_html_e( 'Expired on', 'passpress' ); ?></th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php foreach ( $expired as $m ) : ?>
+										<?php
+										$user   = get_userdata( $m->user_id );
+										$member = $user ? $user->display_name : __( 'Unknown', 'passpress' );
+										?>
+										<tr>
+											<td>
+												<div class="passpress-reports-person">
+													<span class="passpress-reports-avatar"><?php echo esc_html( self::initials( $member ) ); ?></span>
+													<strong><?php echo esc_html( $member ); ?></strong>
+												</div>
+											</td>
+											<td><span class="passpress-reports-pill"><?php echo esc_html( get_the_title( $m->plan_id ) ); ?></span></td>
+											<td><?php echo esc_html( pp_format_date( $m->expiry_date ) ); ?></td>
+										</tr>
+									<?php endforeach; ?>
+								</tbody>
+							</table>
+						</div>
 					<?php endif; ?>
-				</tbody>
-			</table>
+				</section>
 
-			<h2><?php esc_html_e( 'Facility Usage', 'passpress' ); ?></h2>
-			<table class="wp-list-table widefat fixed striped">
-				<thead><tr><th><?php esc_html_e( 'Facility', 'passpress' ); ?></th><th><?php esc_html_e( 'Bookings', 'passpress' ); ?></th><th><?php esc_html_e( 'Entries', 'passpress' ); ?></th></tr></thead>
-				<tbody>
+				<section class="passpress-reports-section">
+					<div class="passpress-reports-section-header">
+						<p class="passpress-reports-card-eyebrow"><?php esc_html_e( 'Usage', 'passpress' ); ?></p>
+						<h2><?php esc_html_e( 'Facility usage', 'passpress' ); ?></h2>
+					</div>
 					<?php if ( ! $facilities ) : ?>
-						<tr><td colspan="3"><?php esc_html_e( 'No activity in this window.', 'passpress' ); ?></td></tr>
+						<?php self::render_empty( __( 'No activity in this window', 'passpress' ), __( 'Bookings and door entries will show up here.', 'passpress' ) ); ?>
 					<?php else : ?>
-						<?php foreach ( $facilities as $f ) : ?>
-							<tr><td><?php echo esc_html( $f['name'] ); ?></td><td><?php echo esc_html( $f['bookings'] ); ?></td><td><?php echo esc_html( $f['entries'] ); ?></td></tr>
-						<?php endforeach; ?>
+						<div class="passpress-reports-table-wrap">
+							<table class="passpress-reports-table">
+								<thead>
+									<tr>
+										<th><?php esc_html_e( 'Facility', 'passpress' ); ?></th>
+										<th><?php esc_html_e( 'Bookings', 'passpress' ); ?></th>
+										<th><?php esc_html_e( 'Entries', 'passpress' ); ?></th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php foreach ( $facilities as $f ) : ?>
+										<tr>
+											<td><strong><?php echo esc_html( $f['name'] ); ?></strong></td>
+											<td><?php echo esc_html( number_format_i18n( $f['bookings'] ) ); ?></td>
+											<td><?php echo esc_html( number_format_i18n( $f['entries'] ) ); ?></td>
+										</tr>
+									<?php endforeach; ?>
+								</tbody>
+							</table>
+						</div>
 					<?php endif; ?>
-				</tbody>
-			</table>
+				</section>
+			</div>
 
-			<h2><?php esc_html_e( 'Popular Plans', 'passpress' ); ?></h2>
-			<table class="wp-list-table widefat fixed striped">
-				<thead><tr><th><?php esc_html_e( 'Plan', 'passpress' ); ?></th><th><?php esc_html_e( 'Active/Total Members', 'passpress' ); ?></th></tr></thead>
-				<tbody>
+			<div class="passpress-reports-grid passpress-reports-grid-tables">
+				<section class="passpress-reports-section">
+					<div class="passpress-reports-section-header">
+						<p class="passpress-reports-card-eyebrow"><?php esc_html_e( 'Catalog', 'passpress' ); ?></p>
+						<h2><?php esc_html_e( 'Popular plans', 'passpress' ); ?></h2>
+					</div>
 					<?php if ( ! $plans ) : ?>
-						<tr><td colspan="2"><?php esc_html_e( 'No memberships yet.', 'passpress' ); ?></td></tr>
+						<?php self::render_empty( __( 'No memberships yet', 'passpress' ), __( 'Issued plans will rank here by member count.', 'passpress' ) ); ?>
 					<?php else : ?>
-						<?php foreach ( $plans as $p ) : ?>
-							<tr><td><?php echo esc_html( $p['name'] ); ?></td><td><?php echo esc_html( $p['count'] ); ?></td></tr>
-						<?php endforeach; ?>
+						<div class="passpress-reports-table-wrap">
+							<table class="passpress-reports-table">
+								<thead>
+									<tr>
+										<th><?php esc_html_e( 'Plan', 'passpress' ); ?></th>
+										<th><?php esc_html_e( 'Active / total', 'passpress' ); ?></th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php foreach ( $plans as $p ) : ?>
+										<tr>
+											<td><span class="passpress-reports-pill"><?php echo esc_html( $p['name'] ); ?></span></td>
+											<td><strong><?php echo esc_html( number_format_i18n( $p['count'] ) ); ?></strong></td>
+										</tr>
+									<?php endforeach; ?>
+								</tbody>
+							</table>
+						</div>
 					<?php endif; ?>
-				</tbody>
-			</table>
+				</section>
 
-			<h2><?php esc_html_e( 'Payment Reports', 'passpress' ); ?></h2>
-			<table class="wp-list-table widefat fixed striped">
-				<thead><tr><th><?php esc_html_e( 'Gateway', 'passpress' ); ?></th><th><?php esc_html_e( 'Status', 'passpress' ); ?></th><th><?php esc_html_e( 'Count', 'passpress' ); ?></th><th><?php esc_html_e( 'Total', 'passpress' ); ?></th></tr></thead>
-				<tbody>
+				<section class="passpress-reports-section">
+					<div class="passpress-reports-section-header">
+						<p class="passpress-reports-card-eyebrow"><?php esc_html_e( 'Checkout', 'passpress' ); ?></p>
+						<h2><?php esc_html_e( 'Payment reports', 'passpress' ); ?></h2>
+					</div>
 					<?php if ( ! $payments ) : ?>
-						<tr><td colspan="4"><?php esc_html_e( 'No payment activity in this window.', 'passpress' ); ?></td></tr>
+						<?php self::render_empty( __( 'No payment activity', 'passpress' ), __( 'Gateway totals for this range will appear here.', 'passpress' ) ); ?>
 					<?php else : ?>
-						<?php foreach ( $payments as $gateway => $statuses ) : ?>
-							<?php foreach ( $statuses as $status => $data ) : ?>
-								<tr>
-									<td><?php echo esc_html( ucfirst( $gateway ) ); ?></td>
-									<td><?php echo esc_html( ucfirst( $status ) ); ?></td>
-									<td><?php echo esc_html( $data['count'] ); ?></td>
-									<td><?php echo esc_html( $settings['currency_symbol'] . number_format_i18n( $data['total'], 2 ) ); ?></td>
-								</tr>
-							<?php endforeach; ?>
-						<?php endforeach; ?>
+						<div class="passpress-reports-table-wrap">
+							<table class="passpress-reports-table">
+								<thead>
+									<tr>
+										<th><?php esc_html_e( 'Gateway', 'passpress' ); ?></th>
+										<th><?php esc_html_e( 'Status', 'passpress' ); ?></th>
+										<th><?php esc_html_e( 'Count', 'passpress' ); ?></th>
+										<th><?php esc_html_e( 'Total', 'passpress' ); ?></th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php foreach ( $payments as $gateway => $statuses ) : ?>
+										<?php foreach ( $statuses as $status => $data ) : ?>
+											<tr>
+												<td><strong><?php echo esc_html( self::gateway_label( $gateway ) ); ?></strong></td>
+												<td>
+													<span class="passpress-reports-status passpress-reports-status-<?php echo esc_attr( sanitize_html_class( $status ) ); ?>">
+														<span class="passpress-reports-status-dot"></span>
+														<?php echo esc_html( ucfirst( $status ) ); ?>
+													</span>
+												</td>
+												<td><?php echo esc_html( number_format_i18n( $data['count'] ) ); ?></td>
+												<td><strong><?php echo esc_html( $symbol . number_format_i18n( $data['total'], 2 ) ); ?></strong></td>
+											</tr>
+										<?php endforeach; ?>
+									<?php endforeach; ?>
+								</tbody>
+							</table>
+						</div>
 					<?php endif; ?>
-				</tbody>
-			</table>
+				</section>
+			</div>
 
-			<h2><?php esc_html_e( 'Trainer Performance', 'passpress' ); ?></h2>
-			<table class="wp-list-table widefat fixed striped">
-				<thead><tr><th><?php esc_html_e( 'Instructor', 'passpress' ); ?></th><th><?php esc_html_e( 'Classes', 'passpress' ); ?></th><th><?php esc_html_e( 'Bookings', 'passpress' ); ?></th><th><?php esc_html_e( 'Attended', 'passpress' ); ?></th><th><?php esc_html_e( 'No-shows', 'passpress' ); ?></th></tr></thead>
-				<tbody>
-					<?php if ( ! $instructors ) : ?>
-						<tr><td colspan="5"><?php esc_html_e( 'No instructor-assigned classes with activity in this window.', 'passpress' ); ?></td></tr>
-					<?php else : ?>
-						<?php foreach ( $instructors as $data ) : ?>
-							<tr>
-								<td><?php echo esc_html( $data['name'] ); ?></td>
-								<td><?php echo esc_html( $data['classes'] ); ?></td>
-								<td><?php echo esc_html( $data['total_bookings'] ); ?></td>
-								<td><?php echo esc_html( $data['attended'] ); ?></td>
-								<td><?php echo esc_html( $data['no_shows'] ); ?></td>
-							</tr>
-						<?php endforeach; ?>
-					<?php endif; ?>
-				</tbody>
-			</table>
+			<section class="passpress-reports-section">
+				<div class="passpress-reports-section-header">
+					<p class="passpress-reports-card-eyebrow"><?php esc_html_e( 'Classes', 'passpress' ); ?></p>
+					<h2><?php esc_html_e( 'Trainer performance', 'passpress' ); ?></h2>
+				</div>
+				<?php if ( ! $instructors ) : ?>
+					<?php self::render_empty( __( 'No instructor activity', 'passpress' ), __( 'No instructor-assigned classes with activity in this window.', 'passpress' ) ); ?>
+				<?php else : ?>
+					<div class="passpress-reports-table-wrap">
+						<table class="passpress-reports-table">
+							<thead>
+								<tr>
+									<th><?php esc_html_e( 'Instructor', 'passpress' ); ?></th>
+									<th><?php esc_html_e( 'Classes', 'passpress' ); ?></th>
+									<th><?php esc_html_e( 'Bookings', 'passpress' ); ?></th>
+									<th><?php esc_html_e( 'Attended', 'passpress' ); ?></th>
+									<th><?php esc_html_e( 'No-shows', 'passpress' ); ?></th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php foreach ( $instructors as $data ) : ?>
+									<tr>
+										<td>
+											<div class="passpress-reports-person">
+												<span class="passpress-reports-avatar"><?php echo esc_html( self::initials( $data['name'] ) ); ?></span>
+												<strong><?php echo esc_html( $data['name'] ); ?></strong>
+											</div>
+										</td>
+										<td><?php echo esc_html( number_format_i18n( $data['classes'] ) ); ?></td>
+										<td><?php echo esc_html( number_format_i18n( $data['total_bookings'] ) ); ?></td>
+										<td><?php echo esc_html( number_format_i18n( $data['attended'] ) ); ?></td>
+										<td><?php echo esc_html( number_format_i18n( $data['no_shows'] ) ); ?></td>
+									</tr>
+								<?php endforeach; ?>
+							</tbody>
+						</table>
+					</div>
+				<?php endif; ?>
+			</section>
 		</div>
 		<?php
 	}
 
-	private static function render_bar_table( $by_day, $format_callback = null ) {
+	/**
+	 * @param array<string,float|int> $by_day
+	 * @param callable|null           $format_callback
+	 * @param string                  $variant
+	 */
+	private static function render_bar_list( $by_day, $format_callback = null, $variant = 'default' ) {
 		if ( ! $by_day ) {
-			echo '<p>' . esc_html__( 'No data in this window.', 'passpress' ) . '</p>';
+			echo '<div class="passpress-reports-card-empty"><p>' . esc_html__( 'No data in this window.', 'passpress' ) . '</p></div>';
 			return;
 		}
-		$max = max( 1, max( $by_day ) );
-		echo '<table class="wp-list-table widefat fixed striped passpress-peak-hours" style="max-width:600px;"><tbody>';
+
+		$max = max( 1, (float) max( $by_day ) );
+		echo '<ul class="passpress-reports-bar-list">';
 		foreach ( $by_day as $day => $value ) {
-			$display = $format_callback ? $format_callback( $value ) : $value;
-			echo '<tr><td style="width:110px;">' . esc_html( pp_format_date( $day ) ) . '</td><td>';
-			echo '<div class="passpress-peak-bar-wrap"><div class="passpress-peak-bar" style="width:' . esc_attr( round( ( $value / $max ) * 100 ) ) . '%;"></div><span>' . esc_html( $display ) . '</span></div>';
-			echo '</td></tr>';
+			$display = $format_callback ? call_user_func( $format_callback, $value ) : number_format_i18n( $value );
+			$width   = round( ( (float) $value / $max ) * 100 );
+			?>
+			<li class="passpress-reports-bar-row">
+				<span class="passpress-reports-bar-day"><?php echo esc_html( pp_format_date( $day ) ); ?></span>
+				<div class="passpress-reports-bar-track" aria-hidden="true">
+					<span class="passpress-reports-bar-fill passpress-reports-bar-fill-<?php echo esc_attr( $variant ); ?>" style="width:<?php echo esc_attr( (string) $width ); ?>%;"></span>
+				</div>
+				<span class="passpress-reports-bar-value"><?php echo esc_html( $display ); ?></span>
+			</li>
+			<?php
 		}
-		echo '</tbody></table>';
+		echo '</ul>';
+	}
+
+	private static function render_empty( $title, $desc ) {
+		?>
+		<div class="passpress-reports-empty">
+			<p class="passpress-reports-empty-eyebrow"><?php esc_html_e( 'Empty', 'passpress' ); ?></p>
+			<h3 class="passpress-reports-empty-title"><?php echo esc_html( $title ); ?></h3>
+			<p class="passpress-reports-empty-desc"><?php echo esc_html( $desc ); ?></p>
+		</div>
+		<?php
+	}
+
+	private static function gateway_label( $gateway ) {
+		$map = array(
+			'offline' => __( 'Offline', 'passpress' ),
+			'stripe'  => __( 'Stripe', 'passpress' ),
+			'paypal'  => __( 'PayPal', 'passpress' ),
+		);
+		$key = strtolower( (string) $gateway );
+		return isset( $map[ $key ] ) ? $map[ $key ] : ucfirst( (string) $gateway );
+	}
+
+	private static function initials( $name ) {
+		$parts = preg_split( '/\s+/', trim( (string) $name ) );
+		if ( ! $parts ) {
+			return '?';
+		}
+		$first = mb_substr( $parts[0], 0, 1 );
+		$last  = count( $parts ) > 1 ? mb_substr( $parts[ count( $parts ) - 1 ], 0, 1 ) : '';
+		return strtoupper( $first . $last );
 	}
 }
