@@ -30,7 +30,7 @@ class PP_Shortcodes {
 		PP_Frontend::enqueue_my_pass_assets();
 		PP_Frontend::enqueue_my_bookings_assets();
 
-		PP_Notifications::maybe_save_birthdate_from_post();
+		$birthdate_saved = PP_Notifications::maybe_save_birthdate_from_post();
 
 		$memberships = array_map( array( 'PP_Membership_Status', 'maybe_expire' ), PP_Membership::get_active_for_user( get_current_user_id() ) );
 		$settings    = pp_get_settings();

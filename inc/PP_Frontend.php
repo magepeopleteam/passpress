@@ -232,6 +232,10 @@ class PP_Frontend {
 			array(
 				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
 				'nonce'   => wp_create_nonce( 'pp_invite_guest' ),
+				'i18n'    => array(
+					'sending' => __( 'Sending…', 'passpress' ),
+					'error'   => __( 'Something went wrong. Please try again.', 'passpress' ),
+				),
 			)
 		);
 	}
@@ -248,10 +252,13 @@ class PP_Frontend {
 				'loginUrl'   => wp_login_url( is_singular() ? get_permalink() : home_url( '/' ) ),
 				'isLoggedIn' => is_user_logged_in(),
 				'i18n'       => array(
-					'book'     => __( 'Book', 'passpress' ),
-					'waitlist' => __( 'Join Waitlist', 'passpress' ),
-					'full'     => __( 'Full', 'passpress' ),
-					'error'    => __( 'Something went wrong. Please try again.', 'passpress' ),
+					'book'       => __( 'Book', 'passpress' ),
+					'booked'     => __( 'Booked', 'passpress' ),
+					'waitlist'   => __( 'Join waitlist', 'passpress' ),
+					'waitlisted' => __( 'Waitlisted', 'passpress' ),
+					'processing' => __( '…', 'passpress' ),
+					'full'       => __( 'Full', 'passpress' ),
+					'error'      => __( 'Something went wrong. Please try again.', 'passpress' ),
 				),
 			)
 		);

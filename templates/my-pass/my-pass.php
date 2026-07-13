@@ -9,32 +9,58 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <div class="passpress-my-pass">
 	<?php if ( empty( $memberships ) ) : ?>
-		<p class="passpress-no-membership"><?php esc_html_e( 'You do not have an active membership yet. Visit the front desk to get started.', 'passpress' ); ?></p>
+		<div class="passpress-no-membership">
+			<p class="passpress-no-membership-eyebrow"><?php esc_html_e( 'Membership', 'passpress' ); ?></p>
+			<h3 class="passpress-no-membership-title"><?php esc_html_e( 'No active pass yet', 'passpress' ); ?></h3>
+			<p class="passpress-no-membership-desc"><?php esc_html_e( 'Visit the front desk or pick a plan to get started.', 'passpress' ); ?></p>
+		</div>
 	<?php else : ?>
-		<?php foreach ( $memberships as $membership ) : ?>
-			<div class="passpress-pass-card passpress-status-<?php echo esc_attr( $membership->status ); ?>">
-				<div class="passpress-pass-qr" data-token="<?php echo esc_attr( $membership->pass_token ); ?>"></div>
-				<div class="passpress-pass-details">
-					<h3><?php echo esc_html( get_the_title( $membership->plan_id ) ); ?></h3>
-					<p><strong><?php esc_html_e( 'Membership #', 'passpress' ); ?></strong> <?php echo esc_html( $membership->membership_number ); ?></p>
-					<p><strong><?php esc_html_e( 'Status', 'passpress' ); ?></strong> <?php echo esc_html( pp_status_label( $membership->status ) ); ?></p>
-					<p><strong><?php esc_html_e( 'Expires', 'passpress' ); ?></strong> <?php echo esc_html( pp_format_date( $membership->expiry_date ) ); ?></p>
-					<?php if ( ! empty( $settings['show_pin_on_pass'] ) ) : ?>
-						<p><strong><?php esc_html_e( 'PIN', 'passpress' ); ?></strong> <?php echo esc_html( $membership->pin_code ); ?></p>
-					<?php endif; ?>
-					<?php if ( PP_Billing::is_billing_available() && in_array( $membership->status, array( PP_Membership::STATUS_ACTIVE, PP_Membership::STATUS_EXPIRED ), true ) ) : ?>
-						<?php
-						$renew_url = PP_Billing::is_woocommerce_mode() && class_exists( 'PP_Shop_WooCommerce' )
-							? PP_Shop_WooCommerce::buy_url( $membership->plan_id )
-							: PP_Billing::checkout_url( $membership->plan_id, $membership->id );
-						?>
+		<div class="passpress-pass-list">
+			<?php foreach ( $memberships as $membership ) : ?>
+				<?php
+				$status_label = pp_status_label( $membership->status );
+				$can_renew    = PP_Billing::is_billing_available()
+					&& in_array( $membership->status, array( PP_Membership::STATUS_ACTIVE, PP_Membership::STATUS_EXPIRED ), true );
+				$renew_url    = '';
+				if ( $can_renew ) {
+					$renew_url = PP_Billing::is_woocommerce_mode() && class_exists( 'PP_Shop_WooCommerce' )
+						? PP_Shop_WooCommerce::buy_url( $membership->plan_id )
+						: PP_Billing::checkout_url( $membership->plan_id, $membership->id );
+				}
+				?>
+				<article class="passpress-pass-card passpress-status-<?php echo esc_attr( $membership->status ); ?>">
+					<div class="passpress-pass-qr-wrap">
+						<div class="passpress-pass-qr" data-token="<?php echo esc_attr( $membership->pass_token ); ?>"></div>
+						<p class="passpress-pass-qr-hint"><?php esc_html_e( 'Scan at check-in', 'passpress' ); ?></p>
+					</div>
+					<div class="passpress-pass-details">
+						<div class="passpress-pass-details-top">
+							<span class="passpress-pass-status"><?php echo esc_html( $status_label ); ?></span>
+							<h3 class="passpress-pass-title"><?php echo esc_html( get_the_title( $membership->plan_id ) ); ?></h3>
+						</div>
+						<dl class="passpress-pass-meta">
+							<div>
+								<dt><?php esc_html_e( 'Membership #', 'passpress' ); ?></dt>
+								<dd><?php echo esc_html( $membership->membership_number ); ?></dd>
+							</div>
+							<div>
+								<dt><?php esc_html_e( 'Expires', 'passpress' ); ?></dt>
+								<dd><?php echo esc_html( pp_format_date( $membership->expiry_date ) ); ?></dd>
+							</div>
+							<?php if ( ! empty( $settings['show_pin_on_pass'] ) ) : ?>
+								<div class="passpress-pass-pin">
+									<dt><?php esc_html_e( 'PIN', 'passpress' ); ?></dt>
+									<dd><span><?php echo esc_html( $membership->pin_code ); ?></span></dd>
+								</div>
+							<?php endif; ?>
+						</dl>
 						<?php if ( $renew_url ) : ?>
-							<p><a class="button button-primary" href="<?php echo esc_url( $renew_url ); ?>"><?php esc_html_e( 'Renew Now', 'passpress' ); ?></a></p>
+							<a class="passpress-pass-renew" href="<?php echo esc_url( $renew_url ); ?>"><?php esc_html_e( 'Renew now', 'passpress' ); ?></a>
 						<?php endif; ?>
-					<?php endif; ?>
-				</div>
-			</div>
-		<?php endforeach; ?>
+					</div>
+				</article>
+			<?php endforeach; ?>
+		</div>
 	<?php endif; ?>
 
 	<?php if ( ! empty( $bookings ) ) : ?>
@@ -69,28 +95,70 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	<?php endif; ?>
 
-	<div class="passpress-birthdate">
-		<h3><?php esc_html_e( 'Birthday', 'passpress' ); ?></h3>
-		<p class="description"><?php esc_html_e( "Let us know your birthday and we'll send you a greeting.", 'passpress' ); ?></p>
-		<form method="post">
-			<?php wp_nonce_field( 'pp_save_birthdate', 'pp_birthdate_nonce' ); ?>
-			<p>
-				<input type="date" name="pp_birthdate" value="<?php echo esc_attr( $birthdate ); ?>">
-				<button type="submit" class="button"><?php esc_html_e( 'Save', 'passpress' ); ?></button>
+	<?php
+	$birthdate_label = '';
+	if ( ! empty( $birthdate ) && preg_match( '/^\d{4}-\d{2}-\d{2}$/', $birthdate ) ) {
+		$ts = strtotime( $birthdate . ' 12:00:00' );
+		if ( $ts ) {
+			/* translators: date format for birthday display, e.g. March 15 */
+			$birthdate_label = date_i18n( __( 'F j', 'passpress' ), $ts );
+		}
+	}
+	$birthdate_saved = ! empty( $birthdate_saved );
+	?>
+	<section class="passpress-birthdate<?php echo $birthdate_label ? ' has-date' : ''; ?>">
+		<div class="passpress-birthdate-copy">
+			<p class="passpress-birthdate-eyebrow"><?php esc_html_e( 'Personal', 'passpress' ); ?></p>
+			<h3 class="passpress-birthdate-title"><?php esc_html_e( 'Birthday', 'passpress' ); ?></h3>
+			<p class="passpress-birthdate-desc">
+				<?php
+				if ( $birthdate_label ) {
+					printf(
+						/* translators: %s: month and day, e.g. March 15 */
+						esc_html__( "We'll send you a greeting on %s.", 'passpress' ),
+						esc_html( $birthdate_label )
+					);
+				} else {
+					esc_html_e( "Add your birthday and we'll send you a greeting when the day comes.", 'passpress' );
+				}
+				?>
 			</p>
-		</form>
-	</div>
+		</div>
 
-	<div class="passpress-invite-guest">
-		<h3><?php esc_html_e( 'Invite a Guest', 'passpress' ); ?></h3>
-		<p class="description"><?php esc_html_e( 'Your guest can pick up their pass at the front desk.', 'passpress' ); ?></p>
-		<form class="passpress-invite-guest-form">
-			<p>
-				<input type="text" name="guest_name" placeholder="<?php esc_attr_e( "Guest's name", 'passpress' ); ?>" required>
-				<input type="email" name="guest_email" placeholder="<?php esc_attr_e( 'Email (optional)', 'passpress' ); ?>">
-				<button type="submit" class="button button-primary"><?php esc_html_e( 'Send Invitation', 'passpress' ); ?></button>
-			</p>
+		<?php if ( $birthdate_saved ) : ?>
+			<p class="passpress-birthdate-notice" role="status"><?php esc_html_e( 'Birthday saved.', 'passpress' ); ?></p>
+		<?php endif; ?>
+
+		<form method="post" class="passpress-birthdate-form">
+			<?php wp_nonce_field( 'pp_save_birthdate', 'pp_birthdate_nonce' ); ?>
+			<label class="passpress-birthdate-field" for="pp_birthdate_input">
+				<span class="passpress-birthdate-label"><?php esc_html_e( 'Date of birth', 'passpress' ); ?></span>
+				<input type="date" id="pp_birthdate_input" name="pp_birthdate" value="<?php echo esc_attr( $birthdate ); ?>" max="<?php echo esc_attr( gmdate( 'Y-m-d' ) ); ?>">
+			</label>
+			<button type="submit" class="passpress-birthdate-submit">
+				<?php echo $birthdate_label ? esc_html__( 'Update', 'passpress' ) : esc_html__( 'Save birthday', 'passpress' ); ?>
+			</button>
 		</form>
-		<div class="passpress-invite-guest-message passpress-checkout-notice" style="display:none;"></div>
-	</div>
+	</section>
+
+	<section class="passpress-invite-guest">
+		<div class="passpress-invite-guest-copy">
+			<p class="passpress-invite-guest-eyebrow"><?php esc_html_e( 'Guests', 'passpress' ); ?></p>
+			<h3 class="passpress-invite-guest-title"><?php esc_html_e( 'Invite a Guest', 'passpress' ); ?></h3>
+			<p class="passpress-invite-guest-desc"><?php esc_html_e( 'Send an invite and your guest can pick up their pass at the front desk.', 'passpress' ); ?></p>
+		</div>
+
+		<form class="passpress-invite-guest-form">
+			<label class="passpress-invite-guest-field" for="pp_guest_name">
+				<span class="passpress-invite-guest-label"><?php esc_html_e( 'Guest name', 'passpress' ); ?></span>
+				<input type="text" id="pp_guest_name" name="guest_name" placeholder="<?php esc_attr_e( 'Alex Rivera', 'passpress' ); ?>" required autocomplete="name">
+			</label>
+			<label class="passpress-invite-guest-field" for="pp_guest_email">
+				<span class="passpress-invite-guest-label"><?php esc_html_e( 'Email', 'passpress' ); ?> <em><?php esc_html_e( '(optional)', 'passpress' ); ?></em></span>
+				<input type="email" id="pp_guest_email" name="guest_email" placeholder="<?php esc_attr_e( 'alex@email.com', 'passpress' ); ?>" autocomplete="email">
+			</label>
+			<button type="submit" class="passpress-invite-guest-submit"><?php esc_html_e( 'Send invitation', 'passpress' ); ?></button>
+			<div class="passpress-invite-guest-message" hidden role="status"></div>
+		</form>
+	</section>
 </div>

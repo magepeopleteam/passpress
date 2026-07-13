@@ -246,15 +246,18 @@ class PP_Notifications {
 	 */
 	public static function maybe_save_birthdate_from_post() {
 		if ( ! isset( $_POST['pp_birthdate_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['pp_birthdate_nonce'] ) ), 'pp_save_birthdate' ) ) {
-			return;
+			return false;
 		}
 		if ( ! is_user_logged_in() ) {
-			return;
+			return false;
 		}
 
 		$birthdate = isset( $_POST['pp_birthdate'] ) ? sanitize_text_field( wp_unslash( $_POST['pp_birthdate'] ) ) : '';
 		if ( $birthdate && preg_match( '/^\d{4}-\d{2}-\d{2}$/', $birthdate ) ) {
 			update_user_meta( get_current_user_id(), 'pp_birthdate', $birthdate );
+			return true;
 		}
+
+		return false;
 	}
 }
