@@ -37,7 +37,7 @@ class PP_Class_Session_CPT {
 				),
 				'public'       => true,
 				'show_ui'      => true,
-				'show_in_menu' => 'passpress',
+				'show_in_menu' => false, // custom card-grid — see admin/PP_Class_Sessions_List.php
 				'menu_icon'    => 'dashicons-universal-access-alt',
 				'supports'     => array( 'title', 'editor' ),
 				'has_archive'  => false,

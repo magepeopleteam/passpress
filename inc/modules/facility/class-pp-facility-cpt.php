@@ -32,7 +32,7 @@ class PP_Facility_CPT {
 				),
 				'public'       => true,
 				'show_ui'      => true,
-				'show_in_menu' => 'passpress',
+				'show_in_menu' => false, // custom card-grid list — see admin/PP_Facilities_List.php
 				'menu_icon'    => 'dashicons-building',
 				'supports'     => array( 'title', 'editor' ),
 				'has_archive'  => false,

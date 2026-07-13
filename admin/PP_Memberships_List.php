@@ -36,7 +36,16 @@ class PP_Memberships_List {
 		settings_errors( 'passpress' );
 		?>
 		<div class="wrap passpress-wrap passpress-members-page">
-			<h1 class="screen-reader-text"><?php esc_html_e( 'Members', 'passpress' ); ?></h1>
+			<div class="passpress-members-page-header">
+				<div class="passpress-members-page-copy">
+					<p class="passpress-members-page-eyebrow"><?php esc_html_e( 'Directory', 'passpress' ); ?></p>
+					<h1><?php esc_html_e( 'Members', 'passpress' ); ?></h1>
+					<p class="passpress-members-page-desc"><?php esc_html_e( 'Filter, search, and manage memberships from one place.', 'passpress' ); ?></p>
+				</div>
+				<button type="button" class="passpress-members-issue-btn" id="passpress-issue-membership-trigger">
+					<?php esc_html_e( 'Issue membership', 'passpress' ); ?>
+				</button>
+			</div>
 
 			<div class="passpress-stat-row">
 				<?php self::render_stat_tile( 'active', __( 'Active', 'passpress' ), $counts['active'], 'shield', $status ); ?>
@@ -77,62 +86,78 @@ class PP_Memberships_List {
 						<?php if ( $status ) : ?><input type="hidden" name="status" value="<?php echo esc_attr( $status ); ?>"><?php endif; ?>
 						<?php if ( $plan_scope ) : ?><input type="hidden" name="plan_scope" value="<?php echo esc_attr( $plan_scope ); ?>"><?php endif; ?>
 						<input type="search" name="s" id="passpress-members-search-input" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Search membership #…', 'passpress' ); ?>" class="passpress-members-search">
-						<button type="submit" class="button"><?php esc_html_e( 'Search', 'passpress' ); ?></button>
+						<button type="submit" class="passpress-members-search-btn"><?php esc_html_e( 'Search', 'passpress' ); ?></button>
 					</form>
-
-					<details class="passpress-issue-membership passpress-issue-membership--compact">
-						<summary class="passpress-issue-btn"><?php esc_html_e( '+ Issue New Membership', 'passpress' ); ?></summary>
-						<div class="passpress-issue-panel">
-							<h2 class="pp-issue-title"><?php esc_html_e( 'Issue Membership', 'passpress' ); ?></h2>
-							<form method="post" class="pp-plan-form">
-								<?php wp_nonce_field( 'pp_issue_membership' ); ?>
-								<div class="pp-field">
-									<label class="pp-label" for="pp_user_id"><?php esc_html_e( 'Member', 'passpress' ); ?></label>
-									<?php
-									wp_dropdown_users(
-										array(
-											'name'             => 'user_id',
-											'id'               => 'pp_user_id',
-											'class'            => 'pp-input pp-input-select',
-											'show_option_none' => __( 'Select a member', 'passpress' ),
-										)
-									);
-									?>
-								</div>
-								<div class="pp-field">
-									<label class="pp-label" for="pp_plan_id"><?php esc_html_e( 'Plan', 'passpress' ); ?></label>
-									<select name="plan_id" id="pp_plan_id" class="pp-input pp-input-select">
-										<option value=""><?php esc_html_e( 'Select a plan', 'passpress' ); ?></option>
-										<?php foreach ( self::get_plans() as $plan ) : ?>
-											<option value="<?php echo esc_attr( $plan->ID ); ?>"><?php echo esc_html( $plan->post_title ); ?></option>
-										<?php endforeach; ?>
-									</select>
-								</div>
-								<button type="submit" name="pp_issue_membership" class="pp-btn-solid pp-btn-block"><?php esc_html_e( 'Issue Membership', 'passpress' ); ?></button>
-							</form>
-						</div>
-					</details>
 				</div>
 			</div>
 
-			<table class="passpress-members-table">
-				<thead>
-					<tr>
-						<th><?php esc_html_e( 'Membership #', 'passpress' ); ?></th>
-						<th><?php esc_html_e( 'Member Name', 'passpress' ); ?></th>
-						<th><?php esc_html_e( 'Plan', 'passpress' ); ?></th>
-						<th><?php esc_html_e( 'Status', 'passpress' ); ?></th>
-						<th><?php esc_html_e( 'Validity', 'passpress' ); ?></th>
-						<th><?php esc_html_e( 'PIN', 'passpress' ); ?></th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody id="passpress-members-tbody">
-					<?php self::render_tbody_rows( $result ); ?>
-				</tbody>
-			</table>
+			<div class="passpress-members-table-wrap">
+				<table class="passpress-members-table">
+					<thead>
+						<tr>
+							<th><?php esc_html_e( 'Membership #', 'passpress' ); ?></th>
+							<th><?php esc_html_e( 'Member', 'passpress' ); ?></th>
+							<th><?php esc_html_e( 'Plan', 'passpress' ); ?></th>
+							<th><?php esc_html_e( 'Status', 'passpress' ); ?></th>
+							<th><?php esc_html_e( 'Validity', 'passpress' ); ?></th>
+							<th><?php esc_html_e( 'PIN', 'passpress' ); ?></th>
+							<th><span class="screen-reader-text"><?php esc_html_e( 'Actions', 'passpress' ); ?></span></th>
+						</tr>
+					</thead>
+					<tbody id="passpress-members-tbody">
+						<?php self::render_tbody_rows( $result ); ?>
+					</tbody>
+				</table>
+			</div>
 
 			<?php self::render_pagination( $result, $status, $search, $paged, $plan_scope ); ?>
+
+			<?php self::render_issue_modal(); ?>
+		</div>
+		<?php
+	}
+
+	private static function render_issue_modal() {
+		?>
+		<div id="passpress-issue-membership-modal" class="passpress-modal-overlay" hidden>
+			<div class="passpress-modal passpress-issue-modal" role="dialog" aria-modal="true" aria-labelledby="passpress-issue-membership-title">
+				<div class="pp-modal-header">
+					<div>
+						<p class="pp-modal-eyebrow"><?php esc_html_e( 'Front desk', 'passpress' ); ?></p>
+						<h2 id="passpress-issue-membership-title"><?php esc_html_e( 'Issue membership', 'passpress' ); ?></h2>
+					</div>
+					<button type="button" class="passpress-modal-close" aria-label="<?php esc_attr_e( 'Close', 'passpress' ); ?>">&times;</button>
+				</div>
+				<form method="post" class="pp-plan-form">
+					<?php wp_nonce_field( 'pp_issue_membership' ); ?>
+					<div class="pp-field">
+						<label class="pp-label" for="pp_user_id"><?php esc_html_e( 'Member', 'passpress' ); ?></label>
+						<?php
+						wp_dropdown_users(
+							array(
+								'name'             => 'user_id',
+								'id'               => 'pp_user_id',
+								'class'            => 'pp-input pp-input-select',
+								'show_option_none' => __( 'Select a member', 'passpress' ),
+							)
+						);
+						?>
+					</div>
+					<div class="pp-field">
+						<label class="pp-label" for="pp_plan_id"><?php esc_html_e( 'Plan', 'passpress' ); ?></label>
+						<select name="plan_id" id="pp_plan_id" class="pp-input pp-input-select">
+							<option value=""><?php esc_html_e( 'Select a plan', 'passpress' ); ?></option>
+							<?php foreach ( self::get_plans() as $plan ) : ?>
+								<option value="<?php echo esc_attr( $plan->ID ); ?>"><?php echo esc_html( $plan->post_title ); ?></option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+					<div class="pp-modal-footer">
+						<button type="button" class="pp-btn-outline passpress-modal-cancel"><?php esc_html_e( 'Cancel', 'passpress' ); ?></button>
+						<button type="submit" name="pp_issue_membership" class="pp-btn-solid"><?php esc_html_e( 'Issue membership', 'passpress' ); ?></button>
+					</div>
+				</form>
+			</div>
 		</div>
 		<?php
 	}
@@ -187,10 +212,10 @@ class PP_Memberships_List {
 		?>
 		<a class="passpress-stat-tile passpress-stat-tile-<?php echo esc_attr( $key ); ?><?php echo $current_status === $key ? ' is-active' : ''; ?>" data-status="<?php echo esc_attr( $key ); ?>" href="<?php echo esc_url( self::filter_url( array( 'status' => $current_status === $key ? '' : $key ) ) ); ?>">
 			<div class="passpress-stat-tile-text">
-				<span class="passpress-stat-tile-label"><?php echo esc_html( strtoupper( $label ) ); ?></span>
+				<span class="passpress-stat-tile-label"><?php echo esc_html( $label ); ?></span>
 				<span class="passpress-stat-tile-number"><?php echo esc_html( number_format_i18n( $count ) ); ?></span>
 			</div>
-			<span class="passpress-stat-tile-icon"><span class="dashicons dashicons-<?php echo esc_attr( $dashicon ); ?>"></span></span>
+			<span class="passpress-stat-tile-icon" aria-hidden="true"><span class="dashicons dashicons-<?php echo esc_attr( $dashicon ); ?>"></span></span>
 		</a>
 		<?php
 	}
@@ -203,7 +228,7 @@ class PP_Memberships_List {
 		$days_left  = $expiring ? ceil( ( strtotime( $membership->expiry_date ) - strtotime( current_time( 'Y-m-d' ) ) ) / DAY_IN_SECONDS ) : 0;
 		?>
 		<tr>
-			<td><code><?php echo esc_html( $membership->membership_number ); ?></code></td>
+			<td><code class="passpress-membership-code"><?php echo esc_html( $membership->membership_number ); ?></code></td>
 			<td>
 				<div class="passpress-member-cell">
 					<span class="passpress-member-avatar passpress-avatar-color-<?php echo esc_attr( self::avatar_color_index( $membership->user_id ) ); ?>"><?php echo esc_html( self::initials( $name ) ); ?></span>
@@ -235,7 +260,7 @@ class PP_Memberships_List {
 					<?php endif; ?>
 				</div>
 			</td>
-			<td><code><?php echo esc_html( $membership->pin_code ); ?></code></td>
+			<td><code class="passpress-pin-code"><?php echo esc_html( $membership->pin_code ); ?></code></td>
 			<td class="passpress-row-menu-cell">
 				<details class="passpress-row-menu">
 					<summary aria-label="<?php esc_attr_e( 'Actions', 'passpress' ); ?>">&#8942;</summary>
