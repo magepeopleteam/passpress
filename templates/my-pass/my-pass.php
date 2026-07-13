@@ -23,7 +23,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<p><strong><?php esc_html_e( 'PIN', 'passpress' ); ?></strong> <?php echo esc_html( $membership->pin_code ); ?></p>
 					<?php endif; ?>
 					<?php if ( PP_Billing::is_billing_available() && in_array( $membership->status, array( PP_Membership::STATUS_ACTIVE, PP_Membership::STATUS_EXPIRED ), true ) ) : ?>
-						<p><a class="button button-primary" href="<?php echo esc_url( PP_Billing::checkout_url( $membership->plan_id, $membership->id ) ); ?>"><?php esc_html_e( 'Renew Now', 'passpress' ); ?></a></p>
+						<?php
+						$renew_url = PP_Billing::is_woocommerce_mode() && class_exists( 'PP_Shop_WooCommerce' )
+							? PP_Shop_WooCommerce::buy_url( $membership->plan_id )
+							: PP_Billing::checkout_url( $membership->plan_id, $membership->id );
+						?>
+						<?php if ( $renew_url ) : ?>
+							<p><a class="button button-primary" href="<?php echo esc_url( $renew_url ); ?>"><?php esc_html_e( 'Renew Now', 'passpress' ); ?></a></p>
+						<?php endif; ?>
 					<?php endif; ?>
 				</div>
 			</div>

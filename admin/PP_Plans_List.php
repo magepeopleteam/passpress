@@ -33,12 +33,11 @@ class PP_Plans_List {
 		$settings = pp_get_settings();
 		?>
 		<div class="wrap passpress-wrap">
-			<div class="passpress-plans-header">
-				<h1><?php esc_html_e( 'Membership Plans', 'passpress' ); ?></h1>
-				<button type="button" id="passpress-new-plan-trigger" class="button button-primary passpress-plans-new-btn">
-					<?php esc_html_e( '+ New Plan', 'passpress' ); ?>
-				</button>
-			</div>
+			<h1 class="wp-heading-inline"><?php esc_html_e( 'Membership Plans', 'passpress' ); ?></h1>
+			<button type="button" id="passpress-new-plan-trigger" class="page-title-action passpress-plans-new-btn">
+				<?php esc_html_e( '+ New Plan', 'passpress' ); ?>
+			</button>
+			<hr class="wp-header-end">
 
 			<?php if ( ! $plans ) : ?>
 				<p><?php esc_html_e( 'No membership plans yet.', 'passpress' ); ?></p>

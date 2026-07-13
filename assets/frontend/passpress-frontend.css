@@ -50,6 +50,24 @@
 	margin-right: auto !important;
 }
 
+.passpress-page .passpress-class-schedule {
+	max-width: var(--wp--style--global--wide-size, 1440px) !important;
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+
+.passpress-page .passpress-my-pass {
+	max-width: var(--wp--style--global--wide-size, 1440px) !important;
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+
+.passpress-page .woocommerce {
+	max-width: var(--wp--style--global--wide-size, 1440px) !important;
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+
 /*
  * Scoped to .wp-block-post-title / :not(.wp-block-site-title) rather than
  * bare h1/h2 — a blanket `.passpress-page h1/h2` also matches the theme's
@@ -326,4 +344,312 @@
 .passpress-class-occurrences td {
 	padding: 6px 4px;
 	border-bottom: 1px solid #eee;
+}
+
+/* Checkout modal (plan Buy button) */
+
+body.passpress-checkout-open {
+	overflow: hidden;
+}
+
+.passpress-checkout-modal-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 100000;
+	display: none;
+	align-items: center;
+	justify-content: center;
+	padding: 24px 16px;
+	background: rgba(15, 23, 42, 0.45);
+	overflow-y: auto;
+}
+
+.passpress-checkout-modal-overlay:not([hidden]) {
+	display: flex !important;
+}
+
+.passpress-checkout-modal {
+	position: relative;
+	width: 100%;
+	max-width: 440px;
+	background: #fff;
+	border-radius: 18px;
+	padding: 28px 26px 22px;
+	box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
+	margin: auto;
+}
+
+.passpress-checkout-modal-close {
+	position: absolute;
+	top: 16px;
+	right: 16px;
+	width: 32px;
+	height: 32px;
+	border: none;
+	border-radius: 8px;
+	background: #f1f5f9;
+	color: #64748b;
+	font-size: 22px;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.passpress-checkout-modal-close:hover {
+	background: #e2e8f0;
+	color: #0f172a;
+}
+
+.passpress-checkout-modal-header {
+	margin-bottom: 18px;
+	padding-right: 36px;
+}
+
+.passpress-checkout-modal-header h2 {
+	margin: 0;
+	font-size: 1.35rem;
+	font-weight: 800;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: #0f172a;
+}
+
+.passpress-checkout-modal-subtitle {
+	margin: 6px 0 0;
+	color: #64748b;
+	font-size: 0.95rem;
+}
+
+.passpress-checkout-modal-notice {
+	margin: 0 0 14px;
+	padding: 10px 12px;
+	border-radius: 10px;
+	font-size: 0.9rem;
+}
+
+.passpress-checkout-modal-notice.is-error {
+	background: #fdecea;
+	color: #99251e;
+}
+
+.passpress-checkout-modal-notice.is-success {
+	background: #eaf7ee;
+	color: #146c34;
+}
+
+.passpress-checkout-modal-form {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.passpress-checkout-gift {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 0.92rem;
+	color: #334155;
+	cursor: pointer;
+}
+
+.passpress-checkout-gift-icon {
+	font-size: 1.05rem;
+}
+
+.passpress-checkout-field label,
+.passpress-checkout-label {
+	display: block;
+	margin-bottom: 6px;
+	font-size: 0.82rem;
+	font-weight: 700;
+	color: #0f172a;
+}
+
+.passpress-checkout-field input[type="text"],
+.passpress-checkout-field input[type="email"] {
+	width: 100%;
+	box-sizing: border-box;
+	border: 1px solid #d8dee8;
+	border-radius: 10px;
+	padding: 11px 12px;
+	font-size: 0.95rem;
+	color: #0f172a;
+	background: #fff;
+}
+
+.passpress-checkout-field input:focus {
+	outline: none;
+	border-color: #94a3b8;
+	box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.2);
+}
+
+.passpress-checkout-field-row {
+	display: flex;
+	gap: 10px;
+}
+
+.passpress-checkout-field-grow {
+	flex: 1 1 auto;
+}
+
+.passpress-checkout-field-exp {
+	flex: 0 0 118px;
+}
+
+.passpress-checkout-field-hint {
+	margin: 6px 0 0;
+	font-size: 0.8rem;
+	color: #64748b;
+	line-height: 1.4;
+}
+
+.passpress-checkout-gateways {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.passpress-checkout-card-fields {
+	display: none;
+	margin: -2px 0 4px;
+	padding: 12px;
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
+	border-radius: 10px;
+}
+
+.passpress-checkout-card-fields.is-open {
+	display: block !important;
+}
+
+.passpress-checkout-gateway {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 12px;
+	border: 1px solid #d8dee8;
+	border-radius: 10px;
+	cursor: pointer;
+	font-size: 0.92rem;
+	font-weight: 600;
+	color: #0f172a;
+}
+
+.passpress-checkout-gateway:has(input:checked) {
+	border-color: #ff8f70;
+	background: #fff7f4;
+}
+
+.passpress-checkout-coupon-row {
+	display: flex;
+	gap: 8px;
+}
+
+.passpress-checkout-coupon-row input {
+	flex: 1 1 auto;
+}
+
+.passpress-checkout-coupon-apply {
+	flex: 0 0 auto;
+	border: 1px solid #d8dee8;
+	background: #fff;
+	border-radius: 10px;
+	padding: 0 16px;
+	font-weight: 700;
+	font-size: 0.88rem;
+	color: #0f172a;
+	cursor: pointer;
+}
+
+.passpress-checkout-coupon-apply:hover {
+	background: #f8fafc;
+}
+
+.passpress-checkout-coupon-msg {
+	margin: 6px 0 0;
+	font-size: 0.82rem;
+}
+
+.passpress-checkout-coupon-msg.is-error {
+	color: #99251e;
+}
+
+.passpress-checkout-coupon-msg.is-success {
+	color: #146c34;
+}
+
+.passpress-checkout-modal .passpress-checkout-summary {
+	border: none;
+	border-radius: 0;
+	padding: 4px 0 0;
+	margin: 2px 0 0;
+}
+
+.passpress-checkout-summary-rule {
+	border: none;
+	border-top: 1px dashed #d8dee8;
+	margin: 4px 0 2px;
+}
+
+.passpress-checkout-summary-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 12px;
+	padding: 6px 0;
+	font-size: 0.95rem;
+	color: #334155;
+}
+
+.passpress-checkout-summary-total {
+	font-weight: 800;
+	color: #0f172a;
+	font-size: 1.05rem;
+}
+
+.passpress-checkout-summary-discount {
+	color: #146c34;
+}
+
+.passpress-checkout-submit {
+	width: 100%;
+	border: none;
+	border-radius: 12px;
+	padding: 14px 16px;
+	background: #ff9b7a;
+	color: #fff;
+	font-size: 1rem;
+	font-weight: 800;
+	cursor: pointer;
+	margin-top: 4px;
+}
+
+.passpress-checkout-submit:hover:not(:disabled) {
+	background: #ff875f;
+}
+
+.passpress-checkout-submit:disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+
+.passpress-checkout-modal-footer {
+	margin: 4px 0 0;
+	text-align: center;
+	font-size: 0.78rem;
+	color: #94a3b8;
+}
+
+@media (max-width: 480px) {
+	.passpress-checkout-modal {
+		padding: 22px 18px 18px;
+		border-radius: 14px;
+	}
+
+	.passpress-checkout-field-row {
+		flex-direction: column;
+	}
+
+	.passpress-checkout-field-exp {
+		flex: 1 1 auto;
+	}
 }

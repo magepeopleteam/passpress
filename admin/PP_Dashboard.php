@@ -12,9 +12,17 @@ class PP_Dashboard {
 		}
 
 		$stats = PP_Query::dashboard_stats();
+		$notice = get_transient( 'passpress_setup_notice' );
+		if ( $notice ) {
+			delete_transient( 'passpress_setup_notice' );
+		}
 		?>
 		<div class="wrap passpress-wrap">
 			<h1><?php esc_html_e( 'PassPress Dashboard', 'passpress' ); ?></h1>
+
+			<?php if ( $notice ) : ?>
+				<div class="notice notice-success is-dismissible"><p><?php echo esc_html( $notice ); ?></p></div>
+			<?php endif; ?>
 
 			<div class="passpress-stat-tiles">
 				<div class="passpress-stat-tile">

@@ -55,8 +55,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<?php endif; ?>
 
 					<div class="passpress-plan-cta-group">
-						<?php if ( PP_Billing::is_billing_available() ) : ?>
-							<a class="passpress-plan-btn passpress-plan-btn-primary" href="<?php echo esc_url( PP_Billing::checkout_url( $plan->ID ) ); ?>">
+						<?php if ( PP_Billing::is_woocommerce_mode() && $shop_url ) : ?>
+							<a class="passpress-plan-btn passpress-plan-btn-primary" href="<?php echo esc_url( $shop_url ); ?>">
+								<?php
+								/* translators: %s: plan name */
+								echo esc_html( sprintf( __( 'Buy %s', 'passpress' ), $plan->post_title ) );
+								?>
+							</a>
+						<?php elseif ( PP_Billing::is_native_mode() && PP_Billing::is_billing_available() ) : ?>
+							<a
+								class="passpress-plan-btn passpress-plan-btn-primary passpress-open-checkout"
+								href="#"
+								role="button"
+								data-checkout-url="<?php echo esc_url( PP_Billing::checkout_url( $plan->ID ) ); ?>"
+								data-plan-id="<?php echo esc_attr( $plan->ID ); ?>"
+								data-plan-name="<?php echo esc_attr( $plan->post_title ); ?>"
+								data-plan-price="<?php echo esc_attr( number_format( $price, 2, '.', '' ) ); ?>"
+								data-plan-price-label="<?php echo esc_attr( $settings['currency_symbol'] . number_format_i18n( $price, 2 ) ); ?>"
+								data-nonce="<?php echo esc_attr( wp_create_nonce( 'passpress_checkout_' . $plan->ID ) ); ?>"
+							>
 								<?php
 								/* translators: %s: plan name */
 								echo esc_html( sprintf( __( 'Buy %s', 'passpress' ), $plan->post_title ) );
@@ -64,9 +81,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 							</a>
 						<?php else : ?>
 							<p class="passpress-plan-cta-fallback"><?php esc_html_e( 'Visit the front desk to join this plan.', 'passpress' ); ?></p>
-						<?php endif; ?>
-						<?php if ( $shop_url ) : ?>
-							<a class="passpress-plan-btn passpress-plan-btn-secondary" href="<?php echo esc_url( $shop_url ); ?>"><?php esc_html_e( 'Buy via Shop', 'passpress' ); ?></a>
 						<?php endif; ?>
 					</div>
 				</div>

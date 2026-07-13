@@ -39,9 +39,11 @@ class PP_Admin {
 		add_submenu_page( 'passpress', __( 'Reports', 'passpress' ), __( 'Reports', 'passpress' ), PP_Roles::CAP_MANAGE, 'passpress-reports', array( 'PP_Reports_Page', 'render' ) );
 		add_submenu_page( 'passpress', __( 'Activity Log', 'passpress' ), __( 'Activity Log', 'passpress' ), PP_Roles::CAP_MANAGE, 'passpress-activity-log', array( 'PP_Activity_Log_Page', 'render' ) );
 		add_submenu_page( 'passpress', __( 'Setup Wizard', 'passpress' ), __( 'Setup Wizard', 'passpress' ), PP_Roles::CAP_MANAGE, 'passpress-setup', array( 'PP_Setup_Wizard', 'render' ) );
-		add_submenu_page( 'passpress', __( 'Settings', 'passpress' ), __( 'Settings', 'passpress' ), PP_Roles::CAP_MANAGE, 'passpress-settings', array( 'PP_Settings', 'render' ) );
-		add_submenu_page( 'passpress', __( 'Billing Settings', 'passpress' ), __( 'Billing Settings', 'passpress' ), PP_Roles::CAP_MANAGE, 'passpress-billing-settings', array( 'PP_Billing_Settings', 'render' ) );
-		add_submenu_page( 'passpress', __( 'Notification Settings', 'passpress' ), __( 'Notification Settings', 'passpress' ), PP_Roles::CAP_MANAGE, 'passpress-notification-settings', array( 'PP_Notification_Settings', 'render' ) );
+		add_submenu_page( 'passpress', __( 'Settings', 'passpress' ), __( 'Settings', 'passpress' ), PP_Roles::CAP_MANAGE, 'passpress-settings', array( 'PP_Settings_Page', 'render' ) );
+
+		// Hidden legacy slugs — redirect into the unified Settings page tabs.
+		add_submenu_page( null, '', '', PP_Roles::CAP_MANAGE, 'passpress-billing-settings', array( 'PP_Settings_Page', 'render_legacy_billing' ) );
+		add_submenu_page( null, '', '', PP_Roles::CAP_MANAGE, 'passpress-notification-settings', array( 'PP_Settings_Page', 'render_legacy_notifications' ) );
 	}
 
 	public function enqueue_assets( $hook ) {

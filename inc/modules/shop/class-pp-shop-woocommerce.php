@@ -4,12 +4,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Optional WooCommerce storefront bridge — a genuine integration, not a
- * detection stub, since WooCommerce IS active on this site and testable
- * here (unlike WC Subscriptions, see class-pp-gateway-woo-subscriptions.php).
- * Entirely additive: native checkout (PP_Billing) keeps working unchanged
- * whether or not WooCommerce is even installed; this just gives every plan
- * a second, optional path to purchase through the WC cart/checkout.
+ * Optional WooCommerce storefront bridge. Entirely additive: native checkout
+ * (PP_Billing) keeps working unchanged whether or not WooCommerce is installed;
+ * this just gives every plan a second, optional path to purchase through the
+ * WC cart/checkout. Memberships and renewals stay in PassPress — WooCommerce
+ * Subscriptions is not used or required.
  *
  * Each pp_membership_plan gets one auto-synced, hidden (catalog_visibility
  * = 'hidden', not shown in shop/search) WC_Product mirroring its name and
@@ -93,7 +92,7 @@ class PP_Shop_WooCommerce {
 	 *                show a Buy via Shop link", not an error.
 	 */
 	public static function buy_url( $plan_id ) {
-		if ( ! self::is_available() ) {
+		if ( ! self::is_available() || ! PP_Billing::is_woocommerce_mode() ) {
 			return '';
 		}
 
@@ -102,7 +101,15 @@ class PP_Shop_WooCommerce {
 			return '';
 		}
 
-		return add_query_arg( 'add-to-cart', $product_id, wc_get_cart_url() );
+		$settings  = PP_Billing::get_settings();
+		$cart_url  = wc_get_cart_url();
+		$target    = ( 'cart' === $settings['wc_add_to_cart_redirect'] ) ? $cart_url : wc_get_checkout_url();
+
+		if ( ! empty( $settings['wc_require_login'] ) && ! is_user_logged_in() ) {
+			return wp_login_url( add_query_arg( 'add-to-cart', $product_id, $target ) );
+		}
+
+		return add_query_arg( 'add-to-cart', $product_id, $target );
 	}
 
 	/**

@@ -19,28 +19,59 @@ class PP_Billing {
 
 	public static function init() {
 		add_action( 'template_redirect', array( __CLASS__, 'maybe_render_checkout' ) );
+		add_action( 'wp_ajax_passpress_modal_checkout', array( __CLASS__, 'ajax_modal_checkout' ) );
+		add_action( 'wp_ajax_nopriv_passpress_modal_checkout', array( __CLASS__, 'ajax_modal_checkout' ) );
+		add_action( 'wp_ajax_passpress_apply_coupon', array( __CLASS__, 'ajax_apply_coupon' ) );
+		add_action( 'wp_ajax_nopriv_passpress_apply_coupon', array( __CLASS__, 'ajax_apply_coupon' ) );
 	}
 
 	public static function default_settings() {
 		return array(
-			'payment_method_type'   => 'native', // native|wc_subscriptions
-			'offline_enabled'       => 1,
-			'offline_auto_confirm'  => 1,
-			'stripe_enabled'        => 0,
-			'stripe_mode'           => 'test',
-			'stripe_publishable_key' => '',
-			'stripe_secret_key'     => '',
-			'stripe_webhook_secret' => '',
-			'paypal_enabled'        => 0,
-			'paypal_mode'           => 'sandbox',
-			'paypal_client_id'      => '',
-			'paypal_client_secret'  => '',
-			'renewal_reminder_days' => 7,
+			'payment_method_type'     => 'native',
+			'offline_enabled'         => 1,
+			'offline_auto_confirm'    => 1,
+			'offline_instructions'    => '',
+			'stripe_enabled'          => 0,
+			'stripe_mode'             => 'test',
+			'stripe_publishable_key'  => '',
+			'stripe_secret_key'       => '',
+			'stripe_webhook_secret'   => '',
+			'paypal_enabled'          => 0,
+			'paypal_mode'             => 'sandbox',
+			'paypal_client_id'        => '',
+			'paypal_client_secret'    => '',
+			'paypal_webhook_id'       => '',
+			'renewal_reminder_days'   => 7,
+			'wc_add_to_cart_redirect' => 'checkout',
+			'wc_require_login'        => 0,
 		);
 	}
 
 	public static function get_settings() {
-		return wp_parse_args( get_option( 'passpress_billing_settings', array() ), self::default_settings() );
+		$settings = wp_parse_args( get_option( 'passpress_billing_settings', array() ), self::default_settings() );
+
+		// Migrate legacy WooCommerce Subscriptions mode — PassPress owns renewals.
+		if ( 'wc_subscriptions' === $settings['payment_method_type'] || 'custom' === $settings['payment_method_type'] ) {
+			$settings['payment_method_type'] = 'native';
+		}
+
+		if ( ! in_array( $settings['payment_method_type'], array( 'native', 'woocommerce', 'none' ), true ) ) {
+			$settings['payment_method_type'] = 'native';
+		}
+
+		return $settings;
+	}
+
+	public static function get_payment_method_type() {
+		return self::get_settings()['payment_method_type'];
+	}
+
+	public static function is_native_mode() {
+		return 'native' === self::get_payment_method_type();
+	}
+
+	public static function is_woocommerce_mode() {
+		return 'woocommerce' === self::get_payment_method_type() && pp_is_woocommerce_active();
 	}
 
 	/**
@@ -62,14 +93,22 @@ class PP_Billing {
 	}
 
 	/**
-	 * @return PP_Gateway_Interface[] id => instance, enabled in settings AND configured.
+	 * Gateways turned on in Billing settings (shown in checkout UI).
+	 * Configuration (API keys) is validated at payment time so an enabled
+	 * but not-yet-keyed gateway still appears in the modal.
+	 *
+	 * @return PP_Gateway_Interface[] id => instance
 	 */
 	public static function get_enabled_gateways() {
+		if ( ! self::is_native_mode() ) {
+			return array();
+		}
+
 		$settings = self::get_settings();
 		$enabled  = array();
 
 		foreach ( self::get_gateway_instances() as $id => $gateway ) {
-			if ( ! empty( $settings[ $id . '_enabled' ] ) && $gateway->is_configured() ) {
+			if ( ! empty( $settings[ $id . '_enabled' ] ) ) {
 				$enabled[ $id ] = $gateway;
 			}
 		}
@@ -77,7 +116,35 @@ class PP_Billing {
 		return $enabled;
 	}
 
+	/**
+	 * Prefer a stable display order: Offline, Stripe, PayPal.
+	 *
+	 * @return PP_Gateway_Interface[]
+	 */
+	public static function get_checkout_gateways() {
+		$order   = array( 'offline', 'stripe', 'paypal' );
+		$enabled = self::get_enabled_gateways();
+		$sorted  = array();
+
+		foreach ( $order as $id ) {
+			if ( isset( $enabled[ $id ] ) ) {
+				$sorted[ $id ] = $enabled[ $id ];
+			}
+		}
+
+		foreach ( $enabled as $id => $gateway ) {
+			if ( ! isset( $sorted[ $id ] ) ) {
+				$sorted[ $id ] = $gateway;
+			}
+		}
+
+		return $sorted;
+	}
+
 	public static function is_billing_available() {
+		if ( self::is_woocommerce_mode() ) {
+			return true;
+		}
 		return (bool) self::get_enabled_gateways();
 	}
 
@@ -96,6 +163,17 @@ class PP_Billing {
 		if ( ! isset( $_GET['passpress_checkout'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only route detection
 			return;
 		}
+
+		// WooCommerce mode: send buyers to the shop product instead of native checkout.
+		if ( self::is_woocommerce_mode() ) {
+			$plan_id = isset( $_GET['plan_id'] ) ? absint( $_GET['plan_id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$shop_url = ( $plan_id && class_exists( 'PP_Shop_WooCommerce' ) ) ? PP_Shop_WooCommerce::buy_url( $plan_id ) : '';
+			if ( $shop_url ) {
+				wp_safe_redirect( $shop_url );
+				exit;
+			}
+		}
+
 		self::render_checkout();
 		exit;
 	}
@@ -146,7 +224,7 @@ class PP_Billing {
 			}
 		}
 
-		$gateways    = self::get_enabled_gateways();
+		$gateways    = self::get_checkout_gateways();
 		$coupon_code = isset( $_POST['coupon_code'] ) ? sanitize_text_field( wp_unslash( $_POST['coupon_code'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- sticky display value only, re-validated on actual submit
 
 		include PASSPRESS_PLUGIN_DIR . '/templates/checkout/checkout.php';
@@ -155,12 +233,23 @@ class PP_Billing {
 	private static function process_checkout_submit( $plan, $membership ) {
 		$gateway_id  = isset( $_POST['gateway'] ) ? sanitize_key( wp_unslash( $_POST['gateway'] ) ) : '';
 		$coupon_code = isset( $_POST['coupon_code'] ) ? sanitize_text_field( wp_unslash( $_POST['coupon_code'] ) ) : '';
-		$gateways    = self::get_enabled_gateways();
+		$gateways    = self::get_checkout_gateways();
 
 		if ( ! isset( $gateways[ $gateway_id ] ) ) {
 			return array(
 				'state'   => 'error',
 				'message' => __( 'Please choose a valid payment method.', 'passpress' ),
+			);
+		}
+
+		if ( ! $gateways[ $gateway_id ]->is_configured() ) {
+			return array(
+				'state'   => 'error',
+				'message' => sprintf(
+					/* translators: %s: gateway label */
+					__( '%s is enabled but not configured yet. Add your API keys in PassPress → Settings → Payment Method.', 'passpress' ),
+					$gateways[ $gateway_id ]->label()
+				),
 			);
 		}
 
@@ -283,6 +372,198 @@ class PP_Billing {
 			return false;
 		}
 		return PP_Billing_History::mark_failed( $billing_row->id, $reason );
+	}
+
+	/**
+	 * Apply a coupon from the checkout modal (preview totals only).
+	 */
+	public static function ajax_apply_coupon() {
+		$plan_id = isset( $_POST['plan_id'] ) ? absint( $_POST['plan_id'] ) : 0;
+		$code    = isset( $_POST['coupon_code'] ) ? sanitize_text_field( wp_unslash( $_POST['coupon_code'] ) ) : '';
+		$nonce   = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
+
+		if ( ! $plan_id || ! wp_verify_nonce( $nonce, 'passpress_checkout_' . $plan_id ) ) {
+			wp_send_json_error( array( 'message' => __( 'Security check failed.', 'passpress' ) ) );
+		}
+
+		$plan = get_post( $plan_id );
+		if ( ! $plan || 'pp_membership_plan' !== $plan->post_type || 'publish' !== $plan->post_status ) {
+			wp_send_json_error( array( 'message' => __( 'This membership plan is not available.', 'passpress' ) ) );
+		}
+
+		$settings = pp_get_settings();
+		$price    = (float) get_post_meta( $plan_id, '_pp_price', true );
+		$user_id  = get_current_user_id();
+
+		if ( ! $code ) {
+			wp_send_json_success(
+				array(
+					'final_amount'    => $price,
+					'discount_amount' => 0,
+					'price_label'     => $settings['currency_symbol'] . number_format_i18n( $price, 2 ),
+					'total_label'     => $settings['currency_symbol'] . number_format_i18n( $price, 2 ),
+					'discount_label'  => '',
+					'message'         => '',
+				)
+			);
+		}
+
+		$result = PP_Coupon::validate( $code, $plan_id, $user_id, $price );
+		if ( empty( $result['valid'] ) ) {
+			wp_send_json_error( array( 'message' => $result['error'] ) );
+		}
+
+		wp_send_json_success(
+			array(
+				'final_amount'    => $result['final_amount'],
+				'discount_amount' => $result['discount_amount'],
+				'code'            => $result['code'],
+				'price_label'     => $settings['currency_symbol'] . number_format_i18n( $price, 2 ),
+				'total_label'     => $settings['currency_symbol'] . number_format_i18n( $result['final_amount'], 2 ),
+				'discount_label'  => '−' . $settings['currency_symbol'] . number_format_i18n( $result['discount_amount'], 2 ),
+				'message'         => __( 'Coupon applied.', 'passpress' ),
+			)
+		);
+	}
+
+	/**
+	 * Process checkout from the plan-list modal.
+	 */
+	public static function ajax_modal_checkout() {
+		if ( ! self::is_native_mode() ) {
+			wp_send_json_error( array( 'message' => __( 'Native checkout is not enabled.', 'passpress' ) ) );
+		}
+
+		$plan_id = isset( $_POST['plan_id'] ) ? absint( $_POST['plan_id'] ) : 0;
+		$nonce   = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
+
+		if ( ! $plan_id || ! wp_verify_nonce( $nonce, 'passpress_checkout_' . $plan_id ) ) {
+			wp_send_json_error( array( 'message' => __( 'Security check failed.', 'passpress' ) ) );
+		}
+
+		$full_name = isset( $_POST['full_name'] ) ? sanitize_text_field( wp_unslash( $_POST['full_name'] ) ) : '';
+		$email     = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
+
+		if ( ! $full_name || ! is_email( $email ) ) {
+			wp_send_json_error( array( 'message' => __( 'Please enter your full name and a valid email.', 'passpress' ) ) );
+		}
+
+		if ( ! is_user_logged_in() ) {
+			$login_url = wp_login_url( self::checkout_url( $plan_id ) );
+			wp_send_json_error(
+				array(
+					'message'  => __( 'Please log in to complete your purchase.', 'passpress' ),
+					'loginUrl' => $login_url,
+				)
+			);
+		}
+
+		$user = wp_get_current_user();
+		if ( $full_name && $full_name !== $user->display_name ) {
+			wp_update_user(
+				array(
+					'ID'           => $user->ID,
+					'display_name' => $full_name,
+				)
+			);
+		}
+
+		$plan = get_post( $plan_id );
+		if ( ! $plan || 'pp_membership_plan' !== $plan->post_type || 'publish' !== $plan->post_status ) {
+			wp_send_json_error( array( 'message' => __( 'This membership plan is not available.', 'passpress' ) ) );
+		}
+
+		$renew_id   = isset( $_POST['renew'] ) ? absint( $_POST['renew'] ) : 0;
+		$membership = null;
+		if ( $renew_id ) {
+			$candidate = PP_Membership::get( $renew_id );
+			if ( $candidate && (int) $candidate->user_id === get_current_user_id() && (int) $candidate->plan_id === $plan_id ) {
+				$membership = $candidate;
+			}
+		}
+
+		$gateway_id  = isset( $_POST['gateway'] ) ? sanitize_key( wp_unslash( $_POST['gateway'] ) ) : '';
+		$coupon_code = isset( $_POST['coupon_code'] ) ? sanitize_text_field( wp_unslash( $_POST['coupon_code'] ) ) : '';
+		$is_gift     = ! empty( $_POST['is_gift'] );
+		$gateways    = self::get_checkout_gateways();
+
+		if ( ! isset( $gateways[ $gateway_id ] ) ) {
+			wp_send_json_error( array( 'message' => __( 'Please choose a valid payment method.', 'passpress' ) ) );
+		}
+
+		if ( ! $gateways[ $gateway_id ]->is_configured() ) {
+			wp_send_json_error(
+				array(
+					'message' => sprintf(
+						/* translators: %s: gateway label */
+						__( '%s is enabled but not configured yet. Add your API keys in PassPress → Settings → Payment Method.', 'passpress' ),
+						$gateways[ $gateway_id ]->label()
+					),
+				)
+			);
+		}
+
+		$settings        = pp_get_settings();
+		$price           = (float) get_post_meta( $plan->ID, '_pp_price', true );
+		$type            = $membership ? 'renewal' : 'initial';
+		$amount          = $price;
+		$discount_amount = 0;
+		$applied_code    = '';
+
+		if ( $coupon_code ) {
+			$coupon_result = PP_Coupon::validate( $coupon_code, $plan->ID, $user->ID, $price );
+			if ( empty( $coupon_result['valid'] ) ) {
+				wp_send_json_error( array( 'message' => $coupon_result['error'] ) );
+			}
+			$amount          = $coupon_result['final_amount'];
+			$discount_amount = $coupon_result['discount_amount'];
+			$applied_code    = $coupon_result['code'];
+		}
+
+		$history_id  = PP_Billing_History::create( $user->ID, $plan->ID, $type, $gateway_id, $amount, $settings['currency_code'], $membership ? $membership->id : 0, $applied_code, $discount_amount );
+		$billing_row = PP_Billing_History::get( $history_id );
+
+		if ( $is_gift ) {
+			PP_Activity_Logger::log( 'checkout_gift', 'billing', $history_id, sprintf( 'Gift checkout for plan #%d by user #%d (%s).', $plan->ID, $user->ID, $email ) );
+		}
+
+		$gateway = $gateways[ $gateway_id ];
+		$result  = $gateway->initiate( $billing_row, $plan, $user );
+
+		if ( ! empty( $result['redirect'] ) ) {
+			wp_send_json_success(
+				array(
+					'state'    => 'redirect',
+					'redirect' => $result['redirect'],
+				)
+			);
+		}
+
+		if ( ! empty( $result['completed'] ) ) {
+			$my_pass = pp_find_shortcode_page_url( 'passpress_my_pass' );
+			wp_send_json_success(
+				array(
+					'state'   => 'success',
+					'message' => __( 'Payment received! Your membership is now active.', 'passpress' ),
+					'passUrl' => $my_pass ? $my_pass : home_url( '/' ),
+				)
+			);
+		}
+
+		if ( ! empty( $result['pending'] ) ) {
+			wp_send_json_success(
+				array(
+					'state'   => 'pending',
+					'message' => __( 'Your payment is awaiting confirmation. You will be notified once it is approved.', 'passpress' ),
+				)
+			);
+		}
+
+		$error_message = ! empty( $result['error'] ) ? $result['error'] : __( 'Payment could not be started. Please try again.', 'passpress' );
+		PP_Billing_History::mark_failed( $history_id, $error_message );
+		PP_Notifications::payment_failed( $billing_row, $error_message );
+
+		wp_send_json_error( array( 'message' => $error_message ) );
 	}
 
 }

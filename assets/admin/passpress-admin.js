@@ -83,6 +83,246 @@
 			} );
 		} );
 
+		// Setup Wizard modal (PassPress → Setup Wizard / post-activation).
+		var $setupModal = $( '#passpress-setup-wizard-modal' );
+		if ( $setupModal.length ) {
+			function openSetupModal() {
+				$setupModal.show();
+				$( 'body' ).addClass( 'passpress-modal-open' );
+			}
+
+			function closeSetupModal() {
+				// First-run welcome flow: keep the modal until they pick or skip.
+				if ( '1' === String( $setupModal.data( 'welcome' ) ) ) {
+					return;
+				}
+				$setupModal.hide();
+				$( 'body' ).removeClass( 'passpress-modal-open' );
+			}
+
+			if ( '1' === String( $setupModal.data( 'auto-open' ) ) ) {
+				openSetupModal();
+			}
+
+			$( '#passpress-open-setup-modal' ).on( 'click', openSetupModal );
+			$setupModal.find( '.passpress-modal-close, .passpress-modal-cancel' ).on( 'click', closeSetupModal );
+
+			$setupModal.on( 'click', function ( e ) {
+				if ( e.target === this ) {
+					closeSetupModal();
+				}
+			} );
+
+			$( document ).on( 'keydown', function ( e ) {
+				if ( 'Escape' === e.key && $setupModal.is( ':visible' ) ) {
+					closeSetupModal();
+				}
+			} );
+
+			$setupModal.on( 'change', 'input[name="business_type"]', function () {
+				$setupModal.find( '.passpress-template-card' ).removeClass( 'is-selected' );
+				$( this ).closest( '.passpress-template-card' ).addClass( 'is-selected' );
+			} );
+		}
+
+		// Payment Method settings (PassPress → Settings → Billing tab).
+		var $pmForm = $( '#passpress-payment-method-form' );
+		if ( $pmForm.length ) {
+			var confirmCopy = {};
+			try {
+				confirmCopy = JSON.parse( $( '#passpress-pm-confirm-copy' ).text() || '{}' );
+			} catch ( e ) {
+				confirmCopy = {};
+			}
+
+			var $confirmModal = $( '#passpress-pm-confirm-modal' );
+
+			function syncPaymentToggles( value ) {
+				$( '#passpress_payment_method_type_input' ).val( value );
+				$( '#passpress_wc_enable_toggle' ).prop( 'checked', value === 'woocommerce' );
+				$( '#passpress_native_enable_toggle' ).prop( 'checked', value === 'native' );
+				$( '.passpress-wc-dependent' ).toggle( value === 'woocommerce' );
+				$( '.passpress-native-dependent' ).toggleClass( 'is-locked', value !== 'native' );
+			}
+
+			function setPaymentMode( value, keepPanel ) {
+				$( '.passpress-pm-toggle-btn' ).removeClass( 'is-active' );
+				$( '.passpress-pm-toggle-btn[data-value="' + value + '"]' ).addClass( 'is-active' );
+				syncPaymentToggles( value );
+				if ( ! keepPanel ) {
+					$( '.passpress-pm-panel[data-panel="woocommerce"]' ).toggle( value === 'woocommerce' );
+					$( '.passpress-pm-panel[data-panel="native"]' ).toggle( value === 'native' );
+				}
+			}
+
+			function openConfirmModal( copy, onConfirm ) {
+				$confirmModal.find( '#passpress-pm-confirm-text' ).html(
+					'<p>' + copy.intro + '</p><p>' + copy.question + '</p>'
+				);
+				$confirmModal.css( 'display', 'flex' );
+				$confirmModal.find( '[data-pp-confirm-ok]' ).off( 'click' ).on( 'click', function () {
+					closeConfirmModal();
+					onConfirm();
+				} );
+				$confirmModal.find( '[data-pp-confirm-cancel]' ).off( 'click' ).on( 'click', closeConfirmModal );
+			}
+
+			function closeConfirmModal() {
+				$confirmModal.hide();
+			}
+
+			$confirmModal.on( 'click', function ( e ) {
+				if ( e.target === this ) {
+					closeConfirmModal();
+				}
+			} );
+
+			$( document ).on( 'keydown', function ( e ) {
+				if ( 'Escape' === e.key && $confirmModal.is( ':visible' ) ) {
+					closeConfirmModal();
+				}
+			} );
+
+			function guardPaymentSwitch( newValue, apply, onCancel ) {
+				var current = $( '#passpress_payment_method_type_input' ).val() || 'none';
+				var isCrossOver = ( newValue === 'woocommerce' && current === 'native' )
+					|| ( newValue === 'native' && current === 'woocommerce' );
+				if ( ! isCrossOver ) {
+					apply();
+					return;
+				}
+				if ( onCancel ) {
+					onCancel();
+				}
+				openConfirmModal( confirmCopy[ newValue ] || confirmCopy.native, apply );
+			}
+
+			$( '.passpress-pm-toggle-btn' ).on( 'click', function () {
+				var value = $( this ).data( 'value' );
+				guardPaymentSwitch( value, function () {
+					setPaymentMode( value );
+				} );
+			} );
+
+			$( '#passpress_wc_enable_toggle' ).on( 'change', function () {
+				var $toggle = $( this );
+				if ( ! this.checked ) {
+					syncPaymentToggles( 'none' );
+					return;
+				}
+				guardPaymentSwitch( 'woocommerce', function () {
+					$toggle.prop( 'checked', true );
+					syncPaymentToggles( 'woocommerce' );
+				}, function () {
+					$toggle.prop( 'checked', false );
+				} );
+			} );
+
+			$( '#passpress_native_enable_toggle' ).on( 'change', function () {
+				var $toggle = $( this );
+				if ( ! this.checked ) {
+					syncPaymentToggles( 'none' );
+					return;
+				}
+				guardPaymentSwitch( 'native', function () {
+					$toggle.prop( 'checked', true );
+					syncPaymentToggles( 'native' );
+				}, function () {
+					$toggle.prop( 'checked', false );
+				} );
+			} );
+
+			$( '.passpress-pm-accordion-header' ).on( 'click', function () {
+				var $header = $( this );
+				$( '#' + $header.data( 'target' ) ).slideToggle( 150 );
+				$header.toggleClass( 'is-open' );
+			} );
+
+			$( '.passpress-gateway-configure' ).on( 'click', function () {
+				$( '#' + $( this ).data( 'target' ) ).slideToggle( 150 );
+			} );
+
+			$( '.passpress-gw-enable-toggle' ).on( 'change', function () {
+				var key = $( this ).data( 'status-for' );
+				var $status = $( '.passpress-gateway-status[data-status-for="' + key + '"]' );
+				if ( this.checked ) {
+					$status.addClass( 'is-enabled' ).text( 'Enabled' );
+				} else {
+					$status.removeClass( 'is-enabled' ).text( 'Disabled' );
+				}
+			} );
+
+			$( '.passpress-wc-gateway-toggle' ).on( 'change', function () {
+				var $toggle = $( this );
+				var gateway = $toggle.data( 'gateway' );
+				var $status = $( '.passpress-wc-gateway-status[data-status-for="' + gateway + '"]' );
+				var enabled = this.checked;
+				$.post( PassPressScan.ajaxUrl, {
+					action: 'passpress_toggle_wc_gateway',
+					gateway: gateway,
+					enabled: enabled ? '1' : '0',
+					nonce: $toggle.data( 'nonce' )
+				} ).done( function ( resp ) {
+					if ( resp && resp.success ) {
+						$status.toggleClass( 'is-enabled', enabled ).text( enabled ? 'ENABLED' : 'DISABLED' );
+					} else {
+						$toggle.prop( 'checked', ! enabled );
+					}
+				} ).fail( function () {
+					$toggle.prop( 'checked', ! enabled );
+				} );
+			} );
+
+			$( '.passpress-wc-gw-save' ).on( 'click', function () {
+				var $btn = $( this );
+				var $panel = $btn.closest( '.passpress-wc-gw-panel' );
+				var $status = $panel.find( '.passpress-wc-gw-save-status' );
+				var gatewayId = $btn.data( 'gateway' );
+				var $enableToggle = $( '.passpress-wc-gateway-toggle[data-gateway="' + gatewayId + '"]' );
+				var data = $panel.find( 'table.form-table :input' ).serializeArray();
+				if ( $enableToggle.is( ':checked' ) ) {
+					data.push( { name: $enableToggle.data( 'enabledField' ), value: 'yes' } );
+				}
+				data.push( { name: 'action', value: 'passpress_save_wc_gateway_settings' } );
+				data.push( { name: 'gateway', value: gatewayId } );
+				data.push( { name: 'nonce', value: $btn.data( 'nonce' ) } );
+				$btn.prop( 'disabled', true );
+				$status.css( 'color', '' ).text( 'Saving…' );
+				$.post( PassPressScan.ajaxUrl, data ).done( function ( resp ) {
+					if ( resp && resp.success ) {
+						$status.css( 'color', '#1c9a5b' ).text( 'Saved.' );
+					} else {
+						$status.css( 'color', '#b32d2e' ).text( ( resp && resp.data && resp.data.message ) ? resp.data.message : 'Something went wrong.' );
+					}
+				} ).fail( function () {
+					$status.css( 'color', '#b32d2e' ).text( 'Request failed.' );
+				} ).always( function () {
+					$btn.prop( 'disabled', false );
+				} );
+			} );
+
+			$( '#passpress_install_wc_btn' ).on( 'click', function () {
+				var $btn = $( this );
+				var $status = $( '#passpress_install_wc_status' );
+				var original = $btn.text();
+				$btn.prop( 'disabled', true ).text( 'Please wait…' );
+				$.post( PassPressScan.ajaxUrl, {
+					action: 'passpress_install_activate_woocommerce',
+					nonce: $btn.data( 'nonce' )
+				} ).done( function ( resp ) {
+					if ( resp && resp.success ) {
+						window.location.reload();
+					} else {
+						$status.css( 'color', '#b32d2e' ).text( ( resp && resp.data && resp.data.message ) ? resp.data.message : 'Something went wrong.' );
+						$btn.prop( 'disabled', false ).text( original );
+					}
+				} ).fail( function () {
+					$status.css( 'color', '#b32d2e' ).text( 'Request failed.' );
+					$btn.prop( 'disabled', false ).text( original );
+				} );
+			} );
+		}
+
 		// New Plan modal (PassPress → Membership Plans).
 		var $modal = $( '#passpress-new-plan-modal' );
 		if ( $modal.length ) {

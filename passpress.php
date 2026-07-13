@@ -3,7 +3,7 @@
  * Plugin Name: PassPress – Membership, Subscription & Pass Management
  * Plugin URI: https://example.com/passpress
  * Description: Modular membership, subscription and pass management for gyms, parks, clubs and sports facilities. Issue membership passes, scan QR/PIN entries at the door, enforce access rules, take online payments, and manage facility/class bookings, visitor passes, and attendance.
- * Version: 0.5.0
+ * Version: 0.5.10
  * Author: PassPress
  * Text Domain: passpress
  * Domain Path: /languages
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'PASSPRESS_PLUGIN_FILE', __FILE__ );
 define( 'PASSPRESS_PLUGIN_DIR', __DIR__ );
 define( 'PASSPRESS_PLUGIN_URL', plugins_url( '', __FILE__ ) );
-define( 'PASSPRESS_PLUGIN_VERSION', '0.5.0' );
+define( 'PASSPRESS_PLUGIN_VERSION', '0.5.10' );
 define( 'PASSPRESS_DB_VERSION', '1.2.0' );
 
 require_once PASSPRESS_PLUGIN_DIR . '/inc/PP_Roles.php';
@@ -60,7 +60,6 @@ require_once PASSPRESS_PLUGIN_DIR . '/inc/modules/billing/class-pp-billing.php';
 require_once PASSPRESS_PLUGIN_DIR . '/inc/modules/billing/gateways/class-pp-gateway-offline.php';
 require_once PASSPRESS_PLUGIN_DIR . '/inc/modules/billing/gateways/class-pp-gateway-stripe.php';
 require_once PASSPRESS_PLUGIN_DIR . '/inc/modules/billing/gateways/class-pp-gateway-paypal.php';
-require_once PASSPRESS_PLUGIN_DIR . '/inc/modules/billing/gateways/class-pp-gateway-woo-subscriptions.php';
 
 require_once PASSPRESS_PLUGIN_DIR . '/inc/modules/booking/class-pp-booking.php';
 require_once PASSPRESS_PLUGIN_DIR . '/inc/modules/booking/class-pp-booking-slots.php';
@@ -103,6 +102,7 @@ if ( is_admin() ) {
 	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Activity_Log_Page.php';
 	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Setup_Wizard.php';
 	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Welcome.php';
+	require_once PASSPRESS_PLUGIN_DIR . '/admin/settings/PP_Settings_Page.php';
 	require_once PASSPRESS_PLUGIN_DIR . '/admin/settings/PP_Settings.php';
 	require_once PASSPRESS_PLUGIN_DIR . '/admin/settings/PP_Billing_Settings.php';
 	require_once PASSPRESS_PLUGIN_DIR . '/admin/settings/PP_Notification_Settings.php';

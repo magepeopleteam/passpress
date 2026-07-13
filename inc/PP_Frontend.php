@@ -20,9 +20,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class PP_Frontend {
 
+	private static $checkout_modal_queued = false;
+
 	public static function init() {
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'register_assets' ) );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'maybe_enqueue_for_current_page' ), 20 );
+		add_action( 'wp_footer', array( __CLASS__, 'maybe_print_checkout_modal' ), 20 );
 		add_filter( 'body_class', array( __CLASS__, 'add_body_classes' ) );
 	}
 
@@ -34,6 +37,7 @@ class PP_Frontend {
 		wp_register_script( 'passpress-my-bookings', PASSPRESS_PLUGIN_URL . '/assets/frontend/passpress-my-bookings.js', array(), PASSPRESS_PLUGIN_VERSION, true );
 		wp_register_script( 'passpress-invite-guest', PASSPRESS_PLUGIN_URL . '/assets/frontend/passpress-invite-guest.js', array(), PASSPRESS_PLUGIN_VERSION, true );
 		wp_register_script( 'passpress-class-schedule', PASSPRESS_PLUGIN_URL . '/assets/frontend/passpress-class-schedule.js', array(), PASSPRESS_PLUGIN_VERSION, true );
+		wp_register_script( 'passpress-checkout-modal', PASSPRESS_PLUGIN_URL . '/assets/frontend/passpress-checkout-modal.js', array(), PASSPRESS_PLUGIN_VERSION, true );
 	}
 
 	/**
@@ -131,6 +135,51 @@ class PP_Frontend {
 
 	public static function enqueue_plan_list_assets() {
 		wp_enqueue_style( 'passpress-frontend' );
+
+		if ( ! PP_Billing::is_native_mode() || ! PP_Billing::is_billing_available() ) {
+			return;
+		}
+
+		self::$checkout_modal_queued = true;
+
+		$billing = PP_Billing::get_settings();
+		wp_enqueue_script( 'passpress-checkout-modal' );
+		wp_localize_script(
+			'passpress-checkout-modal',
+			'PassPressCheckout',
+			array(
+				'ajaxUrl'             => admin_url( 'admin-ajax.php' ),
+				'isLoggedIn'          => is_user_logged_in(),
+				'loginUrl'            => wp_login_url( is_singular() ? get_permalink() : home_url( '/' ) ),
+				'offlineInstructions' => ! empty( $billing['offline_instructions'] )
+					? $billing['offline_instructions']
+					: __( 'Please pay via bank transfer or at the front desk. We will confirm your membership once payment is received.', 'passpress' ),
+				'i18n'                => array(
+					'pass'        => __( 'Pass', 'passpress' ),
+					'payNow'      => __( 'Pay now', 'passpress' ),
+					'processing'  => __( 'Processing…', 'passpress' ),
+					'needGateway' => __( 'Please choose a payment method.', 'passpress' ),
+					'error'       => __( 'Something went wrong. Please try again.', 'passpress' ),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Prints the checkout modal once in the footer so Buy buttons can open it
+	 * reliably regardless of shortcode/block render timing.
+	 */
+	public static function maybe_print_checkout_modal() {
+		if ( ! self::$checkout_modal_queued ) {
+			return;
+		}
+		if ( ! PP_Billing::is_native_mode() || ! PP_Billing::is_billing_available() ) {
+			return;
+		}
+
+		$gateways = PP_Billing::get_checkout_gateways();
+		$settings = pp_get_settings();
+		include PASSPRESS_PLUGIN_DIR . '/templates/checkout/checkout-modal.php';
 	}
 
 	public static function enqueue_my_bookings_assets() {
