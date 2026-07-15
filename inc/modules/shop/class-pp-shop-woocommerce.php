@@ -31,6 +31,7 @@ class PP_Shop_WooCommerce {
 		add_action( 'save_post_pp_membership_plan', array( __CLASS__, 'sync_product_for_plan' ), 20 );
 		add_action( 'woocommerce_order_status_completed', array( __CLASS__, 'handle_order_completed' ) );
 		add_action( 'add_meta_boxes', array( __CLASS__, 'add_meta_box' ) );
+		add_action( 'update_option_passpress_billing_settings', array( __CLASS__, 'maybe_sync_all_on_billing_change' ), 10, 2 );
 	}
 
 	public static function is_available() {
@@ -96,20 +97,63 @@ class PP_Shop_WooCommerce {
 			return '';
 		}
 
+		$plan_id    = absint( $plan_id );
 		$product_id = self::get_product_id_for_plan( $plan_id );
+		if ( ! $product_id || ! wc_get_product( $product_id ) ) {
+			// Plans created before WooCommerce mode was enabled may not have
+			// a linked product yet — sync lazily so the plan list CTA works.
+			self::sync_product_for_plan( $plan_id );
+			$product_id = self::get_product_id_for_plan( $plan_id );
+		}
 		if ( ! $product_id || ! wc_get_product( $product_id ) ) {
 			return '';
 		}
 
-		$settings  = PP_Billing::get_settings();
-		$cart_url  = wc_get_cart_url();
-		$target    = ( 'cart' === $settings['wc_add_to_cart_redirect'] ) ? $cart_url : wc_get_checkout_url();
+		$settings = PP_Billing::get_settings();
+		$cart_url = wc_get_cart_url();
+		$target   = ( 'cart' === $settings['wc_add_to_cart_redirect'] ) ? $cart_url : wc_get_checkout_url();
 
 		if ( ! empty( $settings['wc_require_login'] ) && ! is_user_logged_in() ) {
 			return wp_login_url( add_query_arg( 'add-to-cart', $product_id, $target ) );
 		}
 
 		return add_query_arg( 'add-to-cart', $product_id, $target );
+	}
+
+	/**
+	 * Create/update hidden WC products for every published plan. Used when
+	 * Payment Method switches to WooCommerce so the front-end "Get this pass"
+	 * buttons have add-to-cart URLs immediately.
+	 */
+	public static function sync_all_plans() {
+		if ( ! self::is_available() ) {
+			return;
+		}
+
+		$plan_ids = get_posts(
+			array(
+				'post_type'      => 'pp_membership_plan',
+				'post_status'    => 'publish',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+			)
+		);
+
+		foreach ( $plan_ids as $plan_id ) {
+			self::sync_product_for_plan( (int) $plan_id );
+		}
+	}
+
+	/**
+	 * @param mixed $old Previous option value.
+	 * @param mixed $new New option value.
+	 */
+	public static function maybe_sync_all_on_billing_change( $old, $new ) {
+		$new = is_array( $new ) ? $new : array();
+		if ( empty( $new['payment_method_type'] ) || 'woocommerce' !== $new['payment_method_type'] ) {
+			return;
+		}
+		self::sync_all_plans();
 	}
 
 	/**

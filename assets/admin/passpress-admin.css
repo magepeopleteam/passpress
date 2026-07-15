@@ -1,6 +1,8 @@
 .wrap.passpress-wrap {
-	padding: 20px;
+	padding: 30px;
 	background: #fff;
+	max-width: 90%;
+	box-sizing: border-box;
 }
 
 /* Dashboard */
@@ -12,7 +14,7 @@
 	--pp-db-accent: #ff875f;
 	--pp-db-accent-deep: #ff6b3d;
 	--pp-db-surface: #f8fafc;
-	max-width: 1120px;
+	max-width: 90%;
 }
 
 .passpress-dashboard-page-header {
@@ -727,7 +729,8 @@
 	--pp-su-accent: #ff875f;
 	--pp-su-accent-deep: #ff6b3d;
 	--pp-su-surface: #f8fafc;
-	max-width: 1120px;
+	max-width: 90%;
+	padding: 30px;
 }
 
 .passpress-setup-welcome-banner {
@@ -1296,7 +1299,7 @@ body.passpress-modal-open {
 	--pp-plans-line: #e2e8f0;
 	--pp-plans-accent: #ff875f;
 	--pp-plans-accent-deep: #ff6b3d;
-	max-width: 1200px;
+	max-width: 90%;
 	padding: 20px;
 	background: #fff;
 }
@@ -1880,7 +1883,7 @@ select.pp-input {
 	--pp-mem-line: #e2e8f0;
 	--pp-mem-accent: #ff875f;
 	--pp-mem-accent-deep: #ff6b3d;
-	max-width: 1200px;
+	max-width: 90%;
 }
 
 .passpress-members-page-header {
@@ -2512,7 +2515,7 @@ select.pp-input {
 	--pp-fac-line: #e2e8f0;
 	--pp-fac-accent: #ff875f;
 	--pp-fac-accent-deep: #ff6b3d;
-	max-width: 1200px;
+	max-width: 90%;
 }
 
 .passpress-facilities-page-header {
@@ -2799,7 +2802,7 @@ select.pp-input {
 	--pp-cpn-line: #e2e8f0;
 	--pp-cpn-accent: #ff875f;
 	--pp-cpn-accent-deep: #ff6b3d;
-	max-width: 1200px;
+	max-width: 90%;
 	padding: 20px;
 	background: #fff;
 }
@@ -3080,7 +3083,7 @@ select.pp-input {
 	--pp-cls-line: #e2e8f0;
 	--pp-cls-accent: #ff875f;
 	--pp-cls-accent-deep: #ff6b3d;
-	max-width: 1200px;
+	max-width: 90%;
 }
 
 .passpress-classes-page-header {
@@ -3345,7 +3348,7 @@ select.pp-input {
 	--pp-bh-line: #e2e8f0;
 	--pp-bh-accent: #ff875f;
 	--pp-bh-accent-deep: #ff6b3d;
-	max-width: 1200px;
+	max-width: 90%;
 }
 
 .passpress-billing-page-header {
@@ -3719,7 +3722,7 @@ select.pp-input {
 	--pp-vis-line: #e2e8f0;
 	--pp-vis-accent: #ff875f;
 	--pp-vis-accent-deep: #ff6b3d;
-	max-width: 1200px;
+	max-width: 90%;
 }
 
 .passpress-visitors-page-header {
@@ -4143,7 +4146,7 @@ select.pp-input {
 	--pp-act-line: #e2e8f0;
 	--pp-act-accent: #ff875f;
 	--pp-act-accent-deep: #ff6b3d;
-	max-width: 1200px;
+	max-width: 90%;
 }
 
 .passpress-activity-page-header {
@@ -4353,7 +4356,7 @@ select.pp-input {
 	--pp-rep-line: #e2e8f0;
 	--pp-rep-accent: #ff875f;
 	--pp-rep-accent-deep: #ff6b3d;
-	max-width: 1200px;
+	max-width: 90%;
 }
 
 .passpress-reports-page-header {
@@ -4840,7 +4843,7 @@ select.pp-input {
 	--pp-att-line: #e2e8f0;
 	--pp-att-accent: #ff875f;
 	--pp-att-accent-deep: #ff6b3d;
-	max-width: 1200px;
+	max-width: 90%;
 }
 
 .passpress-attendance-page-header {
@@ -5216,7 +5219,7 @@ select.pp-input {
 	--pp-bk-line: #e2e8f0;
 	--pp-bk-accent: #ff875f;
 	--pp-bk-accent-deep: #ff6b3d;
-	max-width: 1200px;
+	max-width: 90%;
 }
 
 .passpress-bookings-page-header {
@@ -5690,7 +5693,7 @@ select.pp-input {
 	--pp-set-accent: #ff875f;
 	--pp-set-accent-deep: #ff6b3d;
 	--pp-set-surface: #f8fafc;
-	max-width: 1120px;
+	max-width: 90%;
 }
 
 .passpress-settings-page-header {

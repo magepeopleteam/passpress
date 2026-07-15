@@ -69,10 +69,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<?php endif; ?>
 
 					<div class="passpress-plan-cta-group">
-						<?php if ( PP_Billing::is_woocommerce_mode() && $shop_url ) : ?>
-							<a class="passpress-plan-btn passpress-plan-btn-primary" href="<?php echo esc_url( $shop_url ); ?>">
-								<?php esc_html_e( 'Get this pass', 'passpress' ); ?>
-							</a>
+						<?php if ( PP_Billing::is_woocommerce_mode() ) : ?>
+							<?php if ( $shop_url ) : ?>
+								<a class="passpress-plan-btn passpress-plan-btn-primary" href="<?php echo esc_url( $shop_url ); ?>">
+									<?php esc_html_e( 'Get this pass', 'passpress' ); ?>
+								</a>
+							<?php else : ?>
+								<p class="passpress-plan-cta-fallback"><?php esc_html_e( 'This plan is not ready for checkout yet. Please try again shortly or contact the front desk.', 'passpress' ); ?></p>
+							<?php endif; ?>
 						<?php elseif ( PP_Billing::is_native_mode() && PP_Billing::is_billing_available() ) : ?>
 							<a
 								class="passpress-plan-btn passpress-plan-btn-primary passpress-open-checkout"
