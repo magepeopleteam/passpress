@@ -6,13 +6,16 @@
 		}
 
 		container.addEventListener( 'click', function ( e ) {
-			if ( ! e.target.classList.contains( 'pp-cancel-booking-btn' ) ) {
+			var button = e.target.closest( '.pp-cancel-booking-btn' );
+			if ( ! button ) {
 				return;
 			}
 
-			var button     = e.target;
-			var bookingId  = button.dataset.bookingId;
-			var row        = button.closest( 'tr' );
+			var bookingId = button.dataset.bookingId;
+			var item      = button.closest( '.passpress-booking-item' );
+			var actions   = button.closest( '.passpress-booking-item-actions' );
+
+			button.disabled = true;
 
 			var body = new URLSearchParams();
 			body.append( 'action', 'pp_cancel_booking' );
@@ -22,15 +25,33 @@
 			fetch( PassPressMyBookings.ajaxUrl, { method: 'POST', body: body, credentials: 'same-origin' } )
 				.then( function ( response ) { return response.json(); } )
 				.then( function ( response ) {
-					if ( response.success && row ) {
-						var statusCell = row.querySelector( '.pp-booking-status' );
+					if ( response.success && item ) {
+						var statusCell = item.querySelector( '.pp-booking-status' );
+						var cancelledLabel = ( PassPressMyBookings.i18n && PassPressMyBookings.i18n.cancelled ) || 'Cancelled';
+
 						if ( statusCell ) {
-							statusCell.textContent = 'cancelled';
+							statusCell.dataset.status = 'cancelled';
+							statusCell.innerHTML = '<span class="pp-booking-status-dot" aria-hidden="true"></span>' + cancelledLabel;
 						}
-						button.remove();
-					} else if ( ! response.success ) {
-						alert( ( response.data && response.data.message ) || 'Could not cancel booking.' );
+
+						item.classList.remove( 'passpress-booking-status-confirmed' );
+						item.classList.add( 'passpress-booking-status-cancelled' );
+
+						if ( actions ) {
+							actions.remove();
+						} else {
+							button.remove();
+						}
+					} else {
+						button.disabled = false;
+						if ( ! response.success ) {
+							alert( ( response.data && response.data.message ) || 'Could not cancel booking.' );
+						}
 					}
+				} )
+				.catch( function () {
+					button.disabled = false;
+					alert( 'Could not cancel booking.' );
 				} );
 		} );
 	} );

@@ -64,35 +64,61 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php endif; ?>
 
 	<?php if ( ! empty( $bookings ) ) : ?>
-		<div class="passpress-my-bookings">
-			<h3><?php esc_html_e( 'My Bookings', 'passpress' ); ?></h3>
-			<table>
-				<thead>
-					<tr>
-						<th><?php esc_html_e( 'Facility', 'passpress' ); ?></th>
-						<th><?php esc_html_e( 'Date', 'passpress' ); ?></th>
-						<th><?php esc_html_e( 'Time', 'passpress' ); ?></th>
-						<th><?php esc_html_e( 'Status', 'passpress' ); ?></th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					<?php foreach ( $bookings as $booking ) : ?>
-						<tr>
-							<td><?php echo esc_html( get_the_title( $booking->facility_id ) ); ?></td>
-							<td><?php echo esc_html( pp_format_date( $booking->booking_date ) ); ?></td>
-							<td><?php echo esc_html( substr( $booking->start_time, 0, 5 ) . '–' . substr( $booking->end_time, 0, 5 ) ); ?></td>
-							<td class="pp-booking-status"><?php echo esc_html( $booking->status ); ?></td>
-							<td>
-								<?php if ( 'confirmed' === $booking->status ) : ?>
-									<button type="button" class="button pp-cancel-booking-btn" data-booking-id="<?php echo esc_attr( $booking->id ); ?>"><?php esc_html_e( 'Cancel', 'passpress' ); ?></button>
-								<?php endif; ?>
-							</td>
-						</tr>
-					<?php endforeach; ?>
-				</tbody>
-			</table>
-		</div>
+		<?php
+		$booking_status_labels = array(
+			'confirmed' => __( 'Confirmed', 'passpress' ),
+			'completed' => __( 'Completed', 'passpress' ),
+			'no_show'   => __( 'No show', 'passpress' ),
+			'cancelled' => __( 'Cancelled', 'passpress' ),
+		);
+		?>
+		<section class="passpress-my-bookings">
+			<header class="passpress-my-bookings-header">
+				<p class="passpress-my-bookings-eyebrow"><?php esc_html_e( 'Schedule', 'passpress' ); ?></p>
+				<h3 class="passpress-my-bookings-title"><?php esc_html_e( 'My Bookings', 'passpress' ); ?></h3>
+				<p class="passpress-my-bookings-desc"><?php esc_html_e( 'Upcoming and past facility sessions.', 'passpress' ); ?></p>
+			</header>
+
+			<ul class="passpress-my-bookings-list">
+				<?php foreach ( $bookings as $booking ) : ?>
+					<?php
+					$status       = (string) $booking->status;
+					$status_label = isset( $booking_status_labels[ $status ] )
+						? $booking_status_labels[ $status ]
+						: ucfirst( str_replace( '_', ' ', $status ) );
+					$time_label   = substr( $booking->start_time, 0, 5 ) . '–' . substr( $booking->end_time, 0, 5 );
+					?>
+					<li class="passpress-booking-item passpress-booking-status-<?php echo esc_attr( sanitize_html_class( $status ) ); ?>">
+						<div class="passpress-booking-item-main">
+							<div class="passpress-booking-item-top">
+								<h4 class="passpress-booking-facility"><?php echo esc_html( get_the_title( $booking->facility_id ) ); ?></h4>
+								<span class="pp-booking-status" data-status="<?php echo esc_attr( $status ); ?>">
+									<span class="pp-booking-status-dot" aria-hidden="true"></span>
+									<?php echo esc_html( $status_label ); ?>
+								</span>
+							</div>
+							<div class="passpress-booking-item-meta">
+								<span class="passpress-booking-date">
+									<span class="passpress-booking-meta-label"><?php esc_html_e( 'Date', 'passpress' ); ?></span>
+									<?php echo esc_html( pp_format_date( $booking->booking_date ) ); ?>
+								</span>
+								<span class="passpress-booking-time">
+									<span class="passpress-booking-meta-label"><?php esc_html_e( 'Time', 'passpress' ); ?></span>
+									<?php echo esc_html( $time_label ); ?>
+								</span>
+							</div>
+						</div>
+						<?php if ( 'confirmed' === $status ) : ?>
+							<div class="passpress-booking-item-actions">
+								<button type="button" class="pp-cancel-booking-btn" data-booking-id="<?php echo esc_attr( $booking->id ); ?>">
+									<?php esc_html_e( 'Cancel', 'passpress' ); ?>
+								</button>
+							</div>
+						<?php endif; ?>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+		</section>
 	<?php endif; ?>
 
 	<?php

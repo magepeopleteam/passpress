@@ -637,20 +637,231 @@
 }
 
 .passpress-my-bookings {
-	margin-top: 24px;
+	--pp-bk-ink: #0f172a;
+	--pp-bk-muted: #64748b;
+	--pp-bk-line: #e2e8f0;
+	--pp-bk-accent: #ff875f;
+	--pp-bk-accent-deep: #ff6b3d;
 	flex: 1 1 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	margin-top: 8px;
+	padding: 22px 24px;
+	border: 1px solid var(--pp-bk-line);
+	border-radius: 16px;
+	background:
+		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.14) 0%, transparent 55%),
+		linear-gradient(180deg, #fffaf8 0%, #ffffff 72%);
 }
 
-.passpress-my-bookings table {
-	width: 100%;
-	border-collapse: collapse;
+.passpress-my-bookings-header {
+	min-width: 0;
 }
 
-.passpress-my-bookings th,
-.passpress-my-bookings td {
-	text-align: left;
-	padding: 6px 8px;
-	border-bottom: 1px solid #eee;
+.passpress-my-bookings-eyebrow {
+	margin: 0 0 6px;
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--pp-bk-accent-deep);
+}
+
+.passpress-my-bookings-title {
+	margin: 0 0 6px;
+	font-size: 1.35rem;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	color: var(--pp-bk-ink);
+	line-height: 1.2;
+}
+
+.passpress-my-bookings-desc {
+	margin: 0;
+	font-size: 0.92rem;
+	line-height: 1.45;
+	color: var(--pp-bk-muted);
+}
+
+.passpress-my-bookings-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.passpress-booking-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 14px 18px;
+	padding: 14px 16px;
+	border: 1px solid var(--pp-bk-line);
+	border-radius: 12px;
+	background: #fff;
+	transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.passpress-booking-item:hover {
+	border-color: #fbc4b0;
+	box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+}
+
+.passpress-booking-item-main {
+	min-width: 0;
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.passpress-booking-item-top {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 12px;
+}
+
+.passpress-booking-facility {
+	margin: 0;
+	font-size: 1rem;
+	font-weight: 700;
+	letter-spacing: -0.01em;
+	color: var(--pp-bk-ink);
+	line-height: 1.3;
+}
+
+.pp-booking-status {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 9px;
+	border-radius: 999px;
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	line-height: 1;
+	background: #f1f5f9;
+	color: #475569;
+}
+
+.pp-booking-status-dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: currentColor;
+	flex: 0 0 auto;
+}
+
+.passpress-booking-status-confirmed .pp-booking-status {
+	background: #eaf7ee;
+	color: #146c34;
+}
+
+.passpress-booking-status-completed .pp-booking-status {
+	background: #e8f1ff;
+	color: #1d4ed8;
+}
+
+.passpress-booking-status-cancelled .pp-booking-status,
+.passpress-booking-status-no_show .pp-booking-status {
+	background: #fdecea;
+	color: #99251e;
+}
+
+.passpress-booking-status-cancelled,
+.passpress-booking-status-completed,
+.passpress-booking-status-no_show {
+	opacity: 0.92;
+	background: #fafbfc;
+}
+
+.passpress-booking-item-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 16px;
+}
+
+.passpress-booking-date,
+.passpress-booking-time {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 6px;
+	font-size: 0.9rem;
+	font-weight: 600;
+	color: var(--pp-bk-ink);
+}
+
+.passpress-booking-meta-label {
+	font-size: 0.68rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--pp-bk-muted);
+}
+
+.passpress-booking-item-actions {
+	flex: 0 0 auto;
+}
+
+.pp-cancel-booking-btn {
+	appearance: none;
+	cursor: pointer;
+	margin: 0;
+	padding: 8px 14px;
+	border-radius: 999px;
+	border: 1px solid #fecaca;
+	background: #fff;
+	color: #b91c1c;
+	font-size: 0.82rem;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	line-height: 1.2;
+	transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.pp-cancel-booking-btn:hover,
+.pp-cancel-booking-btn:focus {
+	background: #fef2f2;
+	border-color: #f87171;
+	color: #991b1b;
+	outline: none;
+}
+
+.pp-cancel-booking-btn:disabled {
+	opacity: 0.55;
+	cursor: wait;
+}
+
+@media (max-width: 560px) {
+	.passpress-my-bookings {
+		padding: 18px 16px;
+	}
+
+	.passpress-booking-item {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.passpress-booking-item-actions {
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	.pp-cancel-booking-btn {
+		width: 100%;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.passpress-booking-item,
+	.pp-cancel-booking-btn {
+		transition: none;
+	}
 }
 
 .passpress-invite-guest {

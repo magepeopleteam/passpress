@@ -206,6 +206,9 @@ class PP_Frontend {
 			array(
 				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
 				'nonce'   => wp_create_nonce( 'pp_booking' ),
+				'i18n'    => array(
+					'cancelled' => __( 'Cancelled', 'passpress' ),
+				),
 			)
 		);
 	}
