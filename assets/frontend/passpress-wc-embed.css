@@ -1,0 +1,394 @@
+/**
+ * Compact WooCommerce checkout styles for the PassPress modal iframe.
+ * Goal: billing + order summary + payment visible at a glance without scrolling.
+ */
+
+html,
+body.passpress-wc-embed {
+	margin: 0 !important;
+	padding: 0 !important;
+	background: #fff;
+	overflow: hidden;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+	font-size: 13px;
+	line-height: 1.35;
+	color: #0f172a;
+}
+
+body.passpress-wc-embed {
+	padding: 10px 12px !important;
+	box-sizing: border-box;
+	height: 100%;
+}
+
+#wpadminbar {
+	display: none !important;
+}
+
+html {
+	margin-top: 0 !important;
+}
+
+.passpress-wc-embed-wrap {
+	max-width: 100%;
+	margin: 0;
+	height: calc(100vh - 20px);
+	overflow: hidden;
+}
+
+.passpress-wc-embed-wrap .woocommerce-notices-wrapper:empty {
+	display: none;
+}
+
+.passpress-wc-embed-wrap .woocommerce-notices-wrapper .woocommerce-message,
+.passpress-wc-embed-wrap .woocommerce-notices-wrapper .woocommerce-info,
+.passpress-wc-embed-wrap .woocommerce-notices-wrapper .woocommerce-error {
+	margin: 0 0 8px;
+	padding: 8px 10px;
+	font-size: 12px;
+	border-radius: 8px;
+}
+
+/* Hide chrome that eats vertical space */
+.passpress-wc-embed .woocommerce-form-login-toggle,
+.passpress-wc-embed .woocommerce-form-coupon-toggle,
+.passpress-wc-embed form.checkout_coupon,
+.passpress-wc-embed form.login,
+.passpress-wc-embed .woocommerce-shipping-fields,
+.passpress-wc-embed #ship-to-different-address,
+.passpress-wc-embed .woocommerce-additional-fields,
+.passpress-wc-embed .woocommerce-privacy-policy-text,
+.passpress-wc-embed .woocommerce-terms-and-conditions-wrapper .woocommerce-terms-and-conditions,
+.passpress-wc-embed .woocommerce-info,
+.passpress-wc-embed h3#order_review_heading {
+	display: none !important;
+}
+
+.passpress-wc-embed .woocommerce-billing-fields h3,
+.passpress-wc-embed .woocommerce-billing-fields__field-wrapper + h3 {
+	margin: 0 0 8px;
+	font-size: 11px;
+	font-weight: 800;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: #64748b;
+}
+
+/* Two-column checkout: customer | order+pay */
+.passpress-wc-embed form.woocommerce-checkout,
+.passpress-wc-embed form.checkout {
+	display: grid !important;
+	grid-template-columns: 1.05fr 0.95fr;
+	grid-template-rows: auto 1fr;
+	gap: 12px 16px;
+	align-items: stretch;
+	margin: 0;
+	height: 100%;
+}
+
+.passpress-wc-embed #customer_details {
+	grid-column: 1;
+	grid-row: 1 / span 2;
+	width: 100% !important;
+	float: none !important;
+	margin: 0 !important;
+	padding: 12px;
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
+	box-sizing: border-box;
+	overflow: auto;
+	max-height: calc(100vh - 24px);
+}
+
+.passpress-wc-embed #customer_details .col2-set,
+.passpress-wc-embed #customer_details .col-1,
+.passpress-wc-embed #customer_details .col-2 {
+	width: 100% !important;
+	float: none !important;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+.passpress-wc-embed #order_review_heading {
+	grid-column: 2;
+	grid-row: 1;
+	margin: 0;
+	padding: 0;
+}
+
+.passpress-wc-embed #order_review {
+	grid-column: 2;
+	grid-row: 1 / span 2;
+	width: 100% !important;
+	float: none !important;
+	margin: 0 !important;
+	padding: 12px;
+	background: #fff;
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	max-height: calc(100vh - 24px);
+	overflow: hidden;
+}
+
+/* Dense fields */
+.passpress-wc-embed .woocommerce-billing-fields__field-wrapper {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px 10px;
+}
+
+.passpress-wc-embed .form-row {
+	margin: 0 !important;
+	padding: 0 !important;
+	width: 100% !important;
+	float: none !important;
+}
+
+.passpress-wc-embed .form-row-wide,
+.passpress-wc-embed #billing_address_1_field,
+.passpress-wc-embed #billing_email_field,
+.passpress-wc-embed #billing_country_field {
+	grid-column: 1 / -1;
+}
+
+.passpress-wc-embed .form-row label {
+	display: block;
+	margin: 0 0 3px;
+	font-size: 11px;
+	font-weight: 700;
+	color: #334155;
+	line-height: 1.2;
+}
+
+.passpress-wc-embed .form-row label .required {
+	color: #ef4444;
+}
+
+.passpress-wc-embed .form-row input.input-text,
+.passpress-wc-embed .form-row select,
+.passpress-wc-embed .form-row textarea,
+.passpress-wc-embed .select2-container .select2-selection--single {
+	width: 100% !important;
+	box-sizing: border-box;
+	min-height: 34px;
+	height: 34px;
+	padding: 6px 10px !important;
+	border: 1px solid #d8dee8 !important;
+	border-radius: 8px !important;
+	font-size: 13px !important;
+	background: #fff;
+	box-shadow: none !important;
+}
+
+.passpress-wc-embed .select2-container .select2-selection--single .select2-selection__rendered {
+	line-height: 32px !important;
+	padding-left: 10px !important;
+	font-size: 13px;
+}
+
+.passpress-wc-embed .select2-container .select2-selection--single .select2-selection__arrow {
+	height: 32px !important;
+}
+
+.passpress-wc-embed .form-row textarea {
+	height: auto;
+	min-height: 52px;
+}
+
+/* Order table compact */
+.passpress-wc-embed .woocommerce-checkout-review-order-table {
+	width: 100%;
+	margin: 0;
+	border-collapse: collapse;
+	font-size: 13px;
+}
+
+.passpress-wc-embed .woocommerce-checkout-review-order-table thead {
+	display: none;
+}
+
+.passpress-wc-embed .woocommerce-checkout-review-order-table th,
+.passpress-wc-embed .woocommerce-checkout-review-order-table td {
+	padding: 6px 0 !important;
+	border: none !important;
+	background: transparent !important;
+	vertical-align: top;
+}
+
+.passpress-wc-embed .woocommerce-checkout-review-order-table tfoot th {
+	font-weight: 600;
+	color: #64748b;
+	text-align: left;
+}
+
+.passpress-wc-embed .woocommerce-checkout-review-order-table tfoot .order-total th,
+.passpress-wc-embed .woocommerce-checkout-review-order-table tfoot .order-total td {
+	padding-top: 8px !important;
+	border-top: 1px dashed #d8dee8 !important;
+	font-size: 15px;
+	font-weight: 800;
+	color: #0f172a;
+}
+
+.passpress-wc-embed .woocommerce-checkout-review-order-table .product-name {
+	font-weight: 700;
+}
+
+.passpress-wc-embed .woocommerce-checkout-review-order-table .product-quantity {
+	font-weight: 500;
+	color: #64748b;
+}
+
+/* Payment methods compact */
+.passpress-wc-embed #payment {
+	margin: 0 !important;
+	padding: 0 !important;
+	background: transparent !important;
+	border: none !important;
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+}
+
+.passpress-wc-embed #payment ul.payment_methods {
+	margin: 0 0 8px !important;
+	padding: 0 !important;
+	border: none !important;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	overflow: auto;
+	max-height: 180px;
+}
+
+.passpress-wc-embed #payment ul.payment_methods li {
+	margin: 0 !important;
+	padding: 0 !important;
+	border: none !important;
+	list-style: none !important;
+}
+
+.passpress-wc-embed #payment ul.payment_methods li > label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+	padding: 8px 10px;
+	border: 1px solid #d8dee8;
+	border-radius: 8px;
+	font-size: 13px;
+	font-weight: 700;
+	cursor: pointer;
+	background: #fff;
+}
+
+.passpress-wc-embed #payment ul.payment_methods li input[type="radio"] {
+	margin: 0;
+}
+
+.passpress-wc-embed #payment ul.payment_methods li.wc_payment_method > input:checked + label,
+.passpress-wc-embed #payment ul.payment_methods li > label:has(+ .payment_box),
+.passpress-wc-embed #payment .wc_payment_method:has(> input:checked) > label {
+	border-color: #ff8f70;
+	background: #fff7f4;
+}
+
+.passpress-wc-embed #payment div.payment_box {
+	margin: 6px 0 0 !important;
+	padding: 8px 10px !important;
+	background: #f8fafc !important;
+	border: 1px solid #e2e8f0 !important;
+	border-radius: 8px !important;
+	font-size: 12px !important;
+	line-height: 1.35;
+	color: #475569;
+}
+
+.passpress-wc-embed #payment div.payment_box::before {
+	display: none !important;
+}
+
+.passpress-wc-embed #payment div.payment_box p {
+	margin: 0 !important;
+}
+
+.passpress-wc-embed #payment .form-row.place-order {
+	margin: auto 0 0 !important;
+	padding: 8px 0 0 !important;
+	border-top: 1px solid #e2e8f0;
+}
+
+.passpress-wc-embed #payment #place_order,
+.passpress-wc-embed #payment button[name="woocommerce_checkout_place_order"] {
+	width: 100%;
+	margin: 0 !important;
+	padding: 12px 14px !important;
+	border: none !important;
+	border-radius: 10px !important;
+	background: #ff9b7a !important;
+	color: #fff !important;
+	font-size: 14px !important;
+	font-weight: 800 !important;
+	cursor: pointer;
+	float: none !important;
+}
+
+.passpress-wc-embed #payment #place_order:hover {
+	background: #ff875f !important;
+}
+
+.passpress-wc-embed .woocommerce-terms-and-conditions-wrapper {
+	margin: 0 0 8px;
+	font-size: 11px;
+	color: #64748b;
+}
+
+.passpress-wc-embed .woocommerce-terms-and-conditions-wrapper label {
+	font-size: 12px;
+}
+
+/* Order received */
+.passpress-wc-embed .woocommerce-order {
+	padding: 8px;
+}
+
+.passpress-wc-embed .woocommerce-order .woocommerce-notice {
+	margin-bottom: 8px;
+}
+
+@media (max-width: 720px) {
+	body.passpress-wc-embed {
+		overflow: auto;
+		height: auto;
+	}
+
+	.passpress-wc-embed-wrap {
+		height: auto;
+		overflow: visible;
+	}
+
+	.passpress-wc-embed form.woocommerce-checkout,
+	.passpress-wc-embed form.checkout {
+		display: flex !important;
+		flex-direction: column;
+		height: auto;
+		gap: 10px;
+	}
+
+	.passpress-wc-embed #customer_details,
+	.passpress-wc-embed #order_review {
+		max-height: none;
+		overflow: visible;
+	}
+
+	.passpress-wc-embed #payment ul.payment_methods {
+		max-height: none;
+	}
+}

@@ -136,30 +136,41 @@ class PP_Frontend {
 	public static function enqueue_plan_list_assets() {
 		wp_enqueue_style( 'passpress-frontend' );
 
-		if ( ! PP_Billing::is_native_mode() || ! PP_Billing::is_billing_available() ) {
+		$native_ok = PP_Billing::is_native_mode() && PP_Billing::is_billing_available();
+		$wc_ok     = PP_Billing::is_woocommerce_mode() && class_exists( 'PP_Shop_WooCommerce' ) && PP_Shop_WooCommerce::is_available();
+
+		if ( ! $native_ok && ! $wc_ok ) {
 			return;
 		}
 
 		self::$checkout_modal_queued = true;
 
-		$billing = PP_Billing::get_settings();
+		$billing  = PP_Billing::get_settings();
+		$my_pass  = pp_find_shortcode_page_url( 'passpress_my_pass' );
+		$mode     = $wc_ok ? 'woocommerce' : 'native';
+
 		wp_enqueue_script( 'passpress-checkout-modal' );
 		wp_localize_script(
 			'passpress-checkout-modal',
 			'PassPressCheckout',
 			array(
 				'ajaxUrl'             => admin_url( 'admin-ajax.php' ),
+				'paymentMode'         => $mode,
 				'isLoggedIn'          => is_user_logged_in(),
 				'loginUrl'            => wp_login_url( is_singular() ? get_permalink() : home_url( '/' ) ),
+				'passUrl'             => $my_pass ? $my_pass : home_url( '/' ),
 				'offlineInstructions' => ! empty( $billing['offline_instructions'] )
 					? $billing['offline_instructions']
 					: __( 'Please pay via bank transfer or at the front desk. We will confirm your membership once payment is received.', 'passpress' ),
 				'i18n'                => array(
-					'pass'        => __( 'Pass', 'passpress' ),
-					'payNow'      => __( 'Pay now', 'passpress' ),
-					'processing'  => __( 'Processing…', 'passpress' ),
-					'needGateway' => __( 'Please choose a payment method.', 'passpress' ),
-					'error'       => __( 'Something went wrong. Please try again.', 'passpress' ),
+					'pass'                 => __( 'Pass', 'passpress' ),
+					'payNow'               => __( 'Pay now', 'passpress' ),
+					'completeRegistration' => __( 'Complete Registration', 'passpress' ),
+					'processing'           => __( 'Processing…', 'passpress' ),
+					'needGateway'          => __( 'Please choose a payment method.', 'passpress' ),
+					'needMemberInfo'       => __( 'Please fill in all membership information fields.', 'passpress' ),
+					'wcSuccess'            => __( 'Payment received! Your membership will activate shortly.', 'passpress' ),
+					'error'                => __( 'Something went wrong. Please try again.', 'passpress' ),
 				),
 			)
 		);
@@ -173,12 +184,17 @@ class PP_Frontend {
 		if ( ! self::$checkout_modal_queued ) {
 			return;
 		}
-		if ( ! PP_Billing::is_native_mode() || ! PP_Billing::is_billing_available() ) {
+
+		$native_ok = PP_Billing::is_native_mode() && PP_Billing::is_billing_available();
+		$wc_ok     = PP_Billing::is_woocommerce_mode() && class_exists( 'PP_Shop_WooCommerce' ) && PP_Shop_WooCommerce::is_available();
+
+		if ( ! $native_ok && ! $wc_ok ) {
 			return;
 		}
 
-		$gateways = PP_Billing::get_checkout_gateways();
-		$settings = pp_get_settings();
+		$payment_mode = $wc_ok ? 'woocommerce' : 'native';
+		$gateways     = $native_ok ? PP_Billing::get_checkout_gateways() : array();
+		$settings     = pp_get_settings();
 		include PASSPRESS_PLUGIN_DIR . '/templates/checkout/checkout-modal.php';
 	}
 

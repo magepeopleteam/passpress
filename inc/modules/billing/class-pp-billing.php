@@ -442,10 +442,12 @@ class PP_Billing {
 		}
 
 		$full_name = isset( $_POST['full_name'] ) ? sanitize_text_field( wp_unslash( $_POST['full_name'] ) ) : '';
+		$phone     = isset( $_POST['phone'] ) ? sanitize_text_field( wp_unslash( $_POST['phone'] ) ) : '';
 		$email     = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
+		$address   = isset( $_POST['address'] ) ? sanitize_text_field( wp_unslash( $_POST['address'] ) ) : '';
 
-		if ( ! $full_name || ! is_email( $email ) ) {
-			wp_send_json_error( array( 'message' => __( 'Please enter your full name and a valid email.', 'passpress' ) ) );
+		if ( ! $full_name || ! $phone || ! is_email( $email ) || ! $address ) {
+			wp_send_json_error( array( 'message' => __( 'Please enter your full name, phone, email, and address.', 'passpress' ) ) );
 		}
 
 		if ( ! is_user_logged_in() ) {
@@ -467,6 +469,9 @@ class PP_Billing {
 				)
 			);
 		}
+		update_user_meta( $user->ID, 'billing_phone', $phone );
+		update_user_meta( $user->ID, 'billing_address_1', $address );
+		update_user_meta( $user->ID, 'billing_email', $email );
 
 		$plan = get_post( $plan_id );
 		if ( ! $plan || 'pp_membership_plan' !== $plan->post_type || 'publish' !== $plan->post_status ) {

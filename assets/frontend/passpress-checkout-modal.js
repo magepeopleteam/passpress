@@ -5,10 +5,6 @@
 		return ( root || document ).querySelector( sel );
 	}
 
-	function qsa( sel, root ) {
-		return Array.prototype.slice.call( ( root || document ).querySelectorAll( sel ) );
-	}
-
 	function ready( fn ) {
 		if ( document.readyState !== 'loading' ) {
 			fn();
@@ -28,6 +24,11 @@
 		var notice = qs( '.passpress-checkout-modal-notice', overlay );
 		var submitBtn = document.getElementById( 'pp_modal_submit' );
 		var gatewayInput = document.getElementById( 'pp_modal_gateway' );
+		var stepForm = document.getElementById( 'pp_modal_step_form' );
+		var stepWc = document.getElementById( 'pp_modal_step_wc' );
+		var wcIframe = document.getElementById( 'pp_modal_wc_iframe' );
+		var modalBox = qs( '.passpress-checkout-modal', overlay );
+		var paymentMode = overlay.getAttribute( 'data-payment-mode' ) || cfg.paymentMode || 'native';
 		var state = {
 			basePrice: 0,
 			baseLabel: '',
@@ -53,10 +54,13 @@
 		}
 
 		function syncGatewayFromUi() {
+			if ( paymentMode !== 'native' || ! gatewayInput ) {
+				return;
+			}
 			var checked = qs( 'input[data-sync-gateway]:checked', form );
-			if ( checked && gatewayInput ) {
+			if ( checked ) {
 				gatewayInput.value = checked.value;
-			} else if ( gatewayInput && ! gatewayInput.value ) {
+			} else if ( ! gatewayInput.value ) {
 				var first = qs( 'input[data-sync-gateway]', form );
 				if ( first ) {
 					gatewayInput.value = first.value;
@@ -67,10 +71,10 @@
 
 		function toggleCardFields() {
 			var cardFields = document.getElementById( 'pp_modal_card_fields' );
-			if ( ! cardFields ) {
+			if ( ! cardFields || ! gatewayInput ) {
 				return;
 			}
-			var gateway = gatewayInput ? String( gatewayInput.value || '' ) : '';
+			var gateway = String( gatewayInput.value || '' );
 			var showCards = gateway === 'stripe';
 			if ( showCards ) {
 				cardFields.hidden = false;
@@ -85,7 +89,48 @@
 			}
 		}
 
+		function showFormStep() {
+			if ( stepForm ) {
+				stepForm.hidden = false;
+			}
+			if ( stepWc ) {
+				stepWc.hidden = true;
+			}
+			if ( wcIframe ) {
+				wcIframe.src = 'about:blank';
+			}
+			if ( modalBox ) {
+				modalBox.classList.remove( 'is-wc-checkout' );
+			}
+		}
+
+		function showWcStep( checkoutUrl ) {
+			if ( stepForm ) {
+				stepForm.hidden = true;
+			}
+			if ( stepWc ) {
+				stepWc.hidden = false;
+			}
+			if ( modalBox ) {
+				modalBox.classList.add( 'is-wc-checkout' );
+			}
+			if ( wcIframe && checkoutUrl ) {
+				wcIframe.src = checkoutUrl;
+			}
+			showNotice( '', false );
+		}
+
 		function openModal( trigger ) {
+			paymentMode = trigger.getAttribute( 'data-payment-mode' )
+				|| overlay.getAttribute( 'data-payment-mode' )
+				|| cfg.paymentMode
+				|| 'native';
+			overlay.setAttribute( 'data-payment-mode', paymentMode );
+			var modeField = document.getElementById( 'pp_modal_payment_mode' );
+			if ( modeField ) {
+				modeField.value = paymentMode;
+			}
+
 			document.getElementById( 'pp_modal_plan_id' ).value = trigger.getAttribute( 'data-plan-id' ) || '';
 			document.getElementById( 'pp_modal_renew_id' ).value = trigger.getAttribute( 'data-renew-id' ) || '0';
 			document.getElementById( 'pp_modal_nonce' ).value = trigger.getAttribute( 'data-nonce' ) || '';
@@ -103,12 +148,12 @@
 			if ( couponMsg ) {
 				couponMsg.hidden = true;
 			}
-			document.getElementById( 'pp_modal_is_gift' ).checked = false;
 			syncGatewayFromUi();
 			toggleCardFields();
 			updateTotals();
 			updateSubmitState();
 			showNotice( '', false );
+			showFormStep();
 
 			overlay.hidden = false;
 			overlay.style.display = 'flex';
@@ -122,6 +167,7 @@
 		}
 
 		function closeModal() {
+			showFormStep();
 			overlay.hidden = true;
 			overlay.style.display = 'none';
 			overlay.setAttribute( 'aria-hidden', 'true' );
@@ -147,10 +193,25 @@
 				return;
 			}
 			submitBtn.disabled = false;
-			submitBtn.textContent = ( cfg.i18n && cfg.i18n.payNow ) || 'Pay now';
+			if ( paymentMode === 'woocommerce' ) {
+				submitBtn.textContent = ( cfg.i18n && cfg.i18n.completeRegistration ) || 'Complete Registration';
+			} else {
+				submitBtn.textContent = ( cfg.i18n && cfg.i18n.payNow ) || 'Pay now';
+			}
 		}
 
-		// Capture-phase so we beat other handlers / theme links.
+		function validateMemberFields() {
+			var fullName = ( document.getElementById( 'pp_modal_full_name' ).value || '' ).trim();
+			var phone = ( document.getElementById( 'pp_modal_phone' ).value || '' ).trim();
+			var email = ( document.getElementById( 'pp_modal_email' ).value || '' ).trim();
+			var address = ( document.getElementById( 'pp_modal_address' ).value || '' ).trim();
+			if ( ! fullName || ! phone || ! email || ! address ) {
+				showNotice( ( cfg.i18n && cfg.i18n.needMemberInfo ) || 'Please fill in all membership information fields.', true );
+				return false;
+			}
+			return true;
+		}
+
 		document.addEventListener( 'click', function ( e ) {
 			var trigger = e.target.closest ? e.target.closest( '.passpress-open-checkout' ) : null;
 			if ( trigger ) {
@@ -177,7 +238,6 @@
 			}
 		} );
 
-		// Toggle card fields on the same click as gateway selection (under Stripe).
 		if ( form ) {
 			form.addEventListener( 'change', function ( e ) {
 				if ( e.target && e.target.getAttribute( 'data-sync-gateway' ) !== null ) {
@@ -259,64 +319,148 @@
 			} );
 		}
 
+		function submitNative( e ) {
+			e.preventDefault();
+			if ( ! validateMemberFields() ) {
+				return;
+			}
+			syncGatewayFromUi();
+
+			if ( ! gatewayInput || ! gatewayInput.value ) {
+				showNotice( ( cfg.i18n && cfg.i18n.needGateway ) || 'Please choose a payment method.', true );
+				return;
+			}
+
+			submitBtn.disabled = true;
+			var original = submitBtn.textContent;
+			submitBtn.textContent = ( cfg.i18n && cfg.i18n.processing ) || 'Processing…';
+			showNotice( '', false );
+
+			var body = new FormData( form );
+			body.set( 'gateway', gatewayInput.value );
+			body.append( 'action', 'passpress_modal_checkout' );
+
+			fetch( cfg.ajaxUrl || '/wp-admin/admin-ajax.php', { method: 'POST', body: body, credentials: 'same-origin' } )
+				.then( function ( r ) { return r.json(); } )
+				.then( function ( resp ) {
+					if ( ! resp || ! resp.success ) {
+						submitBtn.disabled = false;
+						updateSubmitState();
+						submitBtn.textContent = original;
+						showNotice( ( resp && resp.data && resp.data.message ) || 'Something went wrong.', true );
+						if ( resp && resp.data && resp.data.loginUrl ) {
+							window.setTimeout( function () {
+								window.location.href = resp.data.loginUrl;
+							}, 1000 );
+						}
+						return;
+					}
+					if ( resp.data.state === 'redirect' && resp.data.redirect ) {
+						window.location.href = resp.data.redirect;
+						return;
+					}
+					if ( resp.data.state === 'success' ) {
+						showNotice( resp.data.message || 'Payment received!', false );
+						window.setTimeout( function () {
+							window.location.href = resp.data.passUrl || window.location.href;
+						}, 800 );
+						return;
+					}
+					showNotice( resp.data.message || '', false );
+					submitBtn.disabled = false;
+					updateSubmitState();
+					submitBtn.textContent = original;
+				} )
+				.catch( function () {
+					submitBtn.disabled = false;
+					updateSubmitState();
+					submitBtn.textContent = original;
+					showNotice( 'Something went wrong.', true );
+				} );
+		}
+
+		function submitWooCommerce( e ) {
+			e.preventDefault();
+			if ( ! validateMemberFields() ) {
+				return;
+			}
+
+			submitBtn.disabled = true;
+			var original = submitBtn.textContent;
+			submitBtn.textContent = ( cfg.i18n && cfg.i18n.processing ) || 'Processing…';
+			showNotice( '', false );
+
+			var body = new FormData( form );
+			body.append( 'action', 'passpress_wc_prepare_checkout' );
+
+			fetch( cfg.ajaxUrl || '/wp-admin/admin-ajax.php', { method: 'POST', body: body, credentials: 'same-origin' } )
+				.then( function ( r ) { return r.json(); } )
+				.then( function ( resp ) {
+					if ( ! resp || ! resp.success ) {
+						submitBtn.disabled = false;
+						updateSubmitState();
+						submitBtn.textContent = original;
+						showNotice( ( resp && resp.data && resp.data.message ) || 'Something went wrong.', true );
+						if ( resp && resp.data && resp.data.loginUrl ) {
+							window.setTimeout( function () {
+								window.location.href = resp.data.loginUrl;
+							}, 1200 );
+						}
+						return;
+					}
+					submitBtn.disabled = false;
+					updateSubmitState();
+					submitBtn.textContent = original;
+					if ( resp.data.checkoutUrl ) {
+						showWcStep( resp.data.checkoutUrl );
+						return;
+					}
+					showNotice( ( cfg.i18n && cfg.i18n.error ) || 'Something went wrong.', true );
+				} )
+				.catch( function () {
+					submitBtn.disabled = false;
+					updateSubmitState();
+					submitBtn.textContent = original;
+					showNotice( 'Something went wrong.', true );
+				} );
+		}
+
 		if ( form ) {
 			form.addEventListener( 'submit', function ( e ) {
-				e.preventDefault();
-				syncGatewayFromUi();
-
-				if ( ! gatewayInput || ! gatewayInput.value ) {
-					showNotice( ( cfg.i18n && cfg.i18n.needGateway ) || 'Please choose a payment method.', true );
-					return;
+				var mode = document.getElementById( 'pp_modal_payment_mode' );
+				paymentMode = ( mode && mode.value ) || paymentMode;
+				if ( paymentMode === 'woocommerce' ) {
+					submitWooCommerce( e );
+				} else {
+					submitNative( e );
 				}
-
-				submitBtn.disabled = true;
-				var original = submitBtn.textContent;
-				submitBtn.textContent = ( cfg.i18n && cfg.i18n.processing ) || 'Processing…';
-				showNotice( '', false );
-
-				var body = new FormData( form );
-				body.set( 'gateway', gatewayInput.value );
-				body.append( 'action', 'passpress_modal_checkout' );
-
-				fetch( cfg.ajaxUrl || '/wp-admin/admin-ajax.php', { method: 'POST', body: body, credentials: 'same-origin' } )
-					.then( function ( r ) { return r.json(); } )
-					.then( function ( resp ) {
-						if ( ! resp || ! resp.success ) {
-							submitBtn.disabled = false;
-							updateSubmitState();
-							submitBtn.textContent = original;
-							showNotice( ( resp && resp.data && resp.data.message ) || 'Something went wrong.', true );
-							if ( resp && resp.data && resp.data.loginUrl ) {
-								window.setTimeout( function () {
-									window.location.href = resp.data.loginUrl;
-								}, 1000 );
-							}
-							return;
-						}
-						if ( resp.data.state === 'redirect' && resp.data.redirect ) {
-							window.location.href = resp.data.redirect;
-							return;
-						}
-						if ( resp.data.state === 'success' ) {
-							showNotice( resp.data.message || 'Payment received!', false );
-							window.setTimeout( function () {
-								window.location.href = resp.data.passUrl || window.location.href;
-							}, 800 );
-							return;
-						}
-						showNotice( resp.data.message || '', false );
-						submitBtn.disabled = false;
-						updateSubmitState();
-						submitBtn.textContent = original;
-					} )
-					.catch( function () {
-						submitBtn.disabled = false;
-						updateSubmitState();
-						submitBtn.textContent = original;
-						showNotice( 'Something went wrong.', true );
-					} );
 			} );
 		}
+
+		window.addEventListener( 'message', function ( e ) {
+			if ( e.origin !== window.location.origin ) {
+				return;
+			}
+			var data = e.data || {};
+			if ( data.type === 'passpress_wc_checkout_resize' && data.height ) {
+				var frameWrap = qs( '.passpress-checkout-wc-frame-wrap', overlay );
+				var next = Math.max( 420, Math.min( parseInt( data.height, 10 ) || 0, Math.floor( window.innerHeight * 0.78 ) ) );
+				if ( frameWrap && next ) {
+					frameWrap.style.height = next + 'px';
+				}
+				if ( wcIframe && next ) {
+					wcIframe.style.height = next + 'px';
+					wcIframe.style.minHeight = next + 'px';
+				}
+				return;
+			}
+			if ( data.type === 'passpress_wc_checkout_complete' ) {
+				showNotice( ( cfg.i18n && cfg.i18n.wcSuccess ) || 'Payment received! Your membership will activate shortly.', false );
+				window.setTimeout( function () {
+					window.location.href = cfg.passUrl || window.location.href;
+				}, 900 );
+			}
+		} );
 
 		updateSubmitState();
 		toggleCardFields();

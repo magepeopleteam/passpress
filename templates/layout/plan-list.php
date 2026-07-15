@@ -71,7 +71,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<div class="passpress-plan-cta-group">
 						<?php if ( PP_Billing::is_woocommerce_mode() ) : ?>
 							<?php if ( $shop_url ) : ?>
-								<a class="passpress-plan-btn passpress-plan-btn-primary" href="<?php echo esc_url( $shop_url ); ?>">
+								<a
+									class="passpress-plan-btn passpress-plan-btn-primary passpress-open-checkout"
+									href="<?php echo esc_url( $shop_url ); ?>"
+									role="button"
+									data-payment-mode="woocommerce"
+									data-plan-id="<?php echo esc_attr( $plan->ID ); ?>"
+									data-plan-name="<?php echo esc_attr( $plan->post_title ); ?>"
+									data-plan-price="<?php echo esc_attr( number_format( $price, 2, '.', '' ) ); ?>"
+									data-plan-price-label="<?php echo esc_attr( $price_label ); ?>"
+									data-nonce="<?php echo esc_attr( wp_create_nonce( 'passpress_checkout_' . $plan->ID ) ); ?>"
+								>
 									<?php esc_html_e( 'Get this pass', 'passpress' ); ?>
 								</a>
 							<?php else : ?>
@@ -82,6 +92,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								class="passpress-plan-btn passpress-plan-btn-primary passpress-open-checkout"
 								href="#"
 								role="button"
+								data-payment-mode="native"
 								data-checkout-url="<?php echo esc_url( PP_Billing::checkout_url( $plan->ID ) ); ?>"
 								data-plan-id="<?php echo esc_attr( $plan->ID ); ?>"
 								data-plan-name="<?php echo esc_attr( $plan->post_title ); ?>"

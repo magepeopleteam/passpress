@@ -30,8 +30,114 @@ class PP_Shop_WooCommerce {
 
 		add_action( 'save_post_pp_membership_plan', array( __CLASS__, 'sync_product_for_plan' ), 20 );
 		add_action( 'woocommerce_order_status_completed', array( __CLASS__, 'handle_order_completed' ) );
+		add_action( 'woocommerce_order_status_processing', array( __CLASS__, 'handle_order_completed' ) );
 		add_action( 'add_meta_boxes', array( __CLASS__, 'add_meta_box' ) );
 		add_action( 'update_option_passpress_billing_settings', array( __CLASS__, 'maybe_sync_all_on_billing_change' ), 10, 2 );
+
+		add_action( 'wp_ajax_passpress_wc_prepare_checkout', array( __CLASS__, 'ajax_prepare_checkout' ) );
+		add_action( 'wp_ajax_nopriv_passpress_wc_prepare_checkout', array( __CLASS__, 'ajax_prepare_checkout' ) );
+		add_action( 'template_redirect', array( __CLASS__, 'maybe_serve_embed_checkout' ), 5 );
+		add_action( 'woocommerce_cart_calculate_fees', array( __CLASS__, 'apply_modal_coupon_fee' ) );
+		add_filter( 'woocommerce_checkout_get_value', array( __CLASS__, 'prefill_checkout_from_session' ), 10, 2 );
+		add_filter( 'woocommerce_get_checkout_order_received_url', array( __CLASS__, 'keep_embed_on_order_received' ), 10, 2 );
+
+		if ( ! empty( $_GET['passpress_wc_embed'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			self::register_embed_checkout_filters();
+		}
+	}
+
+	/**
+	 * Whether the current request is the PassPress modal checkout iframe.
+	 */
+	public static function is_embed_request() {
+		return ! empty( $_GET['passpress_wc_embed'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	}
+
+	/**
+	 * Compact field / chrome filters used only inside the modal iframe checkout.
+	 */
+	public static function register_embed_checkout_filters() {
+		static $done = false;
+		if ( $done ) {
+			return;
+		}
+		$done = true;
+
+		add_filter( 'woocommerce_checkout_fields', array( __CLASS__, 'compact_embed_checkout_fields' ) );
+		add_filter( 'woocommerce_enable_order_notes_field', '__return_false' );
+		add_filter( 'woocommerce_cart_needs_shipping_address', '__return_false' );
+		add_filter( 'body_class', array( __CLASS__, 'embed_body_class' ) );
+		add_filter( 'woocommerce_checkout_posted_data', array( __CLASS__, 'normalize_embed_posted_data' ) );
+	}
+
+	/**
+	 * Slim billing fields for the modal: full name, phone, email, address, city/postcode/country.
+	 *
+	 * @param array $fields Checkout fields.
+	 * @return array
+	 */
+	public static function compact_embed_checkout_fields( $fields ) {
+		if ( isset( $fields['billing']['billing_company'] ) ) {
+			unset( $fields['billing']['billing_company'] );
+		}
+		if ( isset( $fields['billing']['billing_address_2'] ) ) {
+			unset( $fields['billing']['billing_address_2'] );
+		}
+		if ( isset( $fields['billing']['billing_last_name'] ) ) {
+			unset( $fields['billing']['billing_last_name'] );
+		}
+		if ( isset( $fields['order']['order_comments'] ) ) {
+			unset( $fields['order']['order_comments'] );
+		}
+		if ( isset( $fields['shipping'] ) ) {
+			$fields['shipping'] = array();
+		}
+
+		if ( isset( $fields['billing']['billing_first_name'] ) ) {
+			$fields['billing']['billing_first_name']['label']    = __( 'Full name', 'passpress' );
+			$fields['billing']['billing_first_name']['class']    = array( 'form-row-wide' );
+			$fields['billing']['billing_first_name']['priority'] = 10;
+		}
+		if ( isset( $fields['billing']['billing_phone'] ) ) {
+			$fields['billing']['billing_phone']['class']    = array( 'form-row-first' );
+			$fields['billing']['billing_phone']['priority'] = 20;
+		}
+		if ( isset( $fields['billing']['billing_email'] ) ) {
+			$fields['billing']['billing_email']['class']    = array( 'form-row-last' );
+			$fields['billing']['billing_email']['priority'] = 30;
+		}
+		if ( isset( $fields['billing']['billing_address_1'] ) ) {
+			$fields['billing']['billing_address_1']['label']    = __( 'Address', 'passpress' );
+			$fields['billing']['billing_address_1']['class']    = array( 'form-row-wide' );
+			$fields['billing']['billing_address_1']['priority'] = 40;
+		}
+		if ( isset( $fields['billing']['billing_city'] ) ) {
+			$fields['billing']['billing_city']['class']    = array( 'form-row-first' );
+			$fields['billing']['billing_city']['priority'] = 50;
+		}
+		if ( isset( $fields['billing']['billing_postcode'] ) ) {
+			$fields['billing']['billing_postcode']['class']    = array( 'form-row-last' );
+			$fields['billing']['billing_postcode']['priority'] = 60;
+		}
+		if ( isset( $fields['billing']['billing_state'] ) ) {
+			$fields['billing']['billing_state']['class']    = array( 'form-row-first' );
+			$fields['billing']['billing_state']['priority'] = 70;
+		}
+		if ( isset( $fields['billing']['billing_country'] ) ) {
+			$fields['billing']['billing_country']['class']    = array( 'form-row-last' );
+			$fields['billing']['billing_country']['priority'] = 80;
+		}
+
+		return $fields;
+	}
+
+	/**
+	 * @param string[] $classes Body classes.
+	 * @return string[]
+	 */
+	public static function embed_body_class( $classes ) {
+		$classes[] = 'passpress-wc-embed';
+		return $classes;
 	}
 
 	public static function is_available() {
@@ -216,6 +322,275 @@ class PP_Shop_WooCommerce {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Registration step from the Get this Pass modal (WooCommerce mode).
+	 * Creates/logs in the member, puts the plan product in cart, applies
+	 * any PassPress coupon as a cart fee, and returns an embeddable checkout URL.
+	 */
+	public static function ajax_prepare_checkout() {
+		if ( ! self::is_available() || ! PP_Billing::is_woocommerce_mode() ) {
+			wp_send_json_error( array( 'message' => __( 'WooCommerce checkout is not enabled.', 'passpress' ) ) );
+		}
+
+		$plan_id = isset( $_POST['plan_id'] ) ? absint( $_POST['plan_id'] ) : 0;
+		$nonce   = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
+
+		if ( ! $plan_id || ! wp_verify_nonce( $nonce, 'passpress_checkout_' . $plan_id ) ) {
+			wp_send_json_error( array( 'message' => __( 'Security check failed.', 'passpress' ) ) );
+		}
+
+		$full_name = isset( $_POST['full_name'] ) ? sanitize_text_field( wp_unslash( $_POST['full_name'] ) ) : '';
+		$phone     = isset( $_POST['phone'] ) ? sanitize_text_field( wp_unslash( $_POST['phone'] ) ) : '';
+		$email     = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
+		$address   = isset( $_POST['address'] ) ? sanitize_text_field( wp_unslash( $_POST['address'] ) ) : '';
+		$coupon    = isset( $_POST['coupon_code'] ) ? sanitize_text_field( wp_unslash( $_POST['coupon_code'] ) ) : '';
+
+		if ( ! $full_name || ! $phone || ! is_email( $email ) || ! $address ) {
+			wp_send_json_error( array( 'message' => __( 'Please enter your full name, phone, email, and address.', 'passpress' ) ) );
+		}
+
+		$settings = PP_Billing::get_settings();
+		if ( ! empty( $settings['wc_require_login'] ) && ! is_user_logged_in() ) {
+			wp_send_json_error(
+				array(
+					'message'  => __( 'Please log in to complete your purchase.', 'passpress' ),
+					'loginUrl' => wp_login_url( self::buy_url( $plan_id ) ),
+				)
+			);
+		}
+
+		$user_id = self::ensure_member_account( $full_name, $email, $phone, $address );
+		if ( is_wp_error( $user_id ) ) {
+			wp_send_json_error(
+				array(
+					'message'  => $user_id->get_error_message(),
+					'loginUrl' => $user_id->get_error_data( 'login_url' ),
+				)
+			);
+		}
+
+		$product_id = self::get_product_id_for_plan( $plan_id );
+		if ( ! $product_id || ! wc_get_product( $product_id ) ) {
+			self::sync_product_for_plan( $plan_id );
+			$product_id = self::get_product_id_for_plan( $plan_id );
+		}
+		if ( ! $product_id || ! wc_get_product( $product_id ) ) {
+			wp_send_json_error( array( 'message' => __( 'This plan is not ready for checkout yet.', 'passpress' ) ) );
+		}
+
+		if ( null === WC()->cart ) {
+			wc_load_cart();
+		}
+
+		WC()->cart->empty_cart();
+		$added = WC()->cart->add_to_cart( $product_id, 1 );
+		if ( ! $added ) {
+			wp_send_json_error( array( 'message' => __( 'Could not add this pass to your cart. Please try again.', 'passpress' ) ) );
+		}
+
+		$discount_amount = 0;
+		$applied_code    = '';
+		$price           = (float) get_post_meta( $plan_id, '_pp_price', true );
+
+		if ( $coupon ) {
+			$result = PP_Coupon::validate( $coupon, $plan_id, $user_id, $price );
+			if ( empty( $result['valid'] ) ) {
+				wp_send_json_error( array( 'message' => $result['error'] ) );
+			}
+			$discount_amount = (float) $result['discount_amount'];
+			$applied_code    = $result['code'];
+		}
+
+		if ( WC()->session ) {
+			WC()->session->set( 'pp_modal_embed', 1 );
+			WC()->session->set( 'pp_modal_discount', $discount_amount );
+			WC()->session->set( 'pp_modal_coupon', $applied_code );
+			WC()->session->set(
+				'pp_modal_billing',
+				array(
+					'first_name' => $full_name,
+					'phone'      => $phone,
+					'email'      => $email,
+					'address_1'  => $address,
+				)
+			);
+		}
+
+		WC()->cart->calculate_totals();
+
+		$checkout_url = add_query_arg(
+			array(
+				'passpress_wc_embed' => '1',
+				'plan_id'            => $plan_id,
+			),
+			wc_get_checkout_url()
+		);
+
+		wp_send_json_success(
+			array(
+				'checkoutUrl' => $checkout_url,
+				'userId'      => $user_id,
+			)
+		);
+	}
+
+	/**
+	 * Create or reuse a WP user for modal registration, then auto-login.
+	 *
+	 * @return int|WP_Error
+	 */
+	private static function ensure_member_account( $full_name, $email, $phone, $address ) {
+		if ( is_user_logged_in() ) {
+			$user_id = get_current_user_id();
+			wp_update_user(
+				array(
+					'ID'           => $user_id,
+					'display_name' => $full_name,
+				)
+			);
+			self::save_member_profile( $user_id, $phone, $address, $email );
+			return $user_id;
+		}
+
+		$existing = email_exists( $email );
+		if ( $existing ) {
+			return new WP_Error(
+				'email_exists',
+				__( 'An account with this email already exists. Please log in to continue.', 'passpress' ),
+				array( 'login_url' => wp_login_url( wc_get_checkout_url() ) )
+			);
+		}
+
+		$username = sanitize_user( current( explode( '@', $email ) ), true );
+		if ( ! $username || username_exists( $username ) ) {
+			$username = sanitize_user( 'member_' . wp_generate_password( 8, false ), true );
+		}
+
+		$user_id = wc_create_new_customer( $email, $username, wp_generate_password() );
+		if ( is_wp_error( $user_id ) ) {
+			return $user_id;
+		}
+
+		wp_update_user(
+			array(
+				'ID'           => $user_id,
+				'display_name' => $full_name,
+				'first_name'   => $full_name,
+			)
+		);
+		self::save_member_profile( $user_id, $phone, $address, $email );
+
+		wp_set_current_user( $user_id );
+		wp_set_auth_cookie( $user_id, true );
+
+		return $user_id;
+	}
+
+	private static function save_member_profile( $user_id, $phone, $address, $email ) {
+		update_user_meta( $user_id, 'billing_phone', $phone );
+		update_user_meta( $user_id, 'billing_address_1', $address );
+		update_user_meta( $user_id, 'billing_email', $email );
+		update_user_meta( $user_id, 'shipping_address_1', $address );
+	}
+
+	/**
+	 * Apply PassPress coupon discount as a WooCommerce cart fee (negative).
+	 */
+	public static function apply_modal_coupon_fee( $cart ) {
+		if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
+			return;
+		}
+		if ( ! WC()->session ) {
+			return;
+		}
+		$discount = (float) WC()->session->get( 'pp_modal_discount' );
+		if ( $discount <= 0 ) {
+			return;
+		}
+		$label = __( 'Coupon discount', 'passpress' );
+		$code  = WC()->session->get( 'pp_modal_coupon' );
+		if ( $code ) {
+			$label = sprintf(
+				/* translators: %s: coupon code */
+				__( 'Coupon (%s)', 'passpress' ),
+				$code
+			);
+		}
+		$cart->add_fee( $label, -1 * $discount );
+	}
+
+	/**
+	 * Prefill WC checkout billing fields from modal registration session.
+	 */
+	public static function prefill_checkout_from_session( $value, $input ) {
+		if ( ! WC()->session ) {
+			return $value;
+		}
+		$billing = WC()->session->get( 'pp_modal_billing' );
+		if ( empty( $billing ) || ! is_array( $billing ) ) {
+			return $value;
+		}
+		$map = array(
+			'billing_first_name' => 'first_name',
+			'billing_phone'      => 'phone',
+			'billing_email'      => 'email',
+			'billing_address_1'  => 'address_1',
+		);
+		if ( isset( $map[ $input ] ) && ! empty( $billing[ $map[ $input ] ] ) ) {
+			return $billing[ $map[ $input ] ];
+		}
+		return $value;
+	}
+
+	/**
+	 * Keep the embed flag when WooCommerce redirects to the thank-you page.
+	 *
+	 * @param string    $url   Order received URL.
+	 * @param WC_Order  $order Order object.
+	 */
+	public static function keep_embed_on_order_received( $url, $order ) {
+		$embed = ! empty( $_GET['passpress_wc_embed'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! $embed && function_exists( 'WC' ) && WC()->session ) {
+			$embed = (bool) WC()->session->get( 'pp_modal_embed' );
+		}
+		if ( $embed ) {
+			$url = add_query_arg( 'passpress_wc_embed', '1', $url );
+		}
+		return $url;
+	}
+
+	/**
+	 * Serve a chrome-free checkout page inside the modal iframe.
+	 */
+	public static function maybe_serve_embed_checkout() {
+		$embed = ! empty( $_GET['passpress_wc_embed'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! $embed && function_exists( 'WC' ) && WC()->session ) {
+			$embed = (bool) WC()->session->get( 'pp_modal_embed' )
+				&& ( is_checkout() || is_wc_endpoint_url( 'order-received' ) || ( function_exists( 'is_order_received_page' ) && is_order_received_page() ) );
+		}
+		if ( ! $embed ) {
+			return;
+		}
+		if ( ! function_exists( 'is_checkout' ) ) {
+			return;
+		}
+
+		$on_checkout = is_checkout()
+			|| is_wc_endpoint_url( 'order-received' )
+			|| ( function_exists( 'is_order_received_page' ) && is_order_received_page() );
+		if ( ! $on_checkout ) {
+			return;
+		}
+
+		header( 'X-Frame-Options: SAMEORIGIN' );
+		header( "Content-Security-Policy: frame-ancestors 'self'" );
+		show_admin_bar( false );
+		self::register_embed_checkout_filters();
+
+		include PASSPRESS_PLUGIN_DIR . '/templates/checkout/wc-embed-checkout.php';
+		exit;
 	}
 
 	public static function add_meta_box() {

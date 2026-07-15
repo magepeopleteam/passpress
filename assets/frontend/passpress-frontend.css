@@ -1174,12 +1174,64 @@ body.passpress-checkout-open {
 .passpress-checkout-modal {
 	position: relative;
 	width: 100%;
-	max-width: 440px;
+	max-width: 480px;
 	background: #fff;
 	border-radius: 18px;
 	padding: 28px 26px 22px;
 	box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
 	margin: auto;
+	max-height: calc(100vh - 48px);
+	overflow-y: auto;
+}
+
+.passpress-checkout-modal.is-wc-checkout {
+	max-width: 920px;
+	width: min(920px, calc(100vw - 32px));
+	padding: 18px 18px 14px;
+	max-height: calc(100vh - 24px);
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.passpress-checkout-modal.is-wc-checkout .passpress-checkout-modal-header {
+	margin-bottom: 8px;
+}
+
+.passpress-checkout-modal.is-wc-checkout .passpress-checkout-modal-subtitle {
+	display: none;
+}
+
+.passpress-checkout-modal.is-wc-checkout #pp_modal_step_wc {
+	display: flex;
+	flex-direction: column;
+	flex: 1 1 auto;
+	min-height: 0;
+}
+
+.passpress-checkout-wc-intro {
+	margin: 0 0 8px;
+	color: #64748b;
+	font-size: 0.88rem;
+}
+
+.passpress-checkout-wc-frame-wrap {
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
+	overflow: hidden;
+	background: #fff;
+	flex: 1 1 auto;
+	min-height: 0;
+	height: calc(100vh - 140px);
+	max-height: 640px;
+}
+
+.passpress-checkout-wc-iframe {
+	display: block;
+	width: 100%;
+	height: 100%;
+	min-height: 480px;
+	border: 0;
 }
 
 .passpress-checkout-modal-close {
@@ -1195,6 +1247,7 @@ body.passpress-checkout-open {
 	font-size: 22px;
 	line-height: 1;
 	cursor: pointer;
+	z-index: 2;
 }
 
 .passpress-checkout-modal-close:hover {
@@ -1245,17 +1298,28 @@ body.passpress-checkout-open {
 	gap: 14px;
 }
 
-.passpress-checkout-gift {
+.passpress-checkout-section {
 	display: flex;
-	align-items: center;
-	gap: 8px;
-	font-size: 0.92rem;
-	color: #334155;
-	cursor: pointer;
+	flex-direction: column;
+	gap: 14px;
+	padding-top: 4px;
 }
 
-.passpress-checkout-gift-icon {
-	font-size: 1.05rem;
+.passpress-checkout-section-title {
+	margin: 0;
+	font-size: 0.78rem;
+	font-weight: 800;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: #64748b;
+}
+
+.passpress-checkout-summary-top {
+	padding: 12px 14px !important;
+	background: #f8fafc;
+	border: 1px solid #e2e8f0 !important;
+	border-radius: 12px !important;
+	margin: 0 0 2px !important;
 }
 
 .passpress-checkout-field label,
@@ -1268,7 +1332,8 @@ body.passpress-checkout-open {
 }
 
 .passpress-checkout-field input[type="text"],
-.passpress-checkout-field input[type="email"] {
+.passpress-checkout-field input[type="email"],
+.passpress-checkout-field input[type="tel"] {
 	width: 100%;
 	box-sizing: border-box;
 	border: 1px solid #d8dee8;
