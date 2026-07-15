@@ -46,7 +46,10 @@ $address      = $user ? (string) get_user_meta( $user->ID, 'billing_address_1', 
 
 				<div class="passpress-checkout-summary passpress-checkout-summary-top">
 					<div class="passpress-checkout-summary-row">
-						<span class="passpress-checkout-summary-plan" id="pp_modal_plan_name"><?php esc_html_e( 'Pass', 'passpress' ); ?></span>
+						<span class="passpress-checkout-summary-plan-wrap">
+							<span class="passpress-checkout-summary-plan" id="pp_modal_plan_name"><?php esc_html_e( 'Pass', 'passpress' ); ?></span>
+							<span class="passpress-plan-duration-label" id="pp_modal_plan_duration" hidden></span>
+						</span>
 						<span class="passpress-checkout-summary-price" id="pp_modal_plan_price"><?php echo esc_html( $symbol ); ?>0.00</span>
 					</div>
 					<div class="passpress-checkout-summary-row passpress-checkout-summary-discount" id="pp_modal_discount_row" hidden>
@@ -60,14 +63,16 @@ $address      = $user ? (string) get_user_meta( $user->ID, 'billing_address_1', 
 					</div>
 				</div>
 
-				<div class="passpress-checkout-field">
-					<label for="pp_modal_coupon"><?php esc_html_e( 'Coupon code', 'passpress' ); ?></label>
-					<div class="passpress-checkout-coupon-row">
-						<input type="text" id="pp_modal_coupon" name="coupon_code" placeholder="<?php esc_attr_e( 'WELCOME10', 'passpress' ); ?>" autocomplete="off">
-						<button type="button" class="passpress-checkout-coupon-apply" id="pp_modal_coupon_apply"><?php esc_html_e( 'Apply', 'passpress' ); ?></button>
+				<?php if ( 'woocommerce' !== $payment_mode ) : ?>
+					<div class="passpress-checkout-field">
+						<label for="pp_modal_coupon"><?php esc_html_e( 'Coupon code', 'passpress' ); ?></label>
+						<div class="passpress-checkout-coupon-row">
+							<input type="text" id="pp_modal_coupon" name="coupon_code" placeholder="<?php esc_attr_e( 'WELCOME10', 'passpress' ); ?>" autocomplete="off">
+							<button type="button" class="passpress-checkout-coupon-apply" id="pp_modal_coupon_apply"><?php esc_html_e( 'Apply', 'passpress' ); ?></button>
+						</div>
+						<p class="passpress-checkout-coupon-msg" id="pp_modal_coupon_msg" hidden></p>
 					</div>
-					<p class="passpress-checkout-coupon-msg" id="pp_modal_coupon_msg" hidden></p>
-				</div>
+				<?php endif; ?>
 
 				<div class="passpress-checkout-section">
 					<h3 class="passpress-checkout-section-title"><?php esc_html_e( 'Membership Information', 'passpress' ); ?></h3>

@@ -56,13 +56,124 @@ $css_ver = defined( 'PASSPRESS_PLUGIN_VERSION' ) ? PASSPRESS_PLUGIN_VERSION : '1
 			} catch ( e ) {}
 		}
 
+		function syncLastName() {
+			var first = document.getElementById( 'billing_first_name' );
+			var last = document.getElementById( 'billing_last_name' );
+			if ( ! first || ! last ) {
+				return;
+			}
+			var full = ( first.value || '' ).trim();
+			if ( ! full ) {
+				return;
+			}
+			var parts = full.split( /\s+/ );
+			if ( parts.length > 1 ) {
+				last.value = parts.slice( 1 ).join( ' ' );
+			} else if ( ! ( last.value || '' ).trim() ) {
+				last.value = '-';
+			}
+		}
+
+		function fillBillingFromSummary() {
+			var summary = document.querySelector( '.passpress-wc-member-summary' );
+			if ( ! summary ) {
+				return;
+			}
+			var map = {
+				billing_first_name: summary.getAttribute( 'data-pp-full-name' ) || '',
+				billing_phone: summary.getAttribute( 'data-pp-phone' ) || '',
+				billing_email: summary.getAttribute( 'data-pp-email' ) || '',
+				billing_address_1: summary.getAttribute( 'data-pp-address' ) || ''
+			};
+			Object.keys( map ).forEach( function ( id ) {
+				var el = document.getElementById( id );
+				if ( el && map[ id ] ) {
+					el.value = map[ id ];
+					el.dispatchEvent( new Event( 'change', { bubbles: true } ) );
+				}
+			} );
+			syncLastName();
+		}
+
+		function bindNameSync() {
+			var form = document.querySelector( 'form.checkout, form.woocommerce-checkout' );
+			var first = document.getElementById( 'billing_first_name' );
+			fillBillingFromSummary();
+			if ( first ) {
+				first.addEventListener( 'input', syncLastName );
+				first.addEventListener( 'change', syncLastName );
+				syncLastName();
+			}
+			if ( form ) {
+				form.addEventListener( 'submit', syncLastName, true );
+			}
+			document.body.addEventListener( 'click', function ( e ) {
+				if ( e.target && ( e.target.id === 'place_order' || ( e.target.closest && e.target.closest( '#place_order' ) ) ) ) {
+					syncLastName();
+				}
+			}, true );
+		}
+
+		function fixCountryStateSelects() {
+			if ( typeof window.jQuery === 'undefined' ) {
+				return;
+			}
+			var $ = window.jQuery;
+			$( '#billing_country, #billing_state' ).each( function () {
+				var $field = $( this );
+				var $row = $field.closest( '.form-row' );
+				var $container = $field.next( '.select2-container' );
+				if ( $container.length ) {
+					$container.css( { width: '100%', display: 'block' } );
+				}
+				// Re-init SelectWoo with a parent that does not clip the dropdown.
+				if ( $field.data( 'select2' ) && $row.length ) {
+					try {
+						var val = $field.val();
+						$field.selectWoo( 'destroy' );
+						$field.selectWoo( {
+							width: '100%',
+							dropdownParent: $row
+						} );
+						if ( val ) {
+							$field.val( val ).trigger( 'change.select2' );
+						}
+					} catch ( e ) {}
+				} else if ( ! $field.data( 'select2' ) && $field.is( 'select' ) && typeof $field.selectWoo === 'function' ) {
+					try {
+						$field.selectWoo( {
+							width: '100%',
+							dropdownParent: $row.length ? $row : $( document.body )
+						} );
+					} catch ( e ) {}
+				}
+			} );
+		}
+
 		if ( document.body.classList.contains( 'woocommerce-order-received' ) || document.querySelector( '.woocommerce-order' ) ) {
 			notifyParent( { type: 'passpress_wc_checkout_complete', url: window.location.href } );
 		}
 
-		window.addEventListener( 'load', fitParentFrame );
+		if ( document.readyState === 'loading' ) {
+			document.addEventListener( 'DOMContentLoaded', bindNameSync );
+		} else {
+			bindNameSync();
+		}
+
+		window.addEventListener( 'load', function () {
+			fitParentFrame();
+			fixCountryStateSelects();
+		} );
 		window.setTimeout( fitParentFrame, 200 );
-		window.setTimeout( fitParentFrame, 800 );
+		window.setTimeout( fixCountryStateSelects, 300 );
+		window.setTimeout( fixCountryStateSelects, 900 );
+
+		if ( typeof window.jQuery !== 'undefined' ) {
+			window.jQuery( document.body ).on( 'updated_checkout country_to_state_changed', function () {
+				window.setTimeout( fixCountryStateSelects, 50 );
+				window.setTimeout( fitParentFrame, 100 );
+			} );
+		}
 
 		if ( window.MutationObserver ) {
 			var obs = new MutationObserver( function () { fitParentFrame(); } );

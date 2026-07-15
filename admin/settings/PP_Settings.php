@@ -46,6 +46,7 @@ class PP_Settings {
 
 			<form method="post" action="options.php" class="passpress-settings-form">
 				<?php settings_fields( 'passpress_settings_group' ); ?>
+				<input type="hidden" name="_wp_http_referer" value="<?php echo esc_attr( PP_Settings_Page::url( 'general' ) ); ?>">
 
 				<section class="passpress-settings-card">
 					<div class="passpress-settings-card-head">

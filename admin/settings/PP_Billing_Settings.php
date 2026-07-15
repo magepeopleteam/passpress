@@ -132,6 +132,7 @@ class PP_Billing_Settings {
 
 			<form method="post" action="options.php" id="passpress-payment-method-form">
 				<?php settings_fields( 'passpress_billing_settings_group' ); ?>
+				<input type="hidden" name="_wp_http_referer" value="<?php echo esc_attr( PP_Settings_Page::url( 'billing' ) ); ?>">
 
 				<div class="passpress-pm-toggle">
 					<button type="button" class="passpress-pm-toggle-btn <?php echo 'native' !== $payment_type ? 'is-active' : ''; ?>" data-value="woocommerce"><?php esc_html_e( 'WooCommerce', 'passpress' ); ?></button>

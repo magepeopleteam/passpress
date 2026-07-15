@@ -37,6 +37,32 @@ function pp_format_datetime( $mysql_datetime ) {
 	return date_i18n( get_option( 'date_format', 'F j, Y' ) . ' ' . get_option( 'time_format', 'g:i a' ), strtotime( $mysql_datetime ) );
 }
 
+/**
+ * Human-readable membership plan duration label (e.g. "1 month", "Lifetime").
+ *
+ * @param int $plan_id Plan post ID.
+ * @return string Empty when duration is not set.
+ */
+function pp_get_plan_duration_label( $plan_id ) {
+	$plan_id = absint( $plan_id );
+	if ( ! $plan_id ) {
+		return '';
+	}
+
+	$duration_value = (int) get_post_meta( $plan_id, '_pp_duration_value', true );
+	$duration_unit  = (string) get_post_meta( $plan_id, '_pp_duration_unit', true );
+
+	if ( 'lifetime' === $duration_unit ) {
+		return __( 'Lifetime', 'passpress' );
+	}
+
+	if ( ! $duration_unit ) {
+		return '';
+	}
+
+	return $duration_value . ' ' . $duration_unit . ( $duration_value > 1 ? 's' : '' );
+}
+
 function pp_status_label( $status ) {
 	$labels = array(
 		'active'    => __( 'Active', 'passpress' ),

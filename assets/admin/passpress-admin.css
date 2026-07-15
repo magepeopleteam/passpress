@@ -5702,6 +5702,24 @@ select.pp-input {
 	border-bottom: 1px solid var(--pp-set-line);
 }
 
+.passpress-settings-notices {
+	margin: 0 0 18px;
+}
+
+.passpress-settings-notices .notice,
+.passpress-settings-notices .updated {
+	margin: 0 0 10px;
+	padding: 10px 14px;
+	border-radius: 10px;
+	box-shadow: none;
+}
+
+.passpress-settings-notices .notice-success,
+.passpress-settings-notices .updated {
+	border-left-color: #1f9c82;
+	background: #eaf7f3;
+}
+
 .passpress-settings-page-eyebrow,
 .passpress-settings-panel-eyebrow {
 	margin: 0 0 6px;

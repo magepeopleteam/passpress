@@ -136,6 +136,18 @@
 			document.getElementById( 'pp_modal_nonce' ).value = trigger.getAttribute( 'data-nonce' ) || '';
 			document.getElementById( 'pp_modal_plan_name' ).textContent = trigger.getAttribute( 'data-plan-name' ) || 'Pass';
 
+			var durationEl = document.getElementById( 'pp_modal_plan_duration' );
+			var durationLabel = ( trigger.getAttribute( 'data-plan-duration' ) || '' ).trim();
+			if ( durationEl ) {
+				if ( durationLabel ) {
+					durationEl.textContent = durationLabel;
+					durationEl.hidden = false;
+				} else {
+					durationEl.textContent = '';
+					durationEl.hidden = true;
+				}
+			}
+
 			state.basePrice = parseFloat( trigger.getAttribute( 'data-plan-price' ) || '0' ) || 0;
 			state.baseLabel = trigger.getAttribute( 'data-plan-price-label' ) || '';
 			state.discount = 0;
@@ -143,7 +155,10 @@
 			state.totalLabel = state.baseLabel;
 			state.discountLabel = '';
 
-			document.getElementById( 'pp_modal_coupon' ).value = '';
+			var couponInput = document.getElementById( 'pp_modal_coupon' );
+			if ( couponInput ) {
+				couponInput.value = '';
+			}
 			var couponMsg = document.getElementById( 'pp_modal_coupon_msg' );
 			if ( couponMsg ) {
 				couponMsg.hidden = true;

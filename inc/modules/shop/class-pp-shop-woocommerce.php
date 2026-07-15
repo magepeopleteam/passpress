@@ -40,6 +40,16 @@ class PP_Shop_WooCommerce {
 		add_action( 'woocommerce_cart_calculate_fees', array( __CLASS__, 'apply_modal_coupon_fee' ) );
 		add_filter( 'woocommerce_checkout_get_value', array( __CLASS__, 'prefill_checkout_from_session' ), 10, 2 );
 		add_filter( 'woocommerce_get_checkout_order_received_url', array( __CLASS__, 'keep_embed_on_order_received' ), 10, 2 );
+		add_filter( 'woocommerce_cart_item_name', array( __CLASS__, 'append_duration_to_cart_item_name' ), 10, 3 );
+		add_filter( 'woocommerce_order_item_name', array( __CLASS__, 'append_duration_to_order_item_name' ), 10, 2 );
+		add_action( 'woocommerce_checkout_create_order_line_item', array( __CLASS__, 'add_duration_to_order_item' ), 10, 4 );
+		add_action( 'woocommerce_before_checkout_form', array( __CLASS__, 'render_membership_info_summary' ), 5 );
+
+		// Always register name-normalization for modal checkouts (incl. wc-ajax=checkout).
+		add_action( 'woocommerce_before_checkout_process', array( __CLASS__, 'ensure_billing_last_name_before_process' ), 1 );
+		add_filter( 'woocommerce_checkout_posted_data', array( __CLASS__, 'normalize_embed_posted_data' ), 5 );
+
+		add_action( 'woocommerce_init', array( __CLASS__, 'maybe_register_embed_filters_from_session' ) );
 
 		if ( ! empty( $_GET['passpress_wc_embed'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			self::register_embed_checkout_filters();
@@ -50,7 +60,24 @@ class PP_Shop_WooCommerce {
 	 * Whether the current request is the PassPress modal checkout iframe.
 	 */
 	public static function is_embed_request() {
-		return ! empty( $_GET['passpress_wc_embed'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! empty( $_GET['passpress_wc_embed'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return true;
+		}
+		return self::has_embed_session();
+	}
+
+	/**
+	 * Session flag set by Complete Registration so AJAX place-order still knows
+	 * this is a modal checkout (no passpress_wc_embed query arg on wc-ajax).
+	 */
+	public static function has_embed_session() {
+		return function_exists( 'WC' ) && WC()->session && (bool) WC()->session->get( 'pp_modal_embed' );
+	}
+
+	public static function maybe_register_embed_filters_from_session() {
+		if ( self::has_embed_session() ) {
+			self::register_embed_checkout_filters();
+		}
 	}
 
 	/**
@@ -63,15 +90,18 @@ class PP_Shop_WooCommerce {
 		}
 		$done = true;
 
-		add_filter( 'woocommerce_checkout_fields', array( __CLASS__, 'compact_embed_checkout_fields' ) );
+		add_filter( 'woocommerce_checkout_fields', array( __CLASS__, 'compact_embed_checkout_fields' ), 999 );
+		add_filter( 'woocommerce_default_address_fields', array( __CLASS__, 'compact_embed_default_address_fields' ), 999 );
+		add_filter( 'woocommerce_get_country_locale', array( __CLASS__, 'compact_embed_country_locale' ), 999 );
 		add_filter( 'woocommerce_enable_order_notes_field', '__return_false' );
 		add_filter( 'woocommerce_cart_needs_shipping_address', '__return_false' );
 		add_filter( 'body_class', array( __CLASS__, 'embed_body_class' ) );
-		add_filter( 'woocommerce_checkout_posted_data', array( __CLASS__, 'normalize_embed_posted_data' ) );
+		add_filter( 'gettext', array( __CLASS__, 'embed_gettext' ), 20, 3 );
 	}
 
 	/**
 	 * Slim billing fields for the modal: full name, phone, email, address, city/postcode/country.
+	 * Last name stays as a hidden field so WooCommerce validation still receives it.
 	 *
 	 * @param array $fields Checkout fields.
 	 * @return array
@@ -83,9 +113,6 @@ class PP_Shop_WooCommerce {
 		if ( isset( $fields['billing']['billing_address_2'] ) ) {
 			unset( $fields['billing']['billing_address_2'] );
 		}
-		if ( isset( $fields['billing']['billing_last_name'] ) ) {
-			unset( $fields['billing']['billing_last_name'] );
-		}
 		if ( isset( $fields['order']['order_comments'] ) ) {
 			unset( $fields['order']['order_comments'] );
 		}
@@ -95,39 +122,96 @@ class PP_Shop_WooCommerce {
 
 		if ( isset( $fields['billing']['billing_first_name'] ) ) {
 			$fields['billing']['billing_first_name']['label']    = __( 'Full name', 'passpress' );
-			$fields['billing']['billing_first_name']['class']    = array( 'form-row-wide' );
+			$fields['billing']['billing_first_name']['class']    = array( 'form-row-first' );
 			$fields['billing']['billing_first_name']['priority'] = 10;
 		}
+
+		// Keep last name hidden — derived from full name.
+		if ( isset( $fields['billing']['billing_last_name'] ) ) {
+			$fields['billing']['billing_last_name']['required'] = false;
+			$fields['billing']['billing_last_name']['class']    = array( 'form-row-wide', 'pp-embed-hidden-field' );
+			$fields['billing']['billing_last_name']['priority'] = 15;
+			$fields['billing']['billing_last_name']['label']    = '';
+		}
+
 		if ( isset( $fields['billing']['billing_phone'] ) ) {
-			$fields['billing']['billing_phone']['class']    = array( 'form-row-first' );
+			$fields['billing']['billing_phone']['class']    = array( 'form-row-last' );
 			$fields['billing']['billing_phone']['priority'] = 20;
+			$fields['billing']['billing_phone']['required'] = false;
 		}
 		if ( isset( $fields['billing']['billing_email'] ) ) {
-			$fields['billing']['billing_email']['class']    = array( 'form-row-last' );
+			$fields['billing']['billing_email']['class']    = array( 'form-row-wide' );
 			$fields['billing']['billing_email']['priority'] = 30;
 		}
 		if ( isset( $fields['billing']['billing_address_1'] ) ) {
 			$fields['billing']['billing_address_1']['label']    = __( 'Address', 'passpress' );
-			$fields['billing']['billing_address_1']['class']    = array( 'form-row-wide' );
+			$fields['billing']['billing_address_1']['class']    = array( 'form-row-wide', 'address-field' );
 			$fields['billing']['billing_address_1']['priority'] = 40;
 		}
+		if ( isset( $fields['billing']['billing_country'] ) ) {
+			$fields['billing']['billing_country']['class']    = array( 'form-row-wide', 'address-field', 'update_totals_on_change' );
+			$fields['billing']['billing_country']['priority'] = 50;
+		}
 		if ( isset( $fields['billing']['billing_city'] ) ) {
-			$fields['billing']['billing_city']['class']    = array( 'form-row-first' );
-			$fields['billing']['billing_city']['priority'] = 50;
+			$fields['billing']['billing_city']['class']    = array( 'form-row-first', 'address-field' );
+			$fields['billing']['billing_city']['priority'] = 60;
 		}
 		if ( isset( $fields['billing']['billing_postcode'] ) ) {
-			$fields['billing']['billing_postcode']['class']    = array( 'form-row-last' );
-			$fields['billing']['billing_postcode']['priority'] = 60;
+			$fields['billing']['billing_postcode']['class']    = array( 'form-row-last', 'address-field' );
+			$fields['billing']['billing_postcode']['priority'] = 65;
 		}
 		if ( isset( $fields['billing']['billing_state'] ) ) {
-			$fields['billing']['billing_state']['class']    = array( 'form-row-first' );
+			$fields['billing']['billing_state']['class']    = array( 'form-row-wide', 'address-field' );
 			$fields['billing']['billing_state']['priority'] = 70;
 		}
-		if ( isset( $fields['billing']['billing_country'] ) ) {
-			$fields['billing']['billing_country']['class']    = array( 'form-row-last' );
-			$fields['billing']['billing_country']['priority'] = 80;
-		}
 
+		return $fields;
+	}
+
+	/**
+	 * Keep city/postcode half-width even when country locale forces form-row-wide.
+	 *
+	 * @param array $locale Country locale field settings.
+	 * @return array
+	 */
+	public static function compact_embed_country_locale( $locale ) {
+		if ( ! self::is_embed_request() && ! self::has_embed_session() ) {
+			return $locale;
+		}
+		foreach ( $locale as $country => $fields ) {
+			if ( ! is_array( $fields ) ) {
+				continue;
+			}
+			if ( ! isset( $locale[ $country ]['city'] ) ) {
+				$locale[ $country ]['city'] = array();
+			}
+			$locale[ $country ]['city']['class'] = array( 'form-row-first' );
+
+			if ( ! isset( $locale[ $country ]['postcode'] ) ) {
+				$locale[ $country ]['postcode'] = array();
+			}
+			$locale[ $country ]['postcode']['class'] = array( 'form-row-last' );
+
+			if ( isset( $locale[ $country ]['state'] ) ) {
+				$locale[ $country ]['state']['class'] = array( 'form-row-wide' );
+			}
+			if ( isset( $locale[ $country ]['address_1'] ) ) {
+				$locale[ $country ]['address_1']['class'] = array( 'form-row-wide' );
+			}
+		}
+		return $locale;
+	}
+
+	/**
+	 * Stop locale/default address rules from forcing a visible required last name.
+	 *
+	 * @param array $fields Default address fields.
+	 * @return array
+	 */
+	public static function compact_embed_default_address_fields( $fields ) {
+		if ( isset( $fields['last_name'] ) ) {
+			$fields['last_name']['required'] = false;
+		}
 		return $fields;
 	}
 
@@ -138,6 +222,169 @@ class PP_Shop_WooCommerce {
 	public static function embed_body_class( $classes ) {
 		$classes[] = 'passpress-wc-embed';
 		return $classes;
+	}
+
+	/**
+	 * @param string $translation Translated text.
+	 * @param string $text        Original text.
+	 * @param string $domain      Text domain.
+	 * @return string
+	 */
+	public static function embed_gettext( $translation, $text, $domain ) {
+		if ( 'woocommerce' !== $domain || ! self::is_embed_request() ) {
+			return $translation;
+		}
+		if ( 'Billing details' === $text ) {
+			return __( 'Billing location', 'passpress' );
+		}
+		return $translation;
+	}
+
+	/**
+	 * Resolve plan ID from a WC product (or cart/order product object).
+	 *
+	 * @param WC_Product|false|null $product Product.
+	 * @return int
+	 */
+	private static function plan_id_from_product( $product ) {
+		if ( ! $product || ! is_a( $product, 'WC_Product' ) ) {
+			return 0;
+		}
+		return (int) $product->get_meta( self::META_PLAN_ID );
+	}
+
+	/**
+	 * HTML duration badge for cart / checkout item names.
+	 *
+	 * @param int $plan_id Plan ID.
+	 * @return string
+	 */
+	private static function duration_badge_html( $plan_id ) {
+		$label = pp_get_plan_duration_label( $plan_id );
+		if ( ! $label ) {
+			return '';
+		}
+		return ' <span class="passpress-plan-duration-label">' . esc_html( $label ) . '</span>';
+	}
+
+	/**
+	 * Show plan duration next to the product name in cart / checkout review.
+	 *
+	 * @param string $name         Item name HTML.
+	 * @param array  $cart_item    Cart item.
+	 * @param string $cart_item_key Cart key.
+	 * @return string
+	 */
+	public static function append_duration_to_cart_item_name( $name, $cart_item, $cart_item_key ) {
+		$product = isset( $cart_item['data'] ) ? $cart_item['data'] : null;
+		$plan_id = self::plan_id_from_product( $product );
+		if ( ! $plan_id ) {
+			return $name;
+		}
+		return $name . self::duration_badge_html( $plan_id );
+	}
+
+	/**
+	 * Show plan duration next to the product name on thank-you / order views.
+	 *
+	 * @param string                $name Item name HTML.
+	 * @param WC_Order_Item_Product $item Order item.
+	 * @return string
+	 */
+	public static function append_duration_to_order_item_name( $name, $item ) {
+		if ( ! is_a( $item, 'WC_Order_Item_Product' ) ) {
+			return $name;
+		}
+
+		$stored = $item->get_meta( '_pp_duration_label' );
+		if ( $stored ) {
+			return $name . ' <span class="passpress-plan-duration-label">' . esc_html( $stored ) . '</span>';
+		}
+
+		$product = $item->get_product();
+		$plan_id = self::plan_id_from_product( $product );
+		if ( ! $plan_id ) {
+			return $name;
+		}
+		return $name . self::duration_badge_html( $plan_id );
+	}
+
+	/**
+	 * Persist duration on the order line item for emails / order admin / thank you.
+	 *
+	 * @param WC_Order_Item_Product $item          Order item.
+	 * @param string                $cart_item_key Cart key.
+	 * @param array                 $values        Cart values.
+	 * @param WC_Order              $order         Order.
+	 */
+	public static function add_duration_to_order_item( $item, $cart_item_key, $values, $order ) {
+		$product = isset( $values['data'] ) ? $values['data'] : null;
+		$plan_id = self::plan_id_from_product( $product );
+		$label   = pp_get_plan_duration_label( $plan_id );
+		if ( $label ) {
+			$item->add_meta_data( '_pp_duration_label', $label, true );
+			$item->add_meta_data( __( 'Duration', 'passpress' ), $label, true );
+		}
+	}
+
+	/**
+	 * Split "Full name" into first/last before WooCommerce validates the order.
+	 * Runs for modal sessions and embed URLs (including wc-ajax=checkout).
+	 */
+	public static function ensure_billing_last_name_before_process() {
+		if ( ! self::is_embed_request() ) {
+			return;
+		}
+
+		$first = isset( $_POST['billing_first_name'] ) ? sanitize_text_field( wp_unslash( $_POST['billing_first_name'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$last  = isset( $_POST['billing_last_name'] ) ? sanitize_text_field( wp_unslash( $_POST['billing_last_name'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+		if ( $last || ! $first ) {
+			if ( ! $last ) {
+				$_POST['billing_last_name'] = '-';
+			}
+			return;
+		}
+
+		$parts = preg_split( '/\s+/', trim( $first ), 2 );
+		if ( ! empty( $parts[1] ) ) {
+			$_POST['billing_first_name'] = $parts[0];
+			$_POST['billing_last_name']  = $parts[1];
+		} else {
+			$_POST['billing_last_name'] = '-';
+		}
+	}
+
+	/**
+	 * Full-name-only billing: derive last name so WooCommerce validation passes.
+	 *
+	 * @param array $data Posted checkout data.
+	 * @return array
+	 */
+	public static function normalize_embed_posted_data( $data ) {
+		if ( ! self::is_embed_request() ) {
+			return $data;
+		}
+
+		$first = isset( $data['billing_first_name'] ) ? trim( (string) $data['billing_first_name'] ) : '';
+		$last  = isset( $data['billing_last_name'] ) ? trim( (string) $data['billing_last_name'] ) : '';
+
+		if ( $last || ! $first ) {
+			if ( ! $last ) {
+				$data['billing_last_name'] = '-';
+			}
+			return $data;
+		}
+
+		$parts = preg_split( '/\s+/', $first, 2 );
+		if ( ! empty( $parts[1] ) ) {
+			$data['billing_first_name'] = $parts[0];
+			$data['billing_last_name']  = $parts[1];
+		} else {
+			$data['billing_last_name'] = '-';
+		}
+
+		return $data;
 	}
 
 	public static function is_available() {
@@ -418,6 +665,16 @@ class PP_Shop_WooCommerce {
 			);
 		}
 
+		// Persist to the WooCommerce customer object so checkout fields fill immediately.
+		if ( WC()->customer ) {
+			WC()->customer->set_billing_first_name( $full_name );
+			WC()->customer->set_billing_last_name( self::split_last_name( $full_name ) );
+			WC()->customer->set_billing_phone( $phone );
+			WC()->customer->set_billing_email( $email );
+			WC()->customer->set_billing_address_1( $address );
+			WC()->customer->save();
+		}
+
 		WC()->cart->calculate_totals();
 
 		$checkout_url = add_query_arg(
@@ -450,7 +707,7 @@ class PP_Shop_WooCommerce {
 					'display_name' => $full_name,
 				)
 			);
-			self::save_member_profile( $user_id, $phone, $address, $email );
+			self::save_member_profile( $user_id, $phone, $address, $email, $full_name );
 			return $user_id;
 		}
 
@@ -480,7 +737,7 @@ class PP_Shop_WooCommerce {
 				'first_name'   => $full_name,
 			)
 		);
-		self::save_member_profile( $user_id, $phone, $address, $email );
+		self::save_member_profile( $user_id, $phone, $address, $email, $full_name );
 
 		wp_set_current_user( $user_id );
 		wp_set_auth_cookie( $user_id, true );
@@ -488,11 +745,27 @@ class PP_Shop_WooCommerce {
 		return $user_id;
 	}
 
-	private static function save_member_profile( $user_id, $phone, $address, $email ) {
+	private static function save_member_profile( $user_id, $phone, $address, $email, $full_name = '' ) {
+		if ( $full_name ) {
+			update_user_meta( $user_id, 'billing_first_name', $full_name );
+			update_user_meta( $user_id, 'first_name', $full_name );
+			update_user_meta( $user_id, 'billing_last_name', self::split_last_name( $full_name ) );
+		}
 		update_user_meta( $user_id, 'billing_phone', $phone );
 		update_user_meta( $user_id, 'billing_address_1', $address );
 		update_user_meta( $user_id, 'billing_email', $email );
 		update_user_meta( $user_id, 'shipping_address_1', $address );
+	}
+
+	/**
+	 * Last name token from a full name (or "-" when only one word).
+	 *
+	 * @param string $full_name Full name.
+	 * @return string
+	 */
+	private static function split_last_name( $full_name ) {
+		$parts = preg_split( '/\s+/', trim( (string) $full_name ), 2 );
+		return ! empty( $parts[1] ) ? $parts[1] : '-';
 	}
 
 	/**
@@ -532,16 +805,96 @@ class PP_Shop_WooCommerce {
 		if ( empty( $billing ) || ! is_array( $billing ) ) {
 			return $value;
 		}
+
+		$full_name = isset( $billing['first_name'] ) ? trim( (string) $billing['first_name'] ) : '';
+		$parts     = $full_name ? preg_split( '/\s+/', $full_name, 2 ) : array();
+
+		if ( 'billing_first_name' === $input && $full_name ) {
+			return $full_name; // Keep full name visible in the single "Full name" field.
+		}
+		if ( 'billing_last_name' === $input ) {
+			if ( ! empty( $parts[1] ) ) {
+				return $parts[1];
+			}
+			return $value ? $value : '-';
+		}
+
 		$map = array(
-			'billing_first_name' => 'first_name',
-			'billing_phone'      => 'phone',
-			'billing_email'      => 'email',
-			'billing_address_1'  => 'address_1',
+			'billing_phone'     => 'phone',
+			'billing_email'     => 'email',
+			'billing_address_1' => 'address_1',
 		);
 		if ( isset( $map[ $input ] ) && ! empty( $billing[ $map[ $input ] ] ) ) {
 			return $billing[ $map[ $input ] ];
 		}
 		return $value;
+	}
+
+	/**
+	 * Show Membership Information collected in the Get this Pass modal above WC checkout.
+	 */
+	public static function render_membership_info_summary() {
+		if ( ! self::is_embed_request() && ! self::has_embed_session() ) {
+			return;
+		}
+		if ( ! WC()->session ) {
+			return;
+		}
+
+		$billing = WC()->session->get( 'pp_modal_billing' );
+		if ( empty( $billing ) || ! is_array( $billing ) ) {
+			return;
+		}
+
+		$name    = isset( $billing['first_name'] ) ? (string) $billing['first_name'] : '';
+		$phone   = isset( $billing['phone'] ) ? (string) $billing['phone'] : '';
+		$email   = isset( $billing['email'] ) ? (string) $billing['email'] : '';
+		$address = isset( $billing['address_1'] ) ? (string) $billing['address_1'] : '';
+
+		if ( ! $name && ! $phone && ! $email && ! $address ) {
+			return;
+		}
+		?>
+		<div
+			class="passpress-wc-member-summary"
+			data-pp-full-name="<?php echo esc_attr( $name ); ?>"
+			data-pp-phone="<?php echo esc_attr( $phone ); ?>"
+			data-pp-email="<?php echo esc_attr( $email ); ?>"
+			data-pp-address="<?php echo esc_attr( $address ); ?>"
+		>
+			<h3 class="passpress-wc-member-summary-title"><?php esc_html_e( 'Membership Information', 'passpress' ); ?></h3>
+			<div class="passpress-wc-member-summary-grid">
+				<div class="passpress-wc-member-summary-col passpress-wc-member-summary-col-left">
+					<?php if ( $name ) : ?>
+						<div class="passpress-wc-member-summary-row">
+							<span class="passpress-wc-member-summary-label"><?php esc_html_e( 'Full Name', 'passpress' ); ?></span>
+							<span class="passpress-wc-member-summary-value"><?php echo esc_html( $name ); ?></span>
+						</div>
+					<?php endif; ?>
+					<?php if ( $email ) : ?>
+						<div class="passpress-wc-member-summary-row">
+							<span class="passpress-wc-member-summary-label"><?php esc_html_e( 'Email', 'passpress' ); ?></span>
+							<span class="passpress-wc-member-summary-value"><?php echo esc_html( $email ); ?></span>
+						</div>
+					<?php endif; ?>
+				</div>
+				<div class="passpress-wc-member-summary-col passpress-wc-member-summary-col-right">
+					<?php if ( $phone ) : ?>
+						<div class="passpress-wc-member-summary-row">
+							<span class="passpress-wc-member-summary-label"><?php esc_html_e( 'Phone Number', 'passpress' ); ?></span>
+							<span class="passpress-wc-member-summary-value"><?php echo esc_html( $phone ); ?></span>
+						</div>
+					<?php endif; ?>
+					<?php if ( $address ) : ?>
+						<div class="passpress-wc-member-summary-row">
+							<span class="passpress-wc-member-summary-label"><?php esc_html_e( 'Address', 'passpress' ); ?></span>
+							<span class="passpress-wc-member-summary-value"><?php echo esc_html( $address ); ?></span>
+						</div>
+					<?php endif; ?>
+				</div>
+			</div>
+		</div>
+		<?php
 	}
 
 	/**

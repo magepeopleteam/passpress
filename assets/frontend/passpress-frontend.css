@@ -1234,6 +1234,11 @@ body.passpress-checkout-open {
 	border: 0;
 }
 
+.passpress-checkout-modal-step table.shop_table.woocommerce-checkout-review-order-table {
+	padding: 20px;
+	box-sizing: border-box;
+}
+
 .passpress-checkout-modal-close {
 	position: absolute;
 	top: 16px;

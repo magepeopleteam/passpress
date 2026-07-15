@@ -97,6 +97,19 @@ class PP_Settings_Page {
 
 		$tabs        = self::tabs();
 		$current_tab = self::current_tab();
+
+		// options.php stores the success notice in a transient; plugin pages must print it.
+		if ( ! empty( $_GET['settings-updated'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$stored = get_transient( 'settings_errors' );
+			if ( empty( $stored ) ) {
+				add_settings_error(
+					'passpress',
+					'settings_updated',
+					__( 'Settings saved.', 'passpress' ),
+					'success'
+				);
+			}
+		}
 		?>
 		<div class="wrap passpress-wrap passpress-settings-page">
 			<div class="passpress-settings-page-header">
@@ -107,6 +120,10 @@ class PP_Settings_Page {
 						<?php esc_html_e( 'Tune currency, checkout, and the emails members receive.', 'passpress' ); ?>
 					</p>
 				</div>
+			</div>
+
+			<div class="passpress-settings-notices">
+				<?php settings_errors(); ?>
 			</div>
 
 			<div class="passpress-settings-layout">

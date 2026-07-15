@@ -29,13 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				$most_popular   = (bool) get_post_meta( $plan->ID, '_pp_most_popular', true );
 				$shop_url       = class_exists( 'PP_Shop_WooCommerce' ) ? PP_Shop_WooCommerce::buy_url( $plan->ID ) : '';
 				$price_label    = $settings['currency_symbol'] . number_format_i18n( $price, 2 );
-
-				$duration_label = '';
-				if ( 'lifetime' === $duration_unit ) {
-					$duration_label = __( 'Lifetime', 'passpress' );
-				} elseif ( $duration_unit ) {
-					$duration_label = $duration_value . ' ' . $duration_unit . ( $duration_value > 1 ? 's' : '' );
-				}
+				$duration_label = pp_get_plan_duration_label( $plan->ID );
 				?>
 				<article class="passpress-plan-card<?php echo $most_popular ? ' passpress-plan-card-featured' : ''; ?>">
 					<div class="passpress-plan-card-top">
@@ -78,6 +72,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 									data-payment-mode="woocommerce"
 									data-plan-id="<?php echo esc_attr( $plan->ID ); ?>"
 									data-plan-name="<?php echo esc_attr( $plan->post_title ); ?>"
+									data-plan-duration="<?php echo esc_attr( $duration_label ); ?>"
 									data-plan-price="<?php echo esc_attr( number_format( $price, 2, '.', '' ) ); ?>"
 									data-plan-price-label="<?php echo esc_attr( $price_label ); ?>"
 									data-nonce="<?php echo esc_attr( wp_create_nonce( 'passpress_checkout_' . $plan->ID ) ); ?>"
@@ -96,6 +91,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								data-checkout-url="<?php echo esc_url( PP_Billing::checkout_url( $plan->ID ) ); ?>"
 								data-plan-id="<?php echo esc_attr( $plan->ID ); ?>"
 								data-plan-name="<?php echo esc_attr( $plan->post_title ); ?>"
+								data-plan-duration="<?php echo esc_attr( $duration_label ); ?>"
 								data-plan-price="<?php echo esc_attr( number_format( $price, 2, '.', '' ) ); ?>"
 								data-plan-price-label="<?php echo esc_attr( $price_label ); ?>"
 								data-nonce="<?php echo esc_attr( wp_create_nonce( 'passpress_checkout_' . $plan->ID ) ); ?>"

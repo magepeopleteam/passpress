@@ -8,7 +8,8 @@ body.passpress-wc-embed {
 	margin: 0 !important;
 	padding: 0 !important;
 	background: #fff;
-	overflow: hidden;
+	overflow-x: hidden;
+	overflow-y: auto;
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 	font-size: 13px;
 	line-height: 1.35;
@@ -19,6 +20,7 @@ body.passpress-wc-embed {
 	padding: 10px 12px !important;
 	box-sizing: border-box;
 	height: 100%;
+	overflow: auto;
 }
 
 #wpadminbar {
@@ -32,12 +34,93 @@ html {
 .passpress-wc-embed-wrap {
 	max-width: 100%;
 	margin: 0;
-	height: calc(100vh - 20px);
-	overflow: hidden;
+	min-height: calc(100vh - 20px);
+	overflow: visible;
 }
 
 .passpress-wc-embed-wrap .woocommerce-notices-wrapper:empty {
 	display: none;
+}
+
+/* Membership info from Get this Pass step */
+.passpress-wc-embed .passpress-wc-member-summary {
+	margin: 0 0 12px;
+	padding: 12px 14px;
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
+}
+
+.passpress-wc-embed .passpress-wc-member-summary-title {
+	margin: 0 0 8px;
+	font-size: 11px;
+	font-weight: 800;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: #64748b;
+}
+
+.passpress-wc-embed .passpress-wc-member-summary-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 10px 24px;
+}
+
+.passpress-wc-embed .passpress-wc-member-summary-col {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	min-width: 0;
+}
+
+.passpress-wc-embed .passpress-wc-member-summary-row {
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.passpress-wc-embed .passpress-wc-member-summary-label {
+	font-size: 10px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: #94a3b8;
+}
+
+.passpress-wc-embed .passpress-wc-member-summary-value {
+	font-size: 13px;
+	font-weight: 600;
+	color: #0f172a;
+	word-break: break-word;
+}
+
+@media (max-width: 560px) {
+	.passpress-wc-embed .passpress-wc-member-summary-grid {
+		grid-template-columns: 1fr;
+		gap: 8px;
+	}
+}
+
+.passpress-wc-embed .passpress-plan-duration-label {
+	display: inline-flex;
+	align-items: center;
+	margin-left: 6px;
+	padding: 3px 8px;
+	border-radius: 999px;
+	background: #fff1eb;
+	color: #ff6b3d;
+	font-size: 0.7rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	vertical-align: middle;
+}
+
+/* Hidden last-name only (still submitted for WC validation; must not occupy grid) */
+.passpress-wc-embed .pp-embed-hidden-field,
+.passpress-wc-embed #billing_last_name_field {
+	display: none !important;
 }
 
 .passpress-wc-embed-wrap .woocommerce-notices-wrapper .woocommerce-message,
@@ -64,10 +147,14 @@ html {
 	display: none !important;
 }
 
+.passpress-wc-embed .woocommerce-billing-fields {
+	margin: 0;
+}
+
 .passpress-wc-embed .woocommerce-billing-fields h3,
 .passpress-wc-embed .woocommerce-billing-fields__field-wrapper + h3 {
-	margin: 0 0 8px;
-	font-size: 11px;
+	margin: 0 0 6px;
+	font-size: 10px;
 	font-weight: 800;
 	letter-spacing: 0.06em;
 	text-transform: uppercase;
@@ -92,13 +179,13 @@ html {
 	width: 100% !important;
 	float: none !important;
 	margin: 0 !important;
-	padding: 12px;
+	padding: 10px;
 	background: #f8fafc;
 	border: 1px solid #e2e8f0;
-	border-radius: 12px;
+	border-radius: 10px;
 	box-sizing: border-box;
-	overflow: auto;
-	max-height: calc(100vh - 24px);
+	overflow: visible;
+	max-height: none;
 }
 
 .passpress-wc-embed #customer_details .col2-set,
@@ -135,11 +222,12 @@ html {
 	overflow: hidden;
 }
 
-/* Dense fields */
+/* Compact location field grid — explicit order (WC DOM order varies by locale) */
 .passpress-wc-embed .woocommerce-billing-fields__field-wrapper {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	gap: 8px 10px;
+	gap: 6px 8px;
+	align-items: start;
 }
 
 .passpress-wc-embed .form-row {
@@ -147,22 +235,72 @@ html {
 	padding: 0 !important;
 	width: 100% !important;
 	float: none !important;
+	clear: none !important;
 }
 
-.passpress-wc-embed .form-row-wide,
-.passpress-wc-embed #billing_address_1_field,
-.passpress-wc-embed #billing_email_field,
+.passpress-wc-embed #billing_last_name_field.pp-embed-hidden-field,
+.passpress-wc-embed .pp-embed-hidden-field {
+	display: none !important;
+}
+
+/* Row 1: Full name | Phone */
+.passpress-wc-embed #billing_first_name_field {
+	order: 1;
+	grid-column: 1;
+}
+
+.passpress-wc-embed #billing_phone_field {
+	order: 2;
+	grid-column: 2;
+}
+
+/* Full-width rows */
+.passpress-wc-embed #billing_email_field {
+	order: 3;
+	grid-column: 1 / -1;
+}
+
+.passpress-wc-embed #billing_address_1_field {
+	order: 4;
+	grid-column: 1 / -1;
+}
+
 .passpress-wc-embed #billing_country_field {
+	order: 5;
+	grid-column: 1 / -1;
+}
+
+/* Row: City | Postcode */
+.passpress-wc-embed #billing_city_field {
+	order: 6;
+	grid-column: 1;
+}
+
+.passpress-wc-embed #billing_postcode_field {
+	order: 7;
+	grid-column: 2;
+}
+
+.passpress-wc-embed #billing_state_field {
+	order: 8;
 	grid-column: 1 / -1;
 }
 
 .passpress-wc-embed .form-row label {
 	display: block;
-	margin: 0 0 3px;
-	font-size: 11px;
+	margin: 0 0 2px;
+	font-size: 10px;
 	font-weight: 700;
-	color: #334155;
+	color: #64748b;
 	line-height: 1.2;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+}
+
+.passpress-wc-embed .form-row label .required,
+.passpress-wc-embed .form-row label .optional {
+	text-transform: none;
+	letter-spacing: 0;
 }
 
 .passpress-wc-embed .form-row label .required {
@@ -171,28 +309,78 @@ html {
 
 .passpress-wc-embed .form-row input.input-text,
 .passpress-wc-embed .form-row select,
-.passpress-wc-embed .form-row textarea,
-.passpress-wc-embed .select2-container .select2-selection--single {
+.passpress-wc-embed .form-row textarea {
 	width: 100% !important;
+	max-width: 100% !important;
 	box-sizing: border-box;
-	min-height: 34px;
-	height: 34px;
-	padding: 6px 10px !important;
+	min-height: 32px;
+	height: 32px;
+	padding: 4px 8px !important;
 	border: 1px solid #d8dee8 !important;
-	border-radius: 8px !important;
-	font-size: 13px !important;
+	border-radius: 6px !important;
+	font-size: 12px !important;
 	background: #fff;
 	box-shadow: none !important;
 }
 
+/* Select2 / SelectWoo — Country & State */
+.passpress-wc-embed .select2-container,
+.passpress-wc-embed .select2-container--default {
+	width: 100% !important;
+	max-width: 100% !important;
+	display: block !important;
+}
+
+.passpress-wc-embed #billing_country_field .select2-container,
+.passpress-wc-embed #billing_state_field .select2-container {
+	width: 100% !important;
+}
+
+.passpress-wc-embed .select2-container .select2-selection--single {
+	width: 100% !important;
+	box-sizing: border-box;
+	min-height: 32px !important;
+	height: 32px !important;
+	padding: 0 !important;
+	border: 1px solid #d8dee8 !important;
+	border-radius: 6px !important;
+	font-size: 12px !important;
+	background: #fff !important;
+	box-shadow: none !important;
+}
+
 .passpress-wc-embed .select2-container .select2-selection--single .select2-selection__rendered {
-	line-height: 32px !important;
-	padding-left: 10px !important;
-	font-size: 13px;
+	line-height: 20px !important;
+	padding: 5px !important;
+	padding-left: 8px !important;
+	padding-right: 24px !important;
+	font-size: 12px;
+	color: #0f172a !important;
+}
+
+.woocommerce-page form .form-row .select2-container .select2-selection--single .select2-selection__rendered {
+	padding: 5px;
 }
 
 .passpress-wc-embed .select2-container .select2-selection--single .select2-selection__arrow {
 	height: 32px !important;
+	width: 28px !important;
+	right: 2px !important;
+}
+
+.passpress-wc-embed .select2-container--open .select2-dropdown,
+.passpress-wc-embed .select2-dropdown,
+.select2-container--open .select2-dropdown {
+	z-index: 100050 !important;
+	border-color: #d8dee8 !important;
+	border-radius: 8px !important;
+	overflow: hidden;
+}
+
+.passpress-wc-embed .select2-results__option,
+.select2-container .select2-results__option {
+	font-size: 13px;
+	padding: 6px 10px;
 }
 
 .passpress-wc-embed .form-row textarea {
@@ -200,12 +388,22 @@ html {
 	min-height: 52px;
 }
 
+/* State can be a text input for some countries */
+.passpress-wc-embed #billing_state_field input.input-text {
+	width: 100% !important;
+}
+
 /* Order table compact */
-.passpress-wc-embed .woocommerce-checkout-review-order-table {
+.passpress-wc-embed .woocommerce-checkout-review-order-table,
+.passpress-wc-embed table.shop_table.woocommerce-checkout-review-order-table,
+.passpress-wc-embed .woocommerce table.shop_table {
 	width: 100%;
 	margin: 0;
+	padding: 20px;
+	border: none !important;
 	border-collapse: collapse;
 	font-size: 13px;
+	box-sizing: border-box;
 }
 
 .passpress-wc-embed .woocommerce-checkout-review-order-table thead {
@@ -265,23 +463,24 @@ html {
 	flex-direction: column;
 	gap: 6px;
 	overflow: auto;
-	max-height: 180px;
+	max-height: 250px;
 }
 
 .passpress-wc-embed #payment ul.payment_methods li {
-	margin: 0 !important;
-	padding: 0 !important;
-	border: none !important;
+	margin: 0px 10px 0px 0px !important;
+	padding: 10px !important;
+	border: 1px solid #ddd !important;
 	list-style: none !important;
+	border-radius: 10px;
 }
 
 .passpress-wc-embed #payment ul.payment_methods li > label {
-	display: flex;
+	display: inline;
 	align-items: center;
 	gap: 8px;
 	margin: 0;
 	padding: 8px 10px;
-	border: 1px solid #d8dee8;
+	border: none;
 	border-radius: 8px;
 	font-size: 13px;
 	font-weight: 700;
@@ -296,8 +495,8 @@ html {
 .passpress-wc-embed #payment ul.payment_methods li.wc_payment_method > input:checked + label,
 .passpress-wc-embed #payment ul.payment_methods li > label:has(+ .payment_box),
 .passpress-wc-embed #payment .wc_payment_method:has(> input:checked) > label {
-	border-color: #ff8f70;
-	background: #fff7f4;
+	border: none;
+	background: none;
 }
 
 .passpress-wc-embed #payment div.payment_box {
