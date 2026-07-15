@@ -83,45 +83,64 @@
 			} );
 		} );
 
-		// Setup Wizard modal (PassPress → Setup Wizard / post-activation).
-		var $setupModal = $( '#passpress-setup-wizard-modal' );
-		if ( $setupModal.length ) {
-			function openSetupModal() {
-				$setupModal.show();
-				$( 'body' ).addClass( 'passpress-modal-open' );
+		// Setup Wizard (PassPress → Setup Wizard / post-activation).
+		var $setupPage = $( '.passpress-setup-page' );
+		if ( $setupPage.length ) {
+			var $setupForm = $( '#passpress-setup-wizard-form' );
+			var $search = $( '#passpress-setup-search' );
+			var $filters = $setupPage.find( '.passpress-setup-filter' );
+			var $empty = $setupPage.find( '.passpress-setup-empty' );
+			var activeFilter = 'all';
+
+			function applySetupFilters() {
+				var query = ( $search.val() || '' ).toString().toLowerCase().trim();
+				var visible = 0;
+
+				$setupPage.find( '.passpress-setup-category' ).each( function () {
+					var $cat = $( this );
+					var catSlug = $cat.attr( 'data-category' );
+					var catVisible = 0;
+
+					$cat.find( '.passpress-template-card' ).each( function () {
+						var $card = $( this );
+						var label = ( $card.attr( 'data-label' ) || '' ).toString();
+						var matchFilter = ( 'all' === activeFilter || catSlug === activeFilter );
+						var matchSearch = ! query || label.indexOf( query ) !== -1;
+						var show = matchFilter && matchSearch;
+						$card.toggleClass( 'is-filtered-out', ! show );
+						if ( show ) {
+							catVisible += 1;
+							visible += 1;
+						}
+					} );
+
+					$cat.toggleClass( 'is-filtered-out', 0 === catVisible );
+				} );
+
+				$empty.prop( 'hidden', visible > 0 );
 			}
 
-			function closeSetupModal() {
-				// First-run welcome flow: keep the modal until they pick or skip.
-				if ( '1' === String( $setupModal.data( 'welcome' ) ) ) {
-					return;
-				}
-				$setupModal.hide();
-				$( 'body' ).removeClass( 'passpress-modal-open' );
-			}
-
-			if ( '1' === String( $setupModal.data( 'auto-open' ) ) ) {
-				openSetupModal();
-			}
-
-			$( '#passpress-open-setup-modal' ).on( 'click', openSetupModal );
-			$setupModal.find( '.passpress-modal-close, .passpress-modal-cancel' ).on( 'click', closeSetupModal );
-
-			$setupModal.on( 'click', function ( e ) {
-				if ( e.target === this ) {
-					closeSetupModal();
-				}
-			} );
-
-			$( document ).on( 'keydown', function ( e ) {
-				if ( 'Escape' === e.key && $setupModal.is( ':visible' ) ) {
-					closeSetupModal();
-				}
-			} );
-
-			$setupModal.on( 'change', 'input[name="business_type"]', function () {
-				$setupModal.find( '.passpress-template-card' ).removeClass( 'is-selected' );
+			$setupForm.on( 'change', 'input[name="business_type"]', function () {
+				$setupForm.find( '.passpress-template-card' ).removeClass( 'is-selected' );
 				$( this ).closest( '.passpress-template-card' ).addClass( 'is-selected' );
+			} );
+
+			$filters.on( 'click', function () {
+				activeFilter = $( this ).attr( 'data-filter' ) || 'all';
+				$filters.removeClass( 'is-active' );
+				$( this ).addClass( 'is-active' );
+				applySetupFilters();
+			} );
+
+			$search.on( 'input', applySetupFilters );
+
+			$setupForm.on( 'submit', function () {
+				var $checked = $setupForm.find( 'input[name="business_type"]:checked:not(:disabled)' );
+				if ( ! $checked.length ) {
+					window.alert( 'Please select a business template to import.' );
+					return false;
+				}
+				$( '#passpress-setup-submit' ).prop( 'disabled', true ).text( 'Importing…' );
 			} );
 		}
 
@@ -660,6 +679,189 @@
 						$facilitySubmit.prop( 'disabled', false );
 					} );
 			} );
+		}
+
+		// Coupon create/edit modal (PassPress → Coupons).
+		var $couponModal = $( '#passpress-coupon-modal' );
+		if ( $couponModal.length ) {
+			var $couponForm = $( '#passpress-coupon-form' );
+			var $couponNotice = $couponModal.find( '.passpress-modal-notice' );
+			var $couponSubmit = $( '#passpress-coupon-submit' );
+			var $couponEyebrow = $couponModal.find( '.pp-modal-eyebrow' );
+			var $couponTitle = $( '#passpress-coupon-modal-title' );
+			var $couponId = $( '#pp_coupon_id' );
+			var $couponStatusBox = $couponModal.find( '.pp-coupon-status-box' );
+			var $couponAmountPrefix = $( '#pp_coupon_amount_prefix' );
+			var couponMode = 'create';
+
+			$couponEyebrow.data( 'labelCreate', $couponEyebrow.attr( 'data-label-create' ) );
+			$couponEyebrow.data( 'labelEdit', $couponEyebrow.attr( 'data-label-edit' ) );
+			$couponTitle.data( 'labelCreate', $couponTitle.attr( 'data-label-create' ) );
+			$couponTitle.data( 'labelEdit', $couponTitle.attr( 'data-label-edit' ) );
+			$couponSubmit.data( 'labelCreate', $couponSubmit.attr( 'data-label-create' ) );
+			$couponSubmit.data( 'labelEdit', $couponSubmit.attr( 'data-label-edit' ) );
+
+			function syncCouponAmountPrefix() {
+				var type = $( '#pp_coupon_discount_type' ).val();
+				$couponAmountPrefix.text( 'fixed' === type ? ( $couponAmountPrefix.data( 'currency' ) || '$' ) : '%' );
+			}
+
+			$couponAmountPrefix.data( 'currency', $couponAmountPrefix.attr( 'data-currency' ) || '$' );
+
+			function setCouponMode( nextMode ) {
+				couponMode = nextMode;
+				var labelKey = 'edit' === couponMode ? 'labelEdit' : 'labelCreate';
+				$couponEyebrow.text( $couponEyebrow.data( labelKey ) || $couponEyebrow.text() );
+				$couponTitle.text( $couponTitle.data( labelKey ) || $couponTitle.text() );
+				$couponSubmit.text( $couponSubmit.data( labelKey ) || $couponSubmit.text() );
+				$couponStatusBox.prop( 'hidden', 'edit' !== couponMode );
+			}
+
+			function resetCouponForm() {
+				$couponForm[0].reset();
+				$couponId.val( '0' );
+				$( '#pp_coupon_discount_type' ).val( 'percent' );
+				$( '#pp_coupon_discount_amount' ).val( '10' );
+				$( '#pp_coupon_usage_total' ).val( '0' );
+				$( '#pp_coupon_usage_per_user' ).val( '1' );
+				$( '#pp_coupon_active' ).prop( 'checked', true );
+				$( '#pp_coupon_live' ).prop( 'checked', true );
+				$( '.pp-coupon-plan-check' ).prop( 'checked', false );
+				$couponNotice.prop( 'hidden', true ).hide().text( '' );
+				$couponSubmit.prop( 'disabled', false );
+				syncCouponAmountPrefix();
+			}
+
+			function fillCouponForm( coupon ) {
+				$couponId.val( coupon.coupon_id || 0 );
+				$( '#pp_coupon_code' ).val( coupon.title || '' );
+				$( '#pp_coupon_discount_type' ).val( coupon._pp_discount_type || 'percent' );
+				$( '#pp_coupon_discount_amount' ).val( coupon._pp_discount_amount != null ? coupon._pp_discount_amount : 0 );
+				$( '#pp_coupon_usage_total' ).val( coupon._pp_usage_limit_total || 0 );
+				$( '#pp_coupon_usage_per_user' ).val( coupon._pp_usage_limit_per_user != null ? coupon._pp_usage_limit_per_user : 1 );
+				$( '#pp_coupon_expiry' ).val( coupon._pp_expiry_date || '' );
+				$( '#pp_coupon_active' ).prop( 'checked', !! parseInt( coupon._pp_active, 10 ) );
+				$( '#pp_coupon_live' ).prop( 'checked', !! parseInt( coupon.is_live, 10 ) );
+
+				var plans = coupon._pp_applicable_plans || [];
+				$( '.pp-coupon-plan-check' ).each( function () {
+					var id = parseInt( $( this ).val(), 10 );
+					$( this ).prop( 'checked', plans.indexOf( id ) !== -1 );
+				} );
+				syncCouponAmountPrefix();
+			}
+
+			function openCouponModal() {
+				$couponModal.prop( 'hidden', false ).css( 'display', 'flex' );
+				$( 'body' ).addClass( 'passpress-modal-open' );
+				window.setTimeout( function () {
+					$( '#pp_coupon_code' ).trigger( 'focus' );
+				}, 30 );
+			}
+
+			function closeCouponModal() {
+				$couponModal.prop( 'hidden', true ).css( 'display', 'none' );
+				$( 'body' ).removeClass( 'passpress-modal-open' );
+				$couponNotice.prop( 'hidden', true ).hide().text( '' );
+			}
+
+			function openCouponCreateModal() {
+				resetCouponForm();
+				setCouponMode( 'create' );
+				openCouponModal();
+			}
+
+			function openCouponEditModal( couponId ) {
+				resetCouponForm();
+				setCouponMode( 'edit' );
+				openCouponModal();
+				$couponSubmit.prop( 'disabled', true ).text( 'Loading…' );
+
+				$.post( PassPressScan.ajaxUrl, {
+					action: 'pp_get_coupon',
+					pp_coupon_modal_nonce: $( '#pp_coupon_modal_nonce' ).val(),
+					coupon_id: couponId
+				} )
+					.done( function ( response ) {
+						if ( ! response || ! response.success ) {
+							$couponNotice
+								.text( ( response && response.data && response.data.message ) || 'Could not load coupon.' )
+								.prop( 'hidden', false )
+								.show();
+							$couponSubmit.prop( 'disabled', false ).text( $couponSubmit.data( 'labelEdit' ) );
+							return;
+						}
+						fillCouponForm( response.data );
+						$couponSubmit.prop( 'disabled', false ).text( $couponSubmit.data( 'labelEdit' ) );
+						$( '#pp_coupon_code' ).trigger( 'focus' );
+					} )
+					.fail( function () {
+						$couponNotice
+							.text( 'Could not load coupon. Please try again.' )
+							.prop( 'hidden', false )
+							.show();
+						$couponSubmit.prop( 'disabled', false ).text( $couponSubmit.data( 'labelEdit' ) );
+					} );
+			}
+
+			$( document ).on( 'change', '#pp_coupon_discount_type', syncCouponAmountPrefix );
+
+			$( document ).on( 'click', '#passpress-new-coupon-trigger, [data-open-new-coupon]', function ( e ) {
+				e.preventDefault();
+				openCouponCreateModal();
+			} );
+
+			$( document ).on( 'click', '[data-edit-coupon]', function ( e ) {
+				e.preventDefault();
+				var id = $( this ).attr( 'data-edit-coupon' );
+				if ( id ) {
+					openCouponEditModal( id );
+				}
+			} );
+
+			$couponModal.find( '.passpress-modal-close, .passpress-modal-cancel' ).on( 'click', closeCouponModal );
+			$couponModal.on( 'click', function ( e ) {
+				if ( e.target === this ) {
+					closeCouponModal();
+				}
+			} );
+			$( document ).on( 'keydown', function ( e ) {
+				if ( 'Escape' === e.key && ! $couponModal.prop( 'hidden' ) ) {
+					closeCouponModal();
+				}
+			} );
+
+			$couponForm.on( 'submit', function ( e ) {
+				e.preventDefault();
+				var action = 'edit' === couponMode ? 'pp_update_coupon' : 'pp_create_coupon';
+				$couponSubmit.prop( 'disabled', true );
+				$couponNotice.prop( 'hidden', true ).hide().text( '' );
+
+				$.post( PassPressScan.ajaxUrl, $couponForm.serialize() + '&action=' + action )
+					.done( function ( response ) {
+						if ( response.success ) {
+							window.location.href = response.data.reload_url;
+						} else {
+							$couponNotice
+								.text( ( response.data && response.data.message ) || 'Something went wrong.' )
+								.prop( 'hidden', false )
+								.show();
+							$couponSubmit.prop( 'disabled', false );
+						}
+					} )
+					.fail( function () {
+						$couponNotice
+							.text( 'Something went wrong. Please try again.' )
+							.prop( 'hidden', false )
+							.show();
+						$couponSubmit.prop( 'disabled', false );
+					} );
+			} );
+
+			var autoEdit = $( '.passpress-coupons-page' ).attr( 'data-auto-edit' );
+			if ( autoEdit ) {
+				openCouponEditModal( autoEdit );
+			}
 		}
 
 		// Class session create/edit modal (PassPress → Class Sessions).

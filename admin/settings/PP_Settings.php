@@ -39,46 +39,60 @@ class PP_Settings {
 		?>
 		<div class="passpress-settings-panel" id="passpress-panel-general">
 			<header class="passpress-settings-panel-header">
+				<p class="passpress-settings-panel-eyebrow"><?php esc_html_e( 'Basics', 'passpress' ); ?></p>
 				<h2><?php esc_html_e( 'General', 'passpress' ); ?></h2>
 				<p><?php esc_html_e( 'Currency, dates, and how passes appear to members.', 'passpress' ); ?></p>
 			</header>
 
-			<form method="post" action="options.php">
+			<form method="post" action="options.php" class="passpress-settings-form">
 				<?php settings_fields( 'passpress_settings_group' ); ?>
-				<table class="form-table" role="presentation">
-					<tr>
-						<th scope="row"><label for="pp_currency_symbol"><?php esc_html_e( 'Currency Symbol', 'passpress' ); ?></label></th>
-						<td><input type="text" id="pp_currency_symbol" name="passpress_settings[currency_symbol]" value="<?php echo esc_attr( $settings['currency_symbol'] ); ?>" class="small-text"></td>
-					</tr>
-					<tr>
-						<th scope="row"><label for="pp_currency_code"><?php esc_html_e( 'Currency Code (ISO 4217)', 'passpress' ); ?></label></th>
-						<td>
-							<input type="text" id="pp_currency_code" name="passpress_settings[currency_code]" value="<?php echo esc_attr( $settings['currency_code'] ); ?>" class="small-text" maxlength="3">
-							<p class="description"><?php esc_html_e( 'e.g. usd, eur, gbp — required by Stripe/PayPal for real charges.', 'passpress' ); ?></p>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row"><label for="pp_date_format"><?php esc_html_e( 'Date Format', 'passpress' ); ?></label></th>
-						<td>
-							<input type="text" id="pp_date_format" name="passpress_settings[date_format]" value="<?php echo esc_attr( $settings['date_format'] ); ?>" class="regular-text">
-							<p class="description"><?php esc_html_e( 'PHP date() format used to display expiry dates on My Pass and in admin lists.', 'passpress' ); ?></p>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row"><label for="pp_qr_size"><?php esc_html_e( 'QR Code Size (px)', 'passpress' ); ?></label></th>
-						<td><input type="number" id="pp_qr_size" name="passpress_settings[qr_size]" value="<?php echo esc_attr( $settings['qr_size'] ); ?>" min="100" max="400" step="10"></td>
-					</tr>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Show PIN on My Pass', 'passpress' ); ?></th>
-						<td>
-							<label>
-								<input type="checkbox" name="passpress_settings[show_pin_on_pass]" value="1" <?php checked( ! empty( $settings['show_pin_on_pass'] ) ); ?>>
-								<?php esc_html_e( 'Display the PIN code alongside the QR code', 'passpress' ); ?>
-							</label>
-						</td>
-					</tr>
-				</table>
-				<?php submit_button( __( 'Save General Settings', 'passpress' ) ); ?>
+
+				<section class="passpress-settings-card">
+					<div class="passpress-settings-card-head">
+						<h3><?php esc_html_e( 'Currency & dates', 'passpress' ); ?></h3>
+						<p><?php esc_html_e( 'Used on plan cards, checkout, and membership lists.', 'passpress' ); ?></p>
+					</div>
+
+					<div class="pp-field-row">
+						<div class="pp-field">
+							<label class="pp-label" for="pp_currency_symbol"><?php esc_html_e( 'Currency symbol', 'passpress' ); ?></label>
+							<input type="text" id="pp_currency_symbol" name="passpress_settings[currency_symbol]" value="<?php echo esc_attr( $settings['currency_symbol'] ); ?>" class="pp-input pp-input-narrow" maxlength="8">
+						</div>
+						<div class="pp-field">
+							<label class="pp-label" for="pp_currency_code"><?php esc_html_e( 'Currency code', 'passpress' ); ?></label>
+							<input type="text" id="pp_currency_code" name="passpress_settings[currency_code]" value="<?php echo esc_attr( $settings['currency_code'] ); ?>" class="pp-input pp-input-narrow" maxlength="3">
+							<p class="pp-field-hint"><?php esc_html_e( 'ISO 4217, e.g. usd, eur, gbp — required by Stripe/PayPal.', 'passpress' ); ?></p>
+						</div>
+					</div>
+
+					<div class="pp-field">
+						<label class="pp-label" for="pp_date_format"><?php esc_html_e( 'Date format', 'passpress' ); ?></label>
+						<input type="text" id="pp_date_format" name="passpress_settings[date_format]" value="<?php echo esc_attr( $settings['date_format'] ); ?>" class="pp-input">
+						<p class="pp-field-hint"><?php esc_html_e( 'PHP date() format for expiry dates on My Pass and in admin lists.', 'passpress' ); ?></p>
+					</div>
+				</section>
+
+				<section class="passpress-settings-card">
+					<div class="passpress-settings-card-head">
+						<h3><?php esc_html_e( 'My Pass display', 'passpress' ); ?></h3>
+						<p><?php esc_html_e( 'How the digital pass looks when members open it.', 'passpress' ); ?></p>
+					</div>
+
+					<div class="pp-field">
+						<label class="pp-label" for="pp_qr_size"><?php esc_html_e( 'QR code size (px)', 'passpress' ); ?></label>
+						<input type="number" id="pp_qr_size" name="passpress_settings[qr_size]" value="<?php echo esc_attr( $settings['qr_size'] ); ?>" min="100" max="400" step="10" class="pp-input pp-input-narrow">
+						<p class="pp-field-hint"><?php esc_html_e( 'Between 100 and 400 pixels.', 'passpress' ); ?></p>
+					</div>
+
+					<label class="pp-checkbox-box">
+						<input type="checkbox" name="passpress_settings[show_pin_on_pass]" value="1" <?php checked( ! empty( $settings['show_pin_on_pass'] ) ); ?>>
+						<span><?php esc_html_e( 'Show PIN code alongside the QR on My Pass', 'passpress' ); ?></span>
+					</label>
+				</section>
+
+				<div class="passpress-settings-actions">
+					<button type="submit" class="pp-btn-solid"><?php esc_html_e( 'Save general settings', 'passpress' ); ?></button>
+				</div>
 			</form>
 		</div>
 		<?php

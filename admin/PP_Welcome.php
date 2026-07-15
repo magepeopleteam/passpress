@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Redirects to the Setup Wizard once, right after activation.
- * The setup screen auto-opens the business-type modal (pp_welcome=1).
+ * The setup screen shows a welcome banner when pp_welcome=1.
  */
 class PP_Welcome {
 

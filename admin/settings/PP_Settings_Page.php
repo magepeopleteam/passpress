@@ -13,21 +13,24 @@ class PP_Settings_Page {
 	const PAGE_SLUG = 'passpress-settings';
 
 	/**
-	 * @return array<string, array{label: string, icon: string}>
+	 * @return array<string, array{label: string, icon: string, desc: string}>
 	 */
 	public static function tabs() {
 		return array(
 			'general'       => array(
 				'label' => __( 'General', 'passpress' ),
 				'icon'  => 'dashicons-admin-generic',
+				'desc'  => __( 'Currency, dates & pass display', 'passpress' ),
 			),
 			'billing'       => array(
 				'label' => __( 'Payment Method', 'passpress' ),
 				'icon'  => 'dashicons-money-alt',
+				'desc'  => __( 'Checkout gateways & renewals', 'passpress' ),
 			),
 			'notifications' => array(
 				'label' => __( 'Notifications', 'passpress' ),
 				'icon'  => 'dashicons-email-alt',
+				'desc'  => __( 'Email alerts for members', 'passpress' ),
 			),
 		);
 	}
@@ -96,10 +99,19 @@ class PP_Settings_Page {
 		$current_tab = self::current_tab();
 		?>
 		<div class="wrap passpress-wrap passpress-settings-page">
-			<h1><?php esc_html_e( 'PassPress Settings', 'passpress' ); ?></h1>
+			<div class="passpress-settings-page-header">
+				<div class="passpress-settings-page-copy">
+					<p class="passpress-settings-page-eyebrow"><?php esc_html_e( 'Configuration', 'passpress' ); ?></p>
+					<h1><?php esc_html_e( 'Settings', 'passpress' ); ?></h1>
+					<p class="passpress-settings-page-desc">
+						<?php esc_html_e( 'Tune currency, checkout, and the emails members receive.', 'passpress' ); ?>
+					</p>
+				</div>
+			</div>
 
 			<div class="passpress-settings-layout">
 				<nav class="passpress-settings-sidebar" aria-label="<?php esc_attr_e( 'Settings sections', 'passpress' ); ?>">
+					<p class="passpress-settings-sidebar-label"><?php esc_html_e( 'Sections', 'passpress' ); ?></p>
 					<ul class="passpress-settings-nav">
 						<?php foreach ( $tabs as $slug => $tab ) : ?>
 							<li>
@@ -108,15 +120,20 @@ class PP_Settings_Page {
 									class="passpress-settings-nav-link <?php echo $slug === $current_tab ? 'is-active' : ''; ?>"
 									data-tab="<?php echo esc_attr( $slug ); ?>"
 								>
-									<span class="dashicons <?php echo esc_attr( $tab['icon'] ); ?>" aria-hidden="true"></span>
-									<span class="passpress-settings-nav-label"><?php echo esc_html( $tab['label'] ); ?></span>
+									<span class="passpress-settings-nav-icon">
+										<span class="dashicons <?php echo esc_attr( $tab['icon'] ); ?>" aria-hidden="true"></span>
+									</span>
+									<span class="passpress-settings-nav-text">
+										<span class="passpress-settings-nav-label"><?php echo esc_html( $tab['label'] ); ?></span>
+										<span class="passpress-settings-nav-desc"><?php echo esc_html( $tab['desc'] ); ?></span>
+									</span>
 								</a>
 							</li>
 						<?php endforeach; ?>
 					</ul>
 				</nav>
 
-				<div class="passpress-settings-content">
+				<div class="passpress-settings-content" data-active-tab="<?php echo esc_attr( $current_tab ); ?>">
 					<?php
 					switch ( $current_tab ) {
 						case 'billing':

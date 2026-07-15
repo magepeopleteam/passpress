@@ -33,7 +33,7 @@ class PP_Coupon_CPT {
 				),
 				'public'       => false,
 				'show_ui'      => true,
-				'show_in_menu' => 'passpress',
+				'show_in_menu' => false, // custom card-grid list page instead — see admin/PP_Coupons_List.php
 				'menu_icon'    => 'dashicons-tag',
 				'supports'     => array( 'title' ),
 				'has_archive'  => false,

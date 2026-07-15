@@ -125,6 +125,7 @@ class PP_Billing_Settings {
 		?>
 		<div class="passpress-settings-panel" id="passpress-panel-billing">
 			<header class="passpress-settings-panel-header">
+				<p class="passpress-settings-panel-eyebrow"><?php esc_html_e( 'Checkout', 'passpress' ); ?></p>
 				<h2><?php esc_html_e( 'Payment Method', 'passpress' ); ?></h2>
 				<p><?php esc_html_e( 'Choose WooCommerce checkout or PassPress custom payment (Offline, Stripe, PayPal). Memberships and renewals are always managed by PassPress.', 'passpress' ); ?></p>
 			</header>

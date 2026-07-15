@@ -30,6 +30,7 @@ class PP_Admin {
 
 		add_submenu_page( 'passpress', __( 'Dashboard', 'passpress' ), __( 'Dashboard', 'passpress' ), PP_Roles::CAP_SCAN, 'passpress', array( 'PP_Dashboard', 'render' ) );
 		add_submenu_page( 'passpress', __( 'Membership Plans', 'passpress' ), __( 'Membership Plans', 'passpress' ), PP_Roles::CAP_MANAGE, 'passpress-plans', array( 'PP_Plans_List', 'render' ) );
+		add_submenu_page( 'passpress', __( 'Coupons', 'passpress' ), __( 'Coupons', 'passpress' ), PP_Roles::CAP_MANAGE, 'passpress-coupons', array( 'PP_Coupons_List', 'render' ) );
 		add_submenu_page( 'passpress', __( 'Facilities', 'passpress' ), __( 'Facilities', 'passpress' ), PP_Roles::CAP_MANAGE, 'passpress-facilities', array( 'PP_Facilities_List', 'render' ) );
 		add_submenu_page( 'passpress', __( 'Class Sessions', 'passpress' ), __( 'Class Sessions', 'passpress' ), PP_Roles::CAP_MANAGE, 'passpress-class-sessions', array( 'PP_Class_Sessions_List', 'render' ) );
 		add_submenu_page( 'passpress', __( 'Memberships', 'passpress' ), __( 'Memberships', 'passpress' ), PP_Roles::CAP_MANAGE, 'passpress-memberships', array( 'PP_Memberships_List', 'render' ) );

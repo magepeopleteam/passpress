@@ -1,3 +1,586 @@
+.wrap.passpress-wrap {
+	padding: 20px;
+	background: #fff;
+}
+
+/* Dashboard */
+
+.passpress-dashboard-page {
+	--pp-db-ink: #0f172a;
+	--pp-db-muted: #64748b;
+	--pp-db-line: #e2e8f0;
+	--pp-db-accent: #ff875f;
+	--pp-db-accent-deep: #ff6b3d;
+	--pp-db-surface: #f8fafc;
+	max-width: 1120px;
+}
+
+.passpress-dashboard-page-header {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 16px;
+	margin: 0 0 20px;
+	padding-bottom: 18px;
+	border-bottom: 1px solid var(--pp-db-line);
+}
+
+.passpress-dashboard-page-eyebrow,
+.passpress-dashboard-panel-eyebrow,
+.passpress-dashboard-setup-eyebrow,
+.passpress-dashboard-empty-eyebrow {
+	margin: 0 0 6px;
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--pp-db-accent-deep);
+}
+
+.passpress-dashboard-page-header h1 {
+	margin: 0 0 6px;
+	padding: 0;
+	font-size: 1.75rem;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	color: var(--pp-db-ink);
+	line-height: 1.2;
+}
+
+.passpress-dashboard-page-desc {
+	margin: 0;
+	max-width: 560px;
+	font-size: 0.92rem;
+	color: var(--pp-db-muted);
+	line-height: 1.45;
+}
+
+.passpress-dashboard-header-actions {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.passpress-dashboard-primary-btn,
+.passpress-dashboard-secondary-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	border-radius: 10px;
+	padding: 10px 16px;
+	font-size: 0.9rem;
+	font-weight: 800;
+	text-decoration: none !important;
+	white-space: nowrap;
+	line-height: 1.2;
+}
+
+.passpress-dashboard-primary-btn {
+	background: var(--pp-db-accent) !important;
+	color: #fff !important;
+	border: none;
+}
+
+.passpress-dashboard-primary-btn:hover,
+.passpress-dashboard-primary-btn:focus {
+	background: var(--pp-db-accent-deep) !important;
+	color: #fff !important;
+}
+
+.passpress-dashboard-primary-btn .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+}
+
+.passpress-dashboard-secondary-btn {
+	background: #fff !important;
+	color: var(--pp-db-ink) !important;
+	border: 1px solid var(--pp-db-line) !important;
+}
+
+.passpress-dashboard-secondary-btn:hover,
+.passpress-dashboard-secondary-btn:focus {
+	border-color: #fdba8c !important;
+	color: var(--pp-db-accent-deep) !important;
+}
+
+.passpress-dashboard-flash {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	margin: 0 0 18px;
+	padding: 14px 16px;
+	border-radius: 12px;
+	border: 1px solid #bbf7d0;
+	background: #f0fdf4;
+}
+
+.passpress-dashboard-flash .dashicons {
+	color: #15803d;
+	margin-top: 1px;
+}
+
+.passpress-dashboard-flash p {
+	margin: 0;
+	color: #166534;
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+.passpress-dashboard-setup-cta {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	flex-wrap: wrap;
+	margin: 0 0 20px;
+	padding: 18px 18px;
+	border: 1px solid #fdba8c;
+	border-radius: 14px;
+	background:
+		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.18) 0%, transparent 55%),
+		linear-gradient(180deg, #fffaf8 0%, #ffffff 70%);
+}
+
+.passpress-dashboard-setup-copy {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 0;
+	max-width: 640px;
+}
+
+.passpress-dashboard-setup-copy strong {
+	font-size: 1.05rem;
+	color: var(--pp-db-ink);
+	letter-spacing: -0.02em;
+}
+
+.passpress-dashboard-setup-copy span {
+	font-size: 0.86rem;
+	color: var(--pp-db-muted);
+	line-height: 1.45;
+}
+
+.passpress-dashboard-setup-cta .pp-btn-solid {
+	border: none;
+	background: var(--pp-db-accent);
+	color: #fff;
+	text-decoration: none;
+}
+
+.passpress-dashboard-setup-cta .pp-btn-solid:hover {
+	background: var(--pp-db-accent-deep);
+	color: #fff;
+}
+
+.passpress-dashboard-kpis {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 12px;
+	margin: 0 0 20px;
+}
+
+.passpress-dashboard-kpi {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 16px;
+	border: 1px solid var(--pp-db-line);
+	border-radius: 14px;
+	background:
+		radial-gradient(120% 140% at 100% 0%, rgba(255, 155, 122, 0.1) 0%, transparent 50%),
+		#fff;
+	text-decoration: none !important;
+	color: inherit;
+	transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.passpress-dashboard-kpi:hover,
+.passpress-dashboard-kpi:focus {
+	border-color: var(--pp-db-accent);
+	box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+	transform: translateY(-1px);
+	color: inherit;
+}
+
+.passpress-dashboard-kpi-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border-radius: 12px;
+	background: #fff1eb;
+	border: 1px solid #fdba8c;
+	flex: 0 0 auto;
+}
+
+.passpress-dashboard-kpi-icon .dashicons {
+	color: var(--pp-db-accent-deep);
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+}
+
+.passpress-dashboard-kpi.is-active .passpress-dashboard-kpi-icon {
+	background: #eaf7ee;
+	border-color: #86efac;
+}
+
+.passpress-dashboard-kpi.is-active .passpress-dashboard-kpi-icon .dashicons {
+	color: #15803d;
+}
+
+.passpress-dashboard-kpi.is-warn .passpress-dashboard-kpi-icon {
+	background: #fff7ed;
+	border-color: #fdba74;
+}
+
+.passpress-dashboard-kpi.is-warn .passpress-dashboard-kpi-icon .dashicons {
+	color: #c2410c;
+}
+
+.passpress-dashboard-kpi.is-checkin .passpress-dashboard-kpi-icon {
+	background: #eff6ff;
+	border-color: #93c5fd;
+}
+
+.passpress-dashboard-kpi.is-checkin .passpress-dashboard-kpi-icon .dashicons {
+	color: #1d4ed8;
+}
+
+.passpress-dashboard-kpi.is-muted .passpress-dashboard-kpi-icon {
+	background: #f8fafc;
+	border-color: #cbd5e1;
+}
+
+.passpress-dashboard-kpi.is-muted .passpress-dashboard-kpi-icon .dashicons {
+	color: #475569;
+}
+
+.passpress-dashboard-kpi-meta {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.passpress-dashboard-kpi-label {
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--pp-db-muted);
+}
+
+.passpress-dashboard-kpi-value {
+	font-size: 1.7rem;
+	font-weight: 800;
+	letter-spacing: -0.03em;
+	color: var(--pp-db-ink);
+	line-height: 1.15;
+}
+
+.passpress-dashboard-kpi-hint {
+	font-size: 0.78rem;
+	font-weight: 600;
+	color: var(--pp-db-accent-deep);
+}
+
+.passpress-dashboard-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+	gap: 16px;
+	align-items: start;
+}
+
+.passpress-dashboard-panel {
+	border: 1px solid var(--pp-db-line);
+	border-radius: 16px;
+	background: #fff;
+	padding: 18px;
+	min-width: 0;
+}
+
+.passpress-dashboard-panel-head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 14px;
+	padding-bottom: 12px;
+	border-bottom: 1px solid var(--pp-db-line);
+}
+
+.passpress-dashboard-panel-head h2 {
+	margin: 0;
+	padding: 0;
+	font-size: 1.1rem;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	color: var(--pp-db-ink);
+}
+
+.passpress-dashboard-panel-link {
+	font-size: 0.82rem;
+	font-weight: 800;
+	color: var(--pp-db-accent-deep) !important;
+	text-decoration: none !important;
+	white-space: nowrap;
+}
+
+.passpress-dashboard-panel-link:hover {
+	text-decoration: underline !important;
+}
+
+.passpress-dashboard-actions {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.passpress-dashboard-action {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px;
+	border: 1px solid var(--pp-db-line);
+	border-radius: 12px;
+	text-decoration: none !important;
+	color: inherit;
+	background: var(--pp-db-surface);
+	transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.passpress-dashboard-action:hover,
+.passpress-dashboard-action:focus {
+	border-color: #fdba8c;
+	background: #fffaf8;
+	color: inherit;
+}
+
+.passpress-dashboard-action-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 10px;
+	background: #fff;
+	border: 1px solid var(--pp-db-line);
+	flex: 0 0 auto;
+}
+
+.passpress-dashboard-action-icon .dashicons {
+	color: var(--pp-db-accent-deep);
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+}
+
+.passpress-dashboard-action-copy {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+	flex: 1 1 auto;
+}
+
+.passpress-dashboard-action-copy strong {
+	font-size: 0.9rem;
+	font-weight: 800;
+	color: var(--pp-db-ink);
+	letter-spacing: -0.01em;
+}
+
+.passpress-dashboard-action-copy em {
+	font-style: normal;
+	font-size: 0.78rem;
+	font-weight: 500;
+	color: var(--pp-db-muted);
+	line-height: 1.35;
+}
+
+.passpress-dashboard-action > .dashicons {
+	color: var(--pp-db-muted);
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	flex: 0 0 auto;
+}
+
+.passpress-dashboard-activity {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+}
+
+.passpress-dashboard-activity li {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	margin: 0;
+	padding: 12px 0;
+	border-bottom: 1px solid var(--pp-db-line);
+}
+
+.passpress-dashboard-activity li:last-child {
+	border-bottom: none;
+	padding-bottom: 0;
+}
+
+.passpress-dashboard-activity-dot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: var(--pp-db-accent);
+	margin-top: 6px;
+	flex: 0 0 auto;
+	box-shadow: 0 0 0 4px rgba(255, 135, 95, 0.15);
+}
+
+.passpress-dashboard-activity-body {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	min-width: 0;
+}
+
+.passpress-dashboard-activity-body strong {
+	font-size: 0.88rem;
+	font-weight: 700;
+	color: var(--pp-db-ink);
+	line-height: 1.35;
+}
+
+.passpress-dashboard-activity-body span {
+	font-size: 0.76rem;
+	font-weight: 500;
+	color: var(--pp-db-muted);
+}
+
+.passpress-dashboard-empty {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 18px 4px 6px;
+}
+
+.passpress-dashboard-empty strong {
+	font-size: 1rem;
+	color: var(--pp-db-ink);
+}
+
+.passpress-dashboard-empty span {
+	font-size: 0.84rem;
+	color: var(--pp-db-muted);
+	line-height: 1.45;
+}
+
+.passpress-dashboard-gate-card {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	flex-wrap: wrap;
+	padding: 22px 20px;
+	border: 1px solid var(--pp-db-line);
+	border-radius: 16px;
+	background:
+		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.16) 0%, transparent 55%),
+		#fff;
+}
+
+.passpress-dashboard-gate-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 52px;
+	height: 52px;
+	border-radius: 14px;
+	background: #fff1eb;
+	border: 1px solid #fdba8c;
+}
+
+.passpress-dashboard-gate-icon .dashicons {
+	color: var(--pp-db-accent-deep);
+	font-size: 24px;
+	width: 24px;
+	height: 24px;
+}
+
+.passpress-dashboard-gate-card strong {
+	display: block;
+	font-size: 1.1rem;
+	color: var(--pp-db-ink);
+	margin-bottom: 4px;
+}
+
+.passpress-dashboard-gate-card p {
+	margin: 0;
+	color: var(--pp-db-muted);
+	font-size: 0.9rem;
+}
+
+.passpress-dashboard-gate-card .pp-btn-solid {
+	margin-left: auto;
+	border: none;
+	background: var(--pp-db-accent);
+	color: #fff;
+	text-decoration: none;
+}
+
+.passpress-dashboard-gate-card .pp-btn-solid:hover {
+	background: var(--pp-db-accent-deep);
+	color: #fff;
+}
+
+@media screen and (max-width: 1100px) {
+	.passpress-dashboard-kpis {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.passpress-dashboard-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media screen and (max-width: 782px) {
+	.passpress-dashboard-page-header,
+	.passpress-dashboard-setup-cta,
+	.passpress-dashboard-gate-card {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.passpress-dashboard-header-actions,
+	.passpress-dashboard-gate-card .pp-btn-solid {
+		width: 100%;
+	}
+
+	.passpress-dashboard-primary-btn,
+	.passpress-dashboard-secondary-btn,
+	.passpress-dashboard-gate-card .pp-btn-solid {
+		width: 100%;
+	}
+
+	.passpress-dashboard-kpis {
+		grid-template-columns: 1fr;
+	}
+
+	.passpress-dashboard-gate-card .pp-btn-solid {
+		margin-left: 0;
+		text-align: center;
+		justify-content: center;
+	}
+}
+
 .passpress-stat-tiles {
 	display: flex;
 	gap: 16px;
@@ -135,108 +718,546 @@
 	color: #155724;
 }
 
-/* Setup Wizard modal */
+/* Setup Wizard */
 
-.passpress-setup-intro {
-	max-width: 640px;
-	font-size: 14px;
-	color: #50575e;
+.passpress-setup-page {
+	--pp-su-ink: #0f172a;
+	--pp-su-muted: #64748b;
+	--pp-su-line: #e2e8f0;
+	--pp-su-accent: #ff875f;
+	--pp-su-accent-deep: #ff6b3d;
+	--pp-su-surface: #f8fafc;
+	max-width: 1120px;
 }
 
-.passpress-setup-active {
-	margin: 12px 0 20px;
+.passpress-setup-welcome-banner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	flex-wrap: wrap;
+	margin: 0 0 20px;
+	padding: 16px 18px;
+	border: 1px solid #fdba8c;
+	border-radius: 14px;
+	background:
+		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.18) 0%, transparent 55%),
+		linear-gradient(180deg, #fffaf8 0%, #ffffff 70%);
 }
 
-.passpress-setup-modal {
-	max-width: 860px;
-	padding: 24px 28px 20px;
-	max-height: calc(100vh - 10vh);
+.passpress-setup-welcome-copy {
 	display: flex;
 	flex-direction: column;
+	gap: 4px;
+	min-width: 0;
 }
 
-.passpress-setup-modal .pp-modal-header {
-	margin-bottom: 12px;
+.passpress-setup-welcome-eyebrow {
+	margin: 0;
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--pp-su-accent-deep);
+}
+
+.passpress-setup-welcome-copy strong {
+	font-size: 1.05rem;
+	color: var(--pp-su-ink);
+	letter-spacing: -0.02em;
+}
+
+.passpress-setup-welcome-copy span {
+	font-size: 0.86rem;
+	color: var(--pp-su-muted);
+	line-height: 1.45;
+}
+
+.passpress-setup-page-header {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 16px;
+	margin: 0 0 20px;
+	padding-bottom: 18px;
+	border-bottom: 1px solid var(--pp-su-line);
+}
+
+.passpress-setup-page-eyebrow {
+	margin: 0 0 6px;
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--pp-su-accent-deep);
+}
+
+.passpress-setup-page-header h1 {
+	margin: 0 0 6px;
+	padding: 0;
+	font-size: 1.75rem;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	color: var(--pp-su-ink);
+	line-height: 1.2;
+}
+
+.passpress-setup-page-desc {
+	margin: 0;
+	max-width: 640px;
+	font-size: 0.92rem;
+	color: var(--pp-su-muted);
+	line-height: 1.5;
+}
+
+.passpress-setup-dashboard-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: none;
+	border-radius: 10px;
+	padding: 10px 16px;
+	background: var(--pp-su-accent);
+	color: #fff !important;
+	font-size: 0.9rem;
+	font-weight: 800;
+	text-decoration: none !important;
+	white-space: nowrap;
+}
+
+.passpress-setup-dashboard-btn:hover,
+.passpress-setup-dashboard-btn:focus {
+	background: var(--pp-su-accent-deep);
+	color: #fff !important;
+}
+
+.passpress-setup-status {
+	display: flex;
+	align-items: flex-start;
+	gap: 14px;
+	margin: 0 0 20px;
+	padding: 16px 18px;
+	border: 1px solid var(--pp-su-line);
+	border-radius: 14px;
+	background: #fff;
+}
+
+.passpress-setup-status-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 42px;
+	height: 42px;
+	border-radius: 12px;
+	background: #fff1eb;
+	border: 1px solid #fdba8c;
 	flex: 0 0 auto;
 }
 
-.passpress-setup-modal-subtitle {
-	margin: 6px 0 0;
-	color: #646970;
-	font-size: 13px;
-	line-height: 1.5;
-	max-width: 560px;
+.passpress-setup-status-icon .dashicons {
+	color: var(--pp-su-accent-deep);
+	font-size: 20px;
+	width: 20px;
+	height: 20px;
+}
+
+.passpress-setup-status-copy {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	min-width: 0;
+}
+
+.passpress-setup-status-label {
+	margin: 0;
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--pp-su-muted);
+}
+
+.passpress-setup-status-copy strong {
+	font-size: 1.05rem;
+	color: var(--pp-su-ink);
+}
+
+.passpress-setup-status-copy span {
+	font-size: 0.84rem;
+	color: var(--pp-su-muted);
+	line-height: 1.45;
+}
+
+.passpress-setup-steps {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 12px;
+	list-style: none;
+	margin: 0 0 22px;
+	padding: 0;
+}
+
+.passpress-setup-steps li {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	margin: 0;
+	padding: 14px 14px;
+	border: 1px solid var(--pp-su-line);
+	border-radius: 14px;
+	background: #fff;
+}
+
+.passpress-setup-steps li.is-active {
+	border-color: #fdba8c;
+	background:
+		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.14) 0%, transparent 55%),
+		#fff;
+}
+
+.passpress-setup-step-num {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 999px;
+	background: #0f172a;
+	color: #fff;
+	font-size: 0.78rem;
+	font-weight: 800;
+	flex: 0 0 auto;
+}
+
+.passpress-setup-steps li.is-active .passpress-setup-step-num {
+	background: var(--pp-su-accent);
+}
+
+.passpress-setup-step-text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.passpress-setup-step-text strong {
+	font-size: 0.9rem;
+	color: var(--pp-su-ink);
+	letter-spacing: -0.01em;
+}
+
+.passpress-setup-step-text em {
+	font-style: normal;
+	font-size: 0.78rem;
+	color: var(--pp-su-muted);
+	line-height: 1.35;
+}
+
+.passpress-setup-toolbar {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin-bottom: 18px;
+}
+
+.passpress-setup-search {
+	position: relative;
+	display: block;
+	max-width: 360px;
+}
+
+.passpress-setup-search .dashicons {
+	position: absolute;
+	left: 12px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: var(--pp-su-muted);
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	pointer-events: none;
+}
+
+.passpress-setup-search input {
+	width: 100%;
+	box-sizing: border-box;
+	min-height: 42px;
+	padding: 0 12px 0 38px;
+	border: 1px solid var(--pp-su-line);
+	border-radius: 10px;
+	background: #fff;
+	color: var(--pp-su-ink);
+	font-size: 0.9rem;
+}
+
+.passpress-setup-search input:focus {
+	outline: none;
+	border-color: #94a3b8;
+	box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.2);
+}
+
+.passpress-setup-filters {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.passpress-setup-filter {
+	border: 1px solid var(--pp-su-line);
+	border-radius: 999px;
+	background: #fff;
+	color: var(--pp-su-muted);
+	padding: 7px 12px;
+	font-size: 0.78rem;
+	font-weight: 700;
+	cursor: pointer;
+	line-height: 1.2;
+}
+
+.passpress-setup-filter:hover {
+	border-color: #fdba8c;
+	color: var(--pp-su-accent-deep);
+}
+
+.passpress-setup-filter.is-active {
+	background: #0f172a;
+	border-color: #0f172a;
+	color: #fff;
+}
+
+.passpress-setup-catalog {
+	display: flex;
+	flex-direction: column;
+	gap: 22px;
+}
+
+.passpress-setup-category-head {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0 0 12px;
+}
+
+.passpress-setup-category-head .dashicons {
+	color: var(--pp-su-accent-deep);
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+}
+
+.passpress-setup-category-head h2 {
+	margin: 0;
+	padding: 0;
+	font-size: 0.95rem;
+	font-weight: 800;
+	letter-spacing: -0.01em;
+	color: var(--pp-su-ink);
 }
 
 .passpress-setup-template-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-	gap: 10px;
-	margin: 8px 0 16px;
-	overflow-y: auto;
-	max-height: min(52vh, 420px);
-	padding: 2px;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: 12px;
 }
 
-.passpress-setup-template-grid .passpress-template-card {
-	margin: 0;
+.passpress-setup-page .passpress-template-card {
+	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: 6px;
-	border-radius: 10px;
-	border: 1px solid #dcdcde;
-	padding: 14px 14px 12px;
-	transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+	gap: 8px;
+	margin: 0;
+	padding: 16px 16px 14px;
+	border: 1px solid var(--pp-su-line);
+	border-radius: 14px;
+	background:
+		radial-gradient(120% 140% at 100% 0%, rgba(255, 155, 122, 0.1) 0%, transparent 50%),
+		#fff;
+	cursor: pointer;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 	position: relative;
 }
 
-.passpress-setup-template-grid .passpress-template-card input[type="radio"] {
+.passpress-setup-page .passpress-template-card input[type="radio"] {
 	position: absolute;
 	opacity: 0;
 	pointer-events: none;
 }
 
-.passpress-setup-template-grid .passpress-template-label {
-	font-weight: 600;
-	font-size: 0.92em;
-	color: #1d2327;
+.passpress-template-card-top {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 8px;
+	width: 100%;
+}
+
+.passpress-template-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 10px;
+	background: #fff1eb;
+	border: 1px solid #fdba8c;
+}
+
+.passpress-template-icon .dashicons {
+	color: var(--pp-su-accent-deep);
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+}
+
+.passpress-setup-page .passpress-template-label {
+	font-weight: 800;
+	font-size: 0.95rem;
+	color: var(--pp-su-ink);
+	letter-spacing: -0.01em;
 	line-height: 1.3;
 }
 
-.passpress-setup-template-grid .passpress-template-card:hover:not(.passpress-template-disabled) {
-	border-color: #ff5a1f;
-	box-shadow: 0 2px 8px rgba(255, 90, 31, 0.12);
+.passpress-template-blurb {
+	font-size: 0.8rem;
+	font-weight: 500;
+	color: var(--pp-su-muted);
+	line-height: 1.4;
 }
 
-.passpress-setup-template-grid .passpress-template-card.is-selected {
-	border-color: #ff5a1f;
-	background: #fff7f3;
-	box-shadow: 0 0 0 1px #ff5a1f;
-}
-
-.passpress-setup-modal-footer {
-	flex: 0 0 auto;
-	align-items: center;
-	justify-content: flex-end;
-	gap: 10px;
-	margin-top: 4px;
-}
-
-.passpress-setup-modal-footer .button-primary,
-.passpress-setup-modal-footer .pp-btn-solid {
-	background: #16213a !important;
-	border-color: #16213a !important;
-	color: #fff !important;
-	border-radius: 8px;
+.passpress-template-badge {
+	display: inline-block;
+	padding: 3px 8px;
+	border-radius: 999px;
+	font-size: 0.65rem;
 	font-weight: 700;
-	padding: 6px 18px;
-	height: auto;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	background: #f1f5f9;
+	color: #475569;
+	line-height: 1.2;
 }
 
-.passpress-setup-modal-footer .pp-btn-outline {
-	text-decoration: none;
-	display: inline-flex;
+.passpress-template-badge-done {
+	background: #eaf7ee;
+	color: #146c34;
+}
+
+.passpress-template-badge-active {
+	background: #fff1eb;
+	color: var(--pp-su-accent-deep);
+}
+
+.passpress-setup-page .passpress-template-card:hover:not(.passpress-template-disabled) {
+	border-color: var(--pp-su-accent);
+	box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+	transform: translateY(-1px);
+}
+
+.passpress-setup-page .passpress-template-card.is-selected {
+	border-color: var(--pp-su-accent);
+	box-shadow: 0 0 0 1px var(--pp-su-accent), 0 10px 24px rgba(255, 107, 61, 0.12);
+	background:
+		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.16) 0%, transparent 55%),
+		#fffaf8;
+}
+
+.passpress-setup-page .passpress-template-disabled {
+	opacity: 0.62;
+	cursor: not-allowed;
+	background: var(--pp-su-surface);
+}
+
+.passpress-setup-empty {
+	margin: 8px 0 0;
+	padding: 20px;
+	border: 1px dashed var(--pp-su-line);
+	border-radius: 14px;
+	text-align: center;
+	color: var(--pp-su-muted);
+	font-weight: 600;
+}
+
+.passpress-setup-footer {
+	display: flex;
 	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	flex-wrap: wrap;
+	margin-top: 22px;
+	padding-top: 18px;
+	border-top: 1px solid var(--pp-su-line);
+	position: sticky;
+	bottom: 0;
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.88) 0%, #fff 40%);
+	padding-bottom: 4px;
+	z-index: 2;
+}
+
+.passpress-setup-footer-note {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	max-width: 420px;
+	font-size: 0.8rem;
+	color: var(--pp-su-muted);
+	line-height: 1.4;
+}
+
+.passpress-setup-footer-note .dashicons {
+	color: var(--pp-su-muted);
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	margin-top: 1px;
+}
+
+.passpress-setup-footer-actions {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.passpress-setup-footer-actions .pp-btn-solid {
+	border: none;
+	background: var(--pp-su-accent);
+	color: #fff;
+}
+
+.passpress-setup-footer-actions .pp-btn-solid:hover,
+.passpress-setup-footer-actions .pp-btn-solid:focus {
+	background: var(--pp-su-accent-deep);
+	color: #fff;
+}
+
+.passpress-setup-category.is-filtered-out,
+.passpress-template-card.is-filtered-out {
+	display: none !important;
+}
+
+@media screen and (max-width: 782px) {
+	.passpress-setup-page-header,
+	.passpress-setup-welcome-banner,
+	.passpress-setup-footer {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.passpress-setup-steps {
+		grid-template-columns: 1fr;
+	}
+
+	.passpress-setup-dashboard-btn,
+	.passpress-setup-footer-actions .pp-btn-solid,
+	.passpress-setup-footer-actions .pp-btn-outline {
+		width: 100%;
+		justify-content: center;
+		text-align: center;
+	}
+
+	.passpress-setup-search {
+		max-width: none;
+	}
 }
 
 body.passpress-modal-open {
@@ -268,6 +1289,7 @@ body.passpress-modal-open {
 	margin: 0;
 }
 
+.wrap.passpress-wrap.passpress-plans-page,
 .passpress-plans-page {
 	--pp-plans-ink: #0f172a;
 	--pp-plans-muted: #64748b;
@@ -275,6 +1297,8 @@ body.passpress-modal-open {
 	--pp-plans-accent: #ff875f;
 	--pp-plans-accent-deep: #ff6b3d;
 	max-width: 1200px;
+	padding: 20px;
+	background: #fff;
 }
 
 .passpress-plans-page-header {
@@ -656,12 +1680,32 @@ body.passpress-modal-open {
 	width: 100%;
 	box-sizing: border-box;
 	border: 1px solid #d8dee8;
-	border-radius: 10px;
-	padding: 10px 12px;
+	border-radius: 5px;
+	padding: 0 12px;
+	min-height: 40px;
 	font-size: 0.92rem;
 	color: #0f172a;
 	background: #fff;
 	max-width: 100%;
+}
+
+/* Beat WP admin forms.css input[type=…] specificity */
+input.pp-input[type="date"],
+input.pp-input[type="datetime-local"],
+input.pp-input[type="datetime"],
+input.pp-input[type="email"],
+input.pp-input[type="month"],
+input.pp-input[type="number"],
+input.pp-input[type="password"],
+input.pp-input[type="search"],
+input.pp-input[type="tel"],
+input.pp-input[type="text"],
+input.pp-input[type="time"],
+input.pp-input[type="url"],
+input.pp-input[type="week"] {
+	padding: 0 12px;
+	min-height: 40px;
+	border-radius: 5px;
 }
 
 .pp-input:focus {
@@ -678,6 +1722,7 @@ textarea.pp-input {
 	color: #0f172a;
 	resize: vertical;
 	min-height: 96px;
+	padding: 10px 12px;
 }
 
 textarea.pp-input::placeholder {
@@ -691,6 +1736,8 @@ select.pp-input {
 	background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2364748b'%3E%3Cpath d='M5.5 7.5l4.5 5 4.5-5z'/%3E%3C/svg%3E") no-repeat right 10px center;
 	background-size: 16px;
 	padding-right: 32px;
+	border-radius: 5px;
+	min-height: 40px;
 }
 
 #pp_new_plan_type.pp-input {
@@ -1739,6 +2786,288 @@ select.pp-input {
 	}
 
 	.passpress-facilities-new-btn {
+		width: 100%;
+	}
+}
+
+/* Coupons page */
+
+.wrap.passpress-wrap.passpress-coupons-page,
+.passpress-coupons-page {
+	--pp-cpn-ink: #0f172a;
+	--pp-cpn-muted: #64748b;
+	--pp-cpn-line: #e2e8f0;
+	--pp-cpn-accent: #ff875f;
+	--pp-cpn-accent-deep: #ff6b3d;
+	max-width: 1200px;
+	padding: 20px;
+	background: #fff;
+}
+
+.passpress-coupons-page-header {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 16px;
+	margin: 18px 0 22px;
+	padding-bottom: 18px;
+	border-bottom: 1px solid var(--pp-cpn-line);
+}
+
+.passpress-coupons-page-eyebrow,
+.passpress-coupons-empty-eyebrow {
+	margin: 0 0 6px;
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--pp-cpn-accent-deep);
+}
+
+.passpress-coupons-page-header h1 {
+	margin: 0 0 6px;
+	padding: 0;
+	font-size: 1.75rem;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	color: var(--pp-cpn-ink);
+	line-height: 1.2;
+}
+
+.passpress-coupons-page-desc,
+.passpress-coupons-empty-desc {
+	margin: 0;
+	font-size: 0.92rem;
+	color: var(--pp-cpn-muted);
+	line-height: 1.45;
+}
+
+.passpress-coupons-new-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: none !important;
+	border-radius: 10px !important;
+	padding: 10px 16px !important;
+	background: var(--pp-cpn-accent) !important;
+	color: #fff !important;
+	font-size: 0.9rem !important;
+	font-weight: 800 !important;
+	line-height: 1.2 !important;
+	cursor: pointer;
+	text-decoration: none !important;
+	box-shadow: none !important;
+	text-shadow: none !important;
+	white-space: nowrap;
+}
+
+.passpress-coupons-new-btn:hover,
+.passpress-coupons-new-btn:focus {
+	background: var(--pp-cpn-accent-deep) !important;
+	color: #fff !important;
+}
+
+.passpress-coupons-empty {
+	padding: 28px 24px;
+	border: 1px dashed var(--pp-cpn-line);
+	border-radius: 16px;
+	background:
+		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.14) 0%, transparent 55%),
+		linear-gradient(180deg, #fffaf8 0%, #ffffff 70%);
+}
+
+.passpress-coupons-empty-title {
+	margin: 0 0 8px;
+	font-size: 1.35rem;
+	font-weight: 800;
+	color: var(--pp-cpn-ink);
+}
+
+.passpress-coupons-empty-cta {
+	margin-top: 16px;
+}
+
+.passpress-coupons-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	gap: 16px;
+}
+
+.passpress-coupon-admin-card {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	width: 100%;
+	min-height: 100%;
+	background:
+		radial-gradient(120% 140% at 100% 0%, rgba(255, 155, 122, 0.12) 0%, transparent 50%),
+		#fff;
+	border: 1px solid var(--pp-cpn-line);
+	border-radius: 16px;
+	padding: 18px 18px 16px;
+	text-decoration: none;
+	color: inherit;
+	box-shadow: none;
+	text-align: left;
+	font: inherit;
+	cursor: pointer;
+	transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.passpress-coupon-admin-card:hover,
+.passpress-coupon-admin-card:focus {
+	border-color: var(--pp-cpn-accent);
+	box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+	transform: translateY(-1px);
+	color: inherit;
+}
+
+.passpress-coupon-admin-card-top {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+.passpress-coupon-admin-card-badges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.passpress-coupon-admin-badge {
+	display: inline-block;
+	padding: 4px 8px;
+	border-radius: 999px;
+	font-size: 0.68rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	line-height: 1.2;
+}
+
+.passpress-coupon-admin-badge.is-active {
+	background: #eaf7ee;
+	color: #146c34;
+}
+
+.passpress-coupon-admin-badge.is-inactive {
+	background: #fef2f2;
+	color: #b91c1c;
+}
+
+.passpress-coupon-admin-badge.is-live {
+	background: #eaf7ee;
+	color: #146c34;
+}
+
+.passpress-coupon-admin-badge.is-draft {
+	background: #f1f5f9;
+	color: #475569;
+}
+
+.passpress-coupon-admin-badge.is-type {
+	background: #fff1eb;
+	color: var(--pp-cpn-accent-deep);
+}
+
+.passpress-coupon-admin-discount {
+	font-size: 1.15rem;
+	font-weight: 800;
+	color: var(--pp-cpn-accent-deep);
+	white-space: nowrap;
+	letter-spacing: -0.02em;
+}
+
+.passpress-coupon-admin-title {
+	margin: 0;
+	font-size: 1.05rem;
+	font-weight: 800;
+	letter-spacing: 0.06em;
+	line-height: 1.3;
+	color: var(--pp-cpn-ink);
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.passpress-coupon-admin-details {
+	display: grid;
+	gap: 8px;
+	margin: 0;
+	padding: 12px 0 0;
+	border-top: 1px solid var(--pp-cpn-line);
+}
+
+.passpress-coupon-admin-details > div {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	align-items: baseline;
+}
+
+.passpress-coupon-admin-details dt {
+	margin: 0;
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--pp-cpn-muted);
+}
+
+.passpress-coupon-admin-details dd {
+	margin: 0;
+	font-size: 0.88rem;
+	font-weight: 600;
+	color: var(--pp-cpn-ink);
+	text-align: right;
+}
+
+.passpress-coupon-admin-footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	margin-top: auto;
+	padding-top: 12px;
+	border-top: 1px solid var(--pp-cpn-line);
+	font-size: 0.8rem;
+	color: var(--pp-cpn-muted);
+}
+
+.passpress-coupon-admin-usage {
+	font-weight: 600;
+}
+
+.passpress-coupon-admin-edit {
+	font-weight: 800;
+	color: var(--pp-cpn-accent-deep);
+}
+
+.pp-checkbox-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+	gap: 8px;
+	max-height: 180px;
+	overflow: auto;
+	padding: 2px;
+}
+
+.pp-checkbox-compact {
+	padding: 8px 10px;
+	font-size: 0.82rem;
+	margin: 0;
+}
+
+.pp-coupon-status-box[hidden] {
+	display: none !important;
+}
+
+@media screen and (max-width: 782px) {
+	.passpress-coupons-page-header {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.passpress-coupons-new-btn {
 		width: 100%;
 	}
 }
@@ -4354,31 +5683,85 @@ select.pp-input {
 
 /* Unified Settings page (sidebar + content) */
 
-.passpress-settings-page > h1 {
-	margin-bottom: 16px;
+.passpress-settings-page {
+	--pp-set-ink: #0f172a;
+	--pp-set-muted: #64748b;
+	--pp-set-line: #e2e8f0;
+	--pp-set-accent: #ff875f;
+	--pp-set-accent-deep: #ff6b3d;
+	--pp-set-surface: #f8fafc;
+	max-width: 1120px;
+}
+
+.passpress-settings-page-header {
+	margin: 0 0 22px;
+	padding-bottom: 18px;
+	border-bottom: 1px solid var(--pp-set-line);
+}
+
+.passpress-settings-page-eyebrow,
+.passpress-settings-panel-eyebrow {
+	margin: 0 0 6px;
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--pp-set-accent-deep);
+}
+
+.passpress-settings-page-header h1 {
+	margin: 0 0 6px;
+	padding: 0;
+	font-size: 1.75rem;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	color: var(--pp-set-ink);
+	line-height: 1.2;
+}
+
+.passpress-settings-page-desc {
+	margin: 0;
+	font-size: 0.92rem;
+	color: var(--pp-set-muted);
+	line-height: 1.45;
 }
 
 .passpress-settings-layout {
-	display: flex;
-	align-items: stretch;
+	display: grid;
+	grid-template-columns: 260px minmax(0, 1fr);
 	gap: 0;
 	background: #fff;
-	border: 1px solid #dcdcde;
-	border-radius: 10px;
+	border: 1px solid var(--pp-set-line);
+	border-radius: 16px;
 	overflow: hidden;
-	min-height: 520px;
+	min-height: 560px;
+	box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
 }
 
 .passpress-settings-sidebar {
-	flex: 0 0 220px;
-	background: #f6f7f7;
-	border-right: 1px solid #dcdcde;
+	background:
+		radial-gradient(120% 80% at 0% 0%, rgba(255, 155, 122, 0.12) 0%, transparent 55%),
+		var(--pp-set-surface);
+	border-right: 1px solid var(--pp-set-line);
+	padding: 18px 12px 20px;
+}
+
+.passpress-settings-sidebar-label {
+	margin: 0 10px 10px;
+	font-size: 0.68rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--pp-set-muted);
 }
 
 .passpress-settings-nav {
 	list-style: none;
 	margin: 0;
-	padding: 12px 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
 }
 
 .passpress-settings-nav li {
@@ -4387,70 +5770,162 @@ select.pp-input {
 
 .passpress-settings-nav-link {
 	display: flex;
-	align-items: center;
-	gap: 10px;
-	padding: 12px 18px;
-	color: #1d2327;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 12px 12px;
+	color: var(--pp-set-ink);
 	text-decoration: none;
-	font-weight: 600;
-	font-size: 13px;
-	border-left: 3px solid transparent;
+	border-radius: 12px;
+	border: 1px solid transparent;
+	transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.passpress-settings-nav-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 10px;
+	background: #fff;
+	border: 1px solid var(--pp-set-line);
+	flex: 0 0 auto;
 }
 
 .passpress-settings-nav-link .dashicons {
 	width: 18px;
 	height: 18px;
 	font-size: 18px;
-	color: #646970;
+	color: var(--pp-set-muted);
+}
+
+.passpress-settings-nav-text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+	padding-top: 1px;
+}
+
+.passpress-settings-nav-label {
+	font-weight: 800;
+	font-size: 0.88rem;
+	letter-spacing: -0.01em;
+	line-height: 1.25;
+}
+
+.passpress-settings-nav-desc {
+	font-size: 0.75rem;
+	font-weight: 500;
+	color: var(--pp-set-muted);
+	line-height: 1.35;
 }
 
 .passpress-settings-nav-link:hover {
-	background: #eef0f1;
-	color: #1d2327;
+	background: #fff;
+	border-color: #fdba8c;
+	color: var(--pp-set-ink);
 }
 
 .passpress-settings-nav-link.is-active {
 	background: #fff;
-	border-left-color: #ff5a1f;
-	color: #16213a;
+	border-color: #fdba8c;
+	box-shadow: 0 8px 18px rgba(255, 107, 61, 0.1);
 }
 
 .passpress-settings-nav-link.is-active .dashicons {
-	color: #ff5a1f;
+	color: var(--pp-set-accent-deep);
+}
+
+.passpress-settings-nav-link.is-active .passpress-settings-nav-icon {
+	border-color: #fdba8c;
+	background: #fff1eb;
 }
 
 .passpress-settings-content {
-	flex: 1 1 auto;
-	padding: 24px 28px 28px;
+	padding: 28px 30px 32px;
 	min-width: 0;
 	background: #fff;
 }
 
 .passpress-settings-panel-header {
-	margin-bottom: 20px;
-	padding-bottom: 16px;
-	border-bottom: 1px solid #eceef1;
+	margin-bottom: 22px;
+	padding-bottom: 18px;
+	border-bottom: 1px solid var(--pp-set-line);
 }
 
 .passpress-settings-panel-header h2 {
 	margin: 0 0 6px;
-	font-size: 1.25em;
-	color: #16213a;
+	padding: 0;
+	font-size: 1.35rem;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	color: var(--pp-set-ink);
+	line-height: 1.25;
 }
 
 .passpress-settings-panel-header p {
 	margin: 0;
-	color: #646970;
-	max-width: 720px;
+	color: var(--pp-set-muted);
+	max-width: 640px;
 	line-height: 1.5;
+	font-size: 0.92rem;
+}
+
+.passpress-settings-panel-header a {
+	color: var(--pp-set-accent-deep);
+	font-weight: 700;
+	text-decoration: none;
+}
+
+.passpress-settings-panel-header a:hover {
+	text-decoration: underline;
+}
+
+.passpress-settings-form {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.passpress-settings-card {
+	border: 1px solid var(--pp-set-line);
+	border-radius: 14px;
+	padding: 18px 18px 16px;
+	background:
+		radial-gradient(120% 140% at 100% 0%, rgba(255, 155, 122, 0.08) 0%, transparent 50%),
+		#fff;
+}
+
+.passpress-settings-card-head {
+	margin-bottom: 16px;
+	padding-bottom: 12px;
+	border-bottom: 1px solid var(--pp-set-line);
+}
+
+.passpress-settings-card-head h3 {
+	margin: 0 0 4px;
+	padding: 0;
+	border: none;
+	font-size: 1rem;
+	font-weight: 800;
+	color: var(--pp-set-ink);
+	letter-spacing: -0.01em;
+}
+
+.passpress-settings-card-head p {
+	margin: 0;
+	font-size: 0.84rem;
+	color: var(--pp-set-muted);
+	line-height: 1.45;
 }
 
 .passpress-settings-panel h3 {
 	margin: 28px 0 8px;
 	padding-top: 8px;
-	border-top: 1px solid #f0f0f1;
+	border-top: 1px solid var(--pp-set-line);
 	font-size: 1.05em;
-	color: #16213a;
+	color: var(--pp-set-ink);
 }
 
 .passpress-settings-panel h3:first-of-type {
@@ -4464,45 +5939,94 @@ select.pp-input {
 	padding-left: 0;
 }
 
-.passpress-settings-panel .submit {
-	margin-top: 12px;
+.passpress-settings-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 4px;
 	padding-top: 16px;
-	border-top: 1px solid #eceef1;
+	border-top: 1px solid var(--pp-set-line);
 }
 
-@media screen and (max-width: 782px) {
+.passpress-settings-actions .pp-btn-solid {
+	border: none;
+	background: var(--pp-set-accent);
+	color: #fff;
+}
+
+.passpress-settings-actions .pp-btn-solid:hover,
+.passpress-settings-actions .pp-btn-solid:focus {
+	background: var(--pp-set-accent-deep);
+	color: #fff;
+}
+
+.passpress-settings-toggle-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 14px 0;
+	border-bottom: 1px solid var(--pp-set-line);
+	cursor: pointer;
+}
+
+.passpress-settings-toggle-row:last-of-type {
+	border-bottom: none;
+	padding-bottom: 4px;
+}
+
+.passpress-settings-toggle-copy {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 0;
+}
+
+.passpress-settings-toggle-title {
+	font-size: 0.92rem;
+	font-weight: 800;
+	color: var(--pp-set-ink);
+	letter-spacing: -0.01em;
+}
+
+.passpress-settings-toggle-desc {
+	font-size: 0.8rem;
+	font-weight: 500;
+	color: var(--pp-set-muted);
+	line-height: 1.4;
+}
+
+.passpress-settings-nested-field {
+	margin: -4px 0 10px;
+	padding: 12px 14px;
+	border-radius: 12px;
+	background: var(--pp-set-surface);
+	border: 1px solid var(--pp-set-line);
+}
+
+@media screen and (max-width: 960px) {
 	.passpress-settings-layout {
-		flex-direction: column;
+		grid-template-columns: 1fr;
 		min-height: 0;
 	}
 
 	.passpress-settings-sidebar {
-		flex: none;
-		width: 100%;
 		border-right: none;
-		border-bottom: 1px solid #dcdcde;
+		border-bottom: 1px solid var(--pp-set-line);
+		padding: 14px 12px;
 	}
 
 	.passpress-settings-nav {
-		display: flex;
+		flex-direction: row;
 		flex-wrap: wrap;
-		padding: 8px;
-		gap: 4px;
 	}
 
-	.passpress-settings-nav-link {
-		border-left: none;
-		border-radius: 8px;
-		padding: 10px 14px;
-	}
-
-	.passpress-settings-nav-link.is-active {
-		border-left-color: transparent;
-		box-shadow: inset 0 0 0 1px #ff5a1f;
+	.passpress-settings-nav li {
+		flex: 1 1 220px;
 	}
 
 	.passpress-settings-content {
-		padding: 18px 16px 22px;
+		padding: 20px 16px 24px;
 	}
 }
 
@@ -4510,24 +6034,30 @@ select.pp-input {
 
 .passpress-pm-toggle {
 	display: inline-flex;
-	border: 1px solid #dcdcde;
-	border-radius: 6px;
+	border: 1px solid var(--pp-set-line, #e2e8f0);
+	border-radius: 12px;
 	overflow: hidden;
 	margin-bottom: 20px;
+	background: #f8fafc;
+	padding: 4px;
+	gap: 4px;
 }
 
 .passpress-pm-toggle-btn {
 	border: none;
-	background: #fff;
-	padding: 10px 22px;
-	font-weight: 600;
+	background: transparent;
+	padding: 10px 20px;
+	font-weight: 800;
+	font-size: 0.88rem;
 	cursor: pointer;
-	color: #1d2327;
+	color: #64748b;
+	border-radius: 9px;
 }
 
 .passpress-pm-toggle-btn.is-active {
-	background: #16213a;
+	background: #0f172a;
 	color: #fff;
+	box-shadow: 0 6px 14px rgba(15, 23, 42, 0.18);
 }
 
 .passpress-pm-panel {
