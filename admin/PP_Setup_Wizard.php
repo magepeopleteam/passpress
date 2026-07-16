@@ -35,6 +35,17 @@ class PP_Setup_Wizard {
 		check_admin_referer( 'pp_setup_wizard' );
 
 		$slug   = isset( $_POST['business_type'] ) ? sanitize_key( $_POST['business_type'] ) : '';
+
+		if ( ! $slug ) {
+			set_transient(
+				'passpress_setup_error',
+				__( 'Please select a business template to import.', 'passpress' ),
+				60
+			);
+			wp_safe_redirect( admin_url( 'admin.php?page=passpress-setup' ) );
+			exit;
+		}
+
 		$result = PP_Business_Templates::import( $slug );
 
 		if ( is_wp_error( $result ) ) {
@@ -258,6 +269,7 @@ class PP_Setup_Wizard {
 
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin.php?page=passpress-setup' . ( $is_welcome ? '&pp_welcome=1' : '' ) ) ); ?>" id="passpress-setup-wizard-form" class="passpress-setup-form">
 				<?php wp_nonce_field( 'pp_setup_wizard' ); ?>
+				<input type="hidden" name="pp_import_template" value="1">
 
 				<div class="passpress-setup-toolbar">
 					<label class="passpress-setup-search">
@@ -344,7 +356,7 @@ class PP_Setup_Wizard {
 								<?php esc_html_e( 'Skip for now', 'passpress' ); ?>
 							</a>
 						<?php endif; ?>
-						<button type="submit" name="pp_import_template" value="1" class="pp-btn-solid" id="passpress-setup-submit">
+						<button type="submit" class="pp-btn-solid" id="passpress-setup-submit">
 							<?php esc_html_e( 'Import template & continue', 'passpress' ); ?>
 						</button>
 					</div>
