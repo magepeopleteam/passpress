@@ -3,7 +3,7 @@
  * Plugin Name: PassPress – Membership, Subscription & Pass Management
  * Plugin URI: https://example.com/passpress
  * Description: Modular membership, subscription and pass management for gyms, parks, clubs and sports facilities. Issue membership passes, scan QR/PIN entries at the door, enforce access rules, take online payments, and manage facility/class bookings, visitor passes, and attendance.
- * Version: 0.5.26
+ * Version: 0.5.29
  * Author: PassPress
  * Text Domain: passpress
  * Domain Path: /languages
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'PASSPRESS_PLUGIN_FILE', __FILE__ );
 define( 'PASSPRESS_PLUGIN_DIR', __DIR__ );
 define( 'PASSPRESS_PLUGIN_URL', plugins_url( '', __FILE__ ) );
-define( 'PASSPRESS_PLUGIN_VERSION', '0.5.26' );
+define( 'PASSPRESS_PLUGIN_VERSION', '0.5.29' );
 define( 'PASSPRESS_DB_VERSION', '1.2.0' );
 
 require_once PASSPRESS_PLUGIN_DIR . '/inc/PP_Roles.php';
@@ -47,7 +47,6 @@ require_once PASSPRESS_PLUGIN_DIR . '/inc/modules/facility/class-pp-facility-cpt
 require_once PASSPRESS_PLUGIN_DIR . '/inc/modules/access-control/class-pp-entry-restrictions.php';
 require_once PASSPRESS_PLUGIN_DIR . '/inc/modules/access-control/class-pp-access-control.php';
 require_once PASSPRESS_PLUGIN_DIR . '/inc/modules/access-control/class-pp-qr-scanner.php';
-require_once PASSPRESS_PLUGIN_DIR . '/inc/modules/access-control/class-pp-pin-entry.php';
 
 require_once PASSPRESS_PLUGIN_DIR . '/inc/modules/business-templates/class-pp-business-templates.php';
 
@@ -88,27 +87,31 @@ require_once PASSPRESS_PLUGIN_DIR . '/support/elementor/elementor-support.php';
 
 require_once PASSPRESS_PLUGIN_DIR . '/inc/PP_Blocks.php';
 
+// REST API for the React admin (admin-app/): required unconditionally, same
+// as Billing above — REST requests don't set is_admin() to true.
+require_once PASSPRESS_PLUGIN_DIR . '/inc/rest/class-pp-rest-controller.php';
+require_once PASSPRESS_PLUGIN_DIR . '/inc/rest/class-pp-rest-dashboard.php';
+require_once PASSPRESS_PLUGIN_DIR . '/inc/rest/class-pp-rest-plans.php';
+require_once PASSPRESS_PLUGIN_DIR . '/inc/rest/class-pp-rest-facilities.php';
+require_once PASSPRESS_PLUGIN_DIR . '/inc/rest/class-pp-rest-class-sessions.php';
+require_once PASSPRESS_PLUGIN_DIR . '/inc/rest/class-pp-rest-coupons.php';
+require_once PASSPRESS_PLUGIN_DIR . '/inc/rest/class-pp-rest-memberships.php';
+require_once PASSPRESS_PLUGIN_DIR . '/inc/rest/class-pp-rest-bookings.php';
+require_once PASSPRESS_PLUGIN_DIR . '/inc/rest/class-pp-rest-visitors.php';
+require_once PASSPRESS_PLUGIN_DIR . '/inc/rest/class-pp-rest-billing-history.php';
+require_once PASSPRESS_PLUGIN_DIR . '/inc/rest/class-pp-rest-attendance.php';
+require_once PASSPRESS_PLUGIN_DIR . '/inc/rest/class-pp-rest-reports.php';
+require_once PASSPRESS_PLUGIN_DIR . '/inc/rest/class-pp-rest-activity-log.php';
+require_once PASSPRESS_PLUGIN_DIR . '/inc/rest/class-pp-rest-scan.php';
+require_once PASSPRESS_PLUGIN_DIR . '/inc/rest/class-pp-rest-setup.php';
+require_once PASSPRESS_PLUGIN_DIR . '/inc/rest/class-pp-rest-settings.php';
+require_once PASSPRESS_PLUGIN_DIR . '/inc/PP_REST.php';
+PP_REST::init();
+
 if ( is_admin() ) {
 	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Admin.php';
-	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Dashboard.php';
-	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Plans_List.php';
-	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Coupons_List.php';
-	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Facilities_List.php';
-	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Class_Sessions_List.php';
-	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Memberships_List.php';
-	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Visitors_List.php';
-	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Bookings_List.php';
-	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Scan_Gate.php';
-	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Billing_History_Page.php';
-	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Attendance_Reports_Page.php';
-	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Reports_Page.php';
-	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Activity_Log_Page.php';
-	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Setup_Wizard.php';
+	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_App_Page.php';
 	require_once PASSPRESS_PLUGIN_DIR . '/admin/PP_Welcome.php';
-	require_once PASSPRESS_PLUGIN_DIR . '/admin/settings/PP_Settings_Page.php';
-	require_once PASSPRESS_PLUGIN_DIR . '/admin/settings/PP_Settings.php';
-	require_once PASSPRESS_PLUGIN_DIR . '/admin/settings/PP_Billing_Settings.php';
-	require_once PASSPRESS_PLUGIN_DIR . '/admin/settings/PP_Notification_Settings.php';
 }
 
 add_action( 'plugins_loaded', 'passpress_init' );

@@ -71,6 +71,40 @@ tracking, and SMS/WhatsApp/push notification channels (email-only for now).
 
 == Changelog ==
 
+= 0.5.29 =
+* UI/UX pass (plan §4): the Plans, Facilities, Class Sessions and Coupons screens now share
+  one create/edit modal controller (assets/admin/passpress-modal-form.js) and one card-grid
+  CSS block instead of four copies of each. No AJAX action, nonce, POST parameter or meta
+  key changed, and no screen's computed styles changed; the per-screen class names are kept
+  in every selector list. Real per-screen differences (monospace coupon titles, the class
+  card gap, muted plan/coupon footers) are preserved as explicit overrides.
+* UI/UX pass (plan §5): the plan create/edit form now shows name, type, price, duration and
+  max entries/day up front, with entry restrictions, the time window and the "Most Popular"
+  badge collapsed under "Advanced rules" (a native <details>, no JS). No field was removed —
+  all 15 controls still post — and the section opens itself when you edit a plan that
+  actually uses one of those rules. The "hour" duration unit sketched in the plan was NOT
+  added: expiry_date is a DATE column and duration_units() has no hour, so that is a schema
+  change rather than a form change.
+* Setup is now a three-step popup instead of a dense full-page picker: "want a head start?"
+  → pick your business type (searchable, filterable) → see exactly what will be created, then
+  confirm. A fresh install lands on the Dashboard with that popup over it rather than on the
+  wizard screen, so declining leaves you somewhere useful. The Setup screen keeps a single
+  "Choose business type" button that opens the same popup — one implementation, not two.
+  The import itself (PP_Setup_Wizard::handle_import, PP_Business_Templates::import) is
+  unchanged; the success notice now reports what was actually created per template.
+  Removed 55 now-dead CSS rules belonging to the old picker markup.
+* Fix: the setup popup's steps all rendered at once instead of one at a time. Cause: a normal
+  (non-!important) author CSS rule always outranks the browser's built-in `[hidden] { display:
+  none }` rule regardless of selector specificity, and .pp-setup-step's unconditional
+  `display: grid` was exactly that rule — the JS was correctly toggling the `hidden` attribute,
+  the CSS was just winning the cascade. Fixed with explicit `[hidden] { display: none; }`
+  overrides. Swept for the same pattern and found three more real instances, now also fixed:
+  filtered-out template tiles in step 2 (.pp-setup-type), a hidden 0-count row in step 3
+  (.pp-setup-counts li), and the Plans/Facilities/Class Sessions/Coupons modals' "Live on
+  site" status box (.pp-checkbox-box) — that last one pre-dates this UI pass entirely. Modals
+  that already toggled an inline style (jQuery's .show()/.hide(), or an explicit
+  .css('display', ...) alongside .prop('hidden', ...)) were confirmed unaffected.
+
 = 0.5.0 =
 * Phase 4 + 5: Reports module, Coupon/Promo Code marketing engine, centralized Notifications dispatcher
   (Welcome/Payment-Failed/Booking-Reminder/Birthday triggers, birthdate field on My Pass), all 26 Business

@@ -4,8 +4,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Redirects to the Setup Wizard once, right after activation.
- * The setup screen shows a welcome banner when pp_welcome=1.
+ * Redirects once, right after activation, to the Dashboard with pp_welcome=1 —
+ * which makes the React Dashboard screen render the three-step import modal
+ * over it (admin-app/src/components/SetupWizardModal.jsx). Landing on the Dashboard rather than on the
+ * Setup screen means a fresh install shows a single yes/no question first, and
+ * an admin who declines is already where they need to be.
  */
 class PP_Welcome {
 
@@ -24,7 +27,7 @@ class PP_Welcome {
 			return;
 		}
 
-		$target = admin_url( 'admin.php?page=passpress-setup&pp_welcome=1' );
+		$target = admin_url( 'admin.php?page=passpress&pp_welcome=1' );
 
 		if ( headers_sent() ) {
 			echo '<script>window.location.href=' . wp_json_encode( $target ) . ';</script>';

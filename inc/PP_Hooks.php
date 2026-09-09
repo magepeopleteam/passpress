@@ -15,8 +15,6 @@ class PP_Hooks {
 		new PP_Membership_Plan_CPT();
 		new PP_Facility_CPT();
 		new PP_Class_Session_CPT();
-		new PP_QR_Scanner();
-		new PP_Pin_Entry();
 		new PP_Booking_Frontend();
 		new PP_Visitor_Frontend();
 		new PP_Class_Frontend();
@@ -35,17 +33,9 @@ class PP_Hooks {
 
 		if ( is_admin() ) {
 			new PP_Admin();
-			PP_Plans_List::init();
-			PP_Coupons_List::init();
-			PP_Facilities_List::init();
-			PP_Class_Sessions_List::init();
-			PP_Memberships_List::init();
-			PP_Settings_Page::init();
-			PP_Settings::init();
-			PP_Billing_Settings::init();
-			PP_Notification_Settings::init();
+			add_action( 'admin_init', array( 'PP_App_Page', 'maybe_redirect_legacy_cpt_screens' ) );
+			add_action( 'admin_init', array( 'PP_App_Page', 'maybe_redirect_legacy_settings_slugs' ) );
 			PP_Welcome::init();
-			PP_Setup_Wizard::init();
 		}
 	}
 }

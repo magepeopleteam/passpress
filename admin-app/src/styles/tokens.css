@@ -1,0 +1,38 @@
+/*
+ * Single source of truth for the design tokens that passpress-admin.css
+ * re-declares per screen (--pp-db-*, --pp-su-*, --pp-card-*, --pp-plans-*,
+ * --pp-mem-*, --pp-fac-*, ...) — all of those are the same literal values.
+ * New React screens should read from these instead of introducing another
+ * prefixed set.
+ *
+ * The accent/ink pair was re-themed to match the "yacht" plugin's
+ * (magepeople-yacht-booking-system) admin design — orange accent + dark-navy
+ * rail — per explicit user request; the neutral tokens (muted/line/surface)
+ * already matched that plugin's palette exactly, so only accent/ink/rail
+ * changed. passpress-admin.css's literal hex duplicates of these were
+ * updated with the same mapping (see the color pass on that file).
+ */
+:root {
+	--pp-ink: #1e293b;
+	--pp-muted: #64748b;
+	--pp-line: #e2e8f0;
+	--pp-accent: #f97316;
+	--pp-accent-deep: #ea580c;
+	--pp-surface: #f8fafc;
+
+	--pp-rail-bg: #181c2b;
+	--pp-rail-ink: #9aa3b8;
+	--pp-rail-width: 236px;
+	--pp-topbar-height: 56px;
+
+	--pp-success-bg: #eaf7ee;
+	--pp-success-fg: #146c34;
+	--pp-danger-bg: #fdecea;
+	--pp-danger-fg: #99251e;
+	--pp-warn-bg: #fff7ed;
+	--pp-warn-fg: #c2410c;
+	--pp-indigo-bg: #eef2ff;
+	--pp-indigo-fg: #4338ca;
+	--pp-blue-bg: #eff6ff;
+	--pp-blue-fg: #1d4ed8;
+}

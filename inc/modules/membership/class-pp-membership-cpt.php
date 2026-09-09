@@ -28,7 +28,7 @@ class PP_Membership_Plan_CPT {
 				),
 				'public'       => true,
 				'show_ui'      => true,
-				'show_in_menu' => false, // custom card-grid list page instead — see admin/PP_Plans_List.php
+				'show_in_menu' => false, // custom card-grid list page instead — see admin-app/src/pages/Plans.jsx + inc/rest/class-pp-rest-plans.php
 				'menu_icon'    => 'dashicons-id-alt',
 				'supports'     => array( 'title', 'editor' ),
 				'has_archive'  => false,

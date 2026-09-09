@@ -8,11 +8,11 @@
 /* Dashboard */
 
 .passpress-dashboard-page {
-	--pp-db-ink: #0f172a;
+	--pp-db-ink: #1e293b;
 	--pp-db-muted: #64748b;
 	--pp-db-line: #e2e8f0;
-	--pp-db-accent: #ff875f;
-	--pp-db-accent-deep: #ff6b3d;
+	--pp-db-accent: #f97316;
+	--pp-db-accent-deep: #ea580c;
 	--pp-db-surface: #f8fafc;
 	max-width: 90%;
 }
@@ -105,7 +105,7 @@
 
 .passpress-dashboard-secondary-btn:hover,
 .passpress-dashboard-secondary-btn:focus {
-	border-color: #fdba8c !important;
+	border-color: #fdba74 !important;
 	color: var(--pp-db-accent-deep) !important;
 }
 
@@ -140,11 +140,11 @@
 	flex-wrap: wrap;
 	margin: 0 0 20px;
 	padding: 18px 18px;
-	border: 1px solid #fdba8c;
+	border: 1px solid #fdba74;
 	border-radius: 14px;
 	background:
-		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.18) 0%, transparent 55%),
-		linear-gradient(180deg, #fffaf8 0%, #ffffff 70%);
+		radial-gradient(120% 140% at 0% 0%, rgba(251, 146, 60, 0.18) 0%, transparent 55%),
+		linear-gradient(180deg, #fff8f2 0%, #ffffff 70%);
 }
 
 .passpress-dashboard-setup-copy {
@@ -194,7 +194,7 @@
 	border: 1px solid var(--pp-db-line);
 	border-radius: 14px;
 	background:
-		radial-gradient(120% 140% at 100% 0%, rgba(255, 155, 122, 0.1) 0%, transparent 50%),
+		radial-gradient(120% 140% at 100% 0%, rgba(251, 146, 60, 0.1) 0%, transparent 50%),
 		#fff;
 	text-decoration: none !important;
 	color: inherit;
@@ -216,8 +216,8 @@
 	width: 40px;
 	height: 40px;
 	border-radius: 12px;
-	background: #fff1eb;
-	border: 1px solid #fdba8c;
+	background: #fff4ec;
+	border: 1px solid #fdba74;
 	flex: 0 0 auto;
 }
 
@@ -340,28 +340,35 @@
 }
 
 .passpress-dashboard-actions {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 10px;
+}
+
+@media (max-width: 1200px) {
+	.passpress-dashboard-actions {
+		grid-template-columns: 1fr;
+	}
 }
 
 .passpress-dashboard-action {
 	display: flex;
 	align-items: center;
-	gap: 12px;
-	padding: 12px;
+	gap: 14px;
+	padding: 14px 16px;
 	border: 1px solid var(--pp-db-line);
-	border-radius: 12px;
+	border-radius: 14px;
 	text-decoration: none !important;
 	color: inherit;
-	background: var(--pp-db-surface);
-	transition: border-color 0.15s ease, background 0.15s ease;
+	background: #fff;
+	transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .passpress-dashboard-action:hover,
 .passpress-dashboard-action:focus {
-	border-color: #fdba8c;
-	background: #fffaf8;
+	border-color: #fdba74;
+	transform: translateY(-2px);
+	box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
 	color: inherit;
 }
 
@@ -369,19 +376,66 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 36px;
-	height: 36px;
-	border-radius: 10px;
-	background: #fff;
-	border: 1px solid var(--pp-db-line);
+	width: 44px;
+	height: 44px;
+	border-radius: 12px;
+	background: #f1f5f9;
 	flex: 0 0 auto;
 }
 
 .passpress-dashboard-action-icon .dashicons {
+	color: #475569;
+	font-size: 20px;
+	width: 20px;
+	height: 20px;
+}
+
+.passpress-dashboard-action-icon.is-membership {
+	background: #eaf7ee;
+}
+
+.passpress-dashboard-action-icon.is-membership .dashicons {
+	color: #146c34;
+}
+
+.passpress-dashboard-action-icon.is-billing {
+	background: #e8eefc;
+}
+
+.passpress-dashboard-action-icon.is-billing .dashicons {
+	color: #1d4ed8;
+}
+
+.passpress-dashboard-action-icon.is-visitor {
+	background: #fff4ec;
+}
+
+.passpress-dashboard-action-icon.is-visitor .dashicons {
 	color: var(--pp-db-accent-deep);
-	font-size: 18px;
-	width: 18px;
-	height: 18px;
+}
+
+.passpress-dashboard-action-icon.is-booking {
+	background: #f3e8ff;
+}
+
+.passpress-dashboard-action-icon.is-booking .dashicons {
+	color: #6b21a8;
+}
+
+.passpress-dashboard-action-icon.is-plan {
+	background: #ecfeff;
+}
+
+.passpress-dashboard-action-icon.is-plan .dashicons {
+	color: #0e7490;
+}
+
+.passpress-dashboard-action-icon.is-accent {
+	background: var(--pp-db-accent);
+}
+
+.passpress-dashboard-action-icon.is-accent .dashicons {
+	color: #fff;
 }
 
 .passpress-dashboard-action-copy {
@@ -425,9 +479,7 @@
 }
 
 .passpress-dashboard-activity li {
-	display: flex;
-	align-items: flex-start;
-	gap: 12px;
+	display: block;
 	margin: 0;
 	padding: 12px 0;
 	border-bottom: 1px solid var(--pp-db-line);
@@ -438,20 +490,11 @@
 	padding-bottom: 0;
 }
 
-.passpress-dashboard-activity-dot {
-	width: 10px;
-	height: 10px;
-	border-radius: 50%;
-	background: var(--pp-db-accent);
-	margin-top: 6px;
-	flex: 0 0 auto;
-	box-shadow: 0 0 0 4px rgba(255, 135, 95, 0.15);
-}
-
 .passpress-dashboard-activity-body {
 	display: flex;
 	flex-direction: column;
-	gap: 3px;
+	align-items: flex-start;
+	gap: 5px;
 	min-width: 0;
 }
 
@@ -495,7 +538,7 @@
 	border: 1px solid var(--pp-db-line);
 	border-radius: 16px;
 	background:
-		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.16) 0%, transparent 55%),
+		radial-gradient(120% 140% at 0% 0%, rgba(251, 146, 60, 0.16) 0%, transparent 55%),
 		#fff;
 }
 
@@ -506,8 +549,8 @@
 	width: 52px;
 	height: 52px;
 	border-radius: 14px;
-	background: #fff1eb;
-	border: 1px solid #fdba8c;
+	background: #fff4ec;
+	border: 1px solid #fdba74;
 }
 
 .passpress-dashboard-gate-icon .dashicons {
@@ -684,98 +727,18 @@
 	background: #f8d7da;
 	color: #721c24;
 }
-
-.passpress-template-grid {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 12px;
-	margin: 16px 0;
-}
-
-.passpress-template-card {
-	border: 1px solid #ccd0d4;
-	border-radius: 6px;
-	padding: 12px 16px;
-	background: #fff;
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	cursor: pointer;
-}
-
-.passpress-template-disabled {
-	opacity: 0.5;
-	cursor: not-allowed;
-}
-
-.passpress-template-badge {
-	font-size: 11px;
-	background: #eee;
-	border-radius: 10px;
-	padding: 1px 8px;
-}
-
-.passpress-template-badge-done {
-	background: #d4edda;
-	color: #155724;
-}
-
 /* Setup Wizard */
 
 .passpress-setup-page {
-	--pp-su-ink: #0f172a;
+	--pp-su-ink: #1e293b;
 	--pp-su-muted: #64748b;
 	--pp-su-line: #e2e8f0;
-	--pp-su-accent: #ff875f;
-	--pp-su-accent-deep: #ff6b3d;
+	--pp-su-accent: #f97316;
+	--pp-su-accent-deep: #ea580c;
 	--pp-su-surface: #f8fafc;
 	max-width: 90%;
 	padding: 30px;
 }
-
-.passpress-setup-welcome-banner {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 16px;
-	flex-wrap: wrap;
-	margin: 0 0 20px;
-	padding: 16px 18px;
-	border: 1px solid #fdba8c;
-	border-radius: 14px;
-	background:
-		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.18) 0%, transparent 55%),
-		linear-gradient(180deg, #fffaf8 0%, #ffffff 70%);
-}
-
-.passpress-setup-welcome-copy {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-	min-width: 0;
-}
-
-.passpress-setup-welcome-eyebrow {
-	margin: 0;
-	font-size: 0.72rem;
-	font-weight: 700;
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
-	color: var(--pp-su-accent-deep);
-}
-
-.passpress-setup-welcome-copy strong {
-	font-size: 1.05rem;
-	color: var(--pp-su-ink);
-	letter-spacing: -0.02em;
-}
-
-.passpress-setup-welcome-copy span {
-	font-size: 0.86rem;
-	color: var(--pp-su-muted);
-	line-height: 1.45;
-}
-
 .passpress-setup-page-header {
 	display: flex;
 	align-items: flex-end;
@@ -852,8 +815,8 @@
 	width: 42px;
 	height: 42px;
 	border-radius: 12px;
-	background: #fff1eb;
-	border: 1px solid #fdba8c;
+	background: #fff4ec;
+	border: 1px solid #fdba74;
 	flex: 0 0 auto;
 }
 
@@ -890,376 +853,15 @@
 	color: var(--pp-su-muted);
 	line-height: 1.45;
 }
-
-.passpress-setup-steps {
-	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
-	gap: 12px;
-	list-style: none;
-	margin: 0 0 22px;
-	padding: 0;
-}
-
-.passpress-setup-steps li {
-	display: flex;
-	align-items: flex-start;
-	gap: 12px;
-	margin: 0;
-	padding: 14px 14px;
-	border: 1px solid var(--pp-su-line);
-	border-radius: 14px;
-	background: #fff;
-}
-
-.passpress-setup-steps li.is-active {
-	border-color: #fdba8c;
-	background:
-		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.14) 0%, transparent 55%),
-		#fff;
-}
-
-.passpress-setup-step-num {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 28px;
-	height: 28px;
-	border-radius: 999px;
-	background: #0f172a;
-	color: #fff;
-	font-size: 0.78rem;
-	font-weight: 800;
-	flex: 0 0 auto;
-}
-
-.passpress-setup-steps li.is-active .passpress-setup-step-num {
-	background: var(--pp-su-accent);
-}
-
-.passpress-setup-step-text {
-	display: flex;
-	flex-direction: column;
-	gap: 2px;
-	min-width: 0;
-}
-
-.passpress-setup-step-text strong {
-	font-size: 0.9rem;
-	color: var(--pp-su-ink);
-	letter-spacing: -0.01em;
-}
-
-.passpress-setup-step-text em {
-	font-style: normal;
-	font-size: 0.78rem;
-	color: var(--pp-su-muted);
-	line-height: 1.35;
-}
-
-.passpress-setup-toolbar {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-	margin-bottom: 18px;
-}
-
-.passpress-setup-search {
-	position: relative;
-	display: block;
-	max-width: 360px;
-}
-
-.passpress-setup-search .dashicons {
-	position: absolute;
-	left: 12px;
-	top: 50%;
-	transform: translateY(-50%);
-	color: var(--pp-su-muted);
-	font-size: 16px;
-	width: 16px;
-	height: 16px;
-	pointer-events: none;
-}
-
-.passpress-setup-search input {
-	width: 100%;
-	box-sizing: border-box;
-	min-height: 42px;
-	padding: 0 12px 0 38px;
-	border: 1px solid var(--pp-su-line);
-	border-radius: 10px;
-	background: #fff;
-	color: var(--pp-su-ink);
-	font-size: 0.9rem;
-}
-
-.passpress-setup-search input:focus {
-	outline: none;
-	border-color: #94a3b8;
-	box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.2);
-}
-
-.passpress-setup-filters {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
-}
-
-.passpress-setup-filter {
-	border: 1px solid var(--pp-su-line);
-	border-radius: 999px;
-	background: #fff;
-	color: var(--pp-su-muted);
-	padding: 7px 12px;
-	font-size: 0.78rem;
-	font-weight: 700;
-	cursor: pointer;
-	line-height: 1.2;
-}
-
-.passpress-setup-filter:hover {
-	border-color: #fdba8c;
-	color: var(--pp-su-accent-deep);
-}
-
-.passpress-setup-filter.is-active {
-	background: #0f172a;
-	border-color: #0f172a;
-	color: #fff;
-}
-
-.passpress-setup-catalog {
-	display: flex;
-	flex-direction: column;
-	gap: 22px;
-}
-
-.passpress-setup-category-head {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	margin: 0 0 12px;
-}
-
-.passpress-setup-category-head .dashicons {
-	color: var(--pp-su-accent-deep);
-	font-size: 18px;
-	width: 18px;
-	height: 18px;
-}
-
-.passpress-setup-category-head h2 {
-	margin: 0;
-	padding: 0;
-	font-size: 0.95rem;
-	font-weight: 800;
-	letter-spacing: -0.01em;
-	color: var(--pp-su-ink);
-}
-
-.passpress-setup-template-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-	gap: 12px;
-}
-
-.passpress-setup-page .passpress-template-card {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 8px;
-	margin: 0;
-	padding: 16px 16px 14px;
-	border: 1px solid var(--pp-su-line);
-	border-radius: 14px;
-	background:
-		radial-gradient(120% 140% at 100% 0%, rgba(255, 155, 122, 0.1) 0%, transparent 50%),
-		#fff;
-	cursor: pointer;
-	transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
-	position: relative;
-}
-
-.passpress-setup-page .passpress-template-card input[type="radio"] {
-	position: absolute;
-	opacity: 0;
-	pointer-events: none;
-}
-
-.passpress-template-card-top {
-	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
-	gap: 8px;
-	width: 100%;
-}
-
-.passpress-template-icon {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 36px;
-	height: 36px;
-	border-radius: 10px;
-	background: #fff1eb;
-	border: 1px solid #fdba8c;
-}
-
-.passpress-template-icon .dashicons {
-	color: var(--pp-su-accent-deep);
-	font-size: 18px;
-	width: 18px;
-	height: 18px;
-}
-
-.passpress-setup-page .passpress-template-label {
-	font-weight: 800;
-	font-size: 0.95rem;
-	color: var(--pp-su-ink);
-	letter-spacing: -0.01em;
-	line-height: 1.3;
-}
-
-.passpress-template-blurb {
-	font-size: 0.8rem;
-	font-weight: 500;
-	color: var(--pp-su-muted);
-	line-height: 1.4;
-}
-
-.passpress-template-badge {
-	display: inline-block;
-	padding: 3px 8px;
-	border-radius: 999px;
-	font-size: 0.65rem;
-	font-weight: 700;
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
-	background: #f1f5f9;
-	color: #475569;
-	line-height: 1.2;
-}
-
-.passpress-template-badge-done {
-	background: #eaf7ee;
-	color: #146c34;
-}
-
-.passpress-template-badge-active {
-	background: #fff1eb;
-	color: var(--pp-su-accent-deep);
-}
-
-.passpress-setup-page .passpress-template-card:hover:not(.passpress-template-disabled) {
-	border-color: var(--pp-su-accent);
-	box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
-	transform: translateY(-1px);
-}
-
-.passpress-setup-page .passpress-template-card.is-selected {
-	border-color: var(--pp-su-accent);
-	box-shadow: 0 0 0 1px var(--pp-su-accent), 0 10px 24px rgba(255, 107, 61, 0.12);
-	background:
-		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.16) 0%, transparent 55%),
-		#fffaf8;
-}
-
-.passpress-setup-page .passpress-template-disabled {
-	opacity: 0.62;
-	cursor: not-allowed;
-	background: var(--pp-su-surface);
-}
-
-.passpress-setup-empty {
-	margin: 8px 0 0;
-	padding: 20px;
-	border: 1px dashed var(--pp-su-line);
-	border-radius: 14px;
-	text-align: center;
-	color: var(--pp-su-muted);
-	font-weight: 600;
-}
-
-.passpress-setup-footer {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 16px;
-	flex-wrap: wrap;
-	margin-top: 22px;
-	padding-top: 18px;
-	border-top: 1px solid var(--pp-su-line);
-	position: sticky;
-	bottom: 0;
-	background: linear-gradient(180deg, rgba(255, 255, 255, 0.88) 0%, #fff 40%);
-	padding-bottom: 4px;
-	z-index: 2;
-}
-
-.passpress-setup-footer-note {
-	display: flex;
-	align-items: flex-start;
-	gap: 8px;
-	max-width: 420px;
-	font-size: 0.8rem;
-	color: var(--pp-su-muted);
-	line-height: 1.4;
-}
-
-.passpress-setup-footer-note .dashicons {
-	color: var(--pp-su-muted);
-	font-size: 16px;
-	width: 16px;
-	height: 16px;
-	margin-top: 1px;
-}
-
-.passpress-setup-footer-actions {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	flex-wrap: wrap;
-}
-
-.passpress-setup-footer-actions .pp-btn-solid {
-	border: none;
-	background: var(--pp-su-accent);
-	color: #fff;
-}
-
-.passpress-setup-footer-actions .pp-btn-solid:hover,
-.passpress-setup-footer-actions .pp-btn-solid:focus {
-	background: var(--pp-su-accent-deep);
-	color: #fff;
-}
-
-.passpress-setup-category.is-filtered-out,
-.passpress-template-card.is-filtered-out {
-	display: none !important;
-}
-
 @media screen and (max-width: 782px) {
-	.passpress-setup-page-header,
-	.passpress-setup-welcome-banner,
-	.passpress-setup-footer {
+.passpress-setup-page-header{
 		flex-direction: column;
 		align-items: stretch;
 	}
-
-	.passpress-setup-steps {
-		grid-template-columns: 1fr;
-	}
-
-	.passpress-setup-dashboard-btn,
-	.passpress-setup-footer-actions .pp-btn-solid,
-	.passpress-setup-footer-actions .pp-btn-outline {
+.passpress-setup-dashboard-btn{
 		width: 100%;
 		justify-content: center;
 		text-align: center;
-	}
-
-	.passpress-setup-search {
-		max-width: none;
 	}
 }
 
@@ -1280,6 +882,280 @@ body.passpress-modal-open {
 	min-width: 2px;
 }
 
+/* ============================================================
+ * Shared card-grid styles — Plans / Facilities / Class Sessions / Coupons
+ *
+ * These four screens were built as four copies of one card grid, differing
+ * only in class names and in four identically-valued sets of CSS variables
+ * (--pp-plans-* / --pp-fac-* / --pp-cpn-* / --pp-cls-*). This is the single
+ * copy. Every per-screen class name is kept in the selector lists, so no
+ * markup had to change; the short .pp-card / .pp-grid aliases are for any
+ * new screen built on this pattern.
+ *
+ * Real per-screen differences are not folded in — they stay as explicit
+ * overrides at the end of this block. See passpress-uiux-simplification-plan.md §4.
+ * ============================================================ */
+
+.passpress-plans-page,
+.passpress-facilities-page,
+.passpress-coupons-page,
+.passpress-classes-page,
+.pp-cards-page {
+	--pp-card-ink: #1e293b;
+	--pp-card-muted: #64748b;
+	--pp-card-line: #e2e8f0;
+	--pp-card-accent: #f97316;
+	--pp-card-accent-deep: #ea580c;
+}
+
+.passpress-plans-empty,
+.passpress-facilities-empty,
+.passpress-coupons-empty,
+.passpress-classes-empty,
+.pp-cards-empty {
+	padding: 28px 24px;
+	border: 1px dashed var(--pp-card-line);
+	border-radius: 16px;
+	background: radial-gradient(120% 140% at 0% 0%, rgba(251, 146, 60, 0.14) 0%, transparent 55%),
+		linear-gradient(180deg, #fff8f2 0%, #ffffff 70%);
+}
+
+.passpress-plans-empty-title,
+.passpress-facilities-empty-title,
+.passpress-coupons-empty-title,
+.passpress-classes-empty-title,
+.pp-cards-empty-title {
+	margin: 0 0 8px;
+	font-size: 1.35rem;
+	font-weight: 800;
+	color: var(--pp-card-ink);
+}
+
+.passpress-plans-grid,
+.passpress-facilities-grid,
+.passpress-coupons-grid,
+.passpress-classes-grid,
+.pp-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	gap: 16px;
+}
+
+.passpress-plan-admin-card,
+.passpress-facility-admin-card,
+.passpress-coupon-admin-card,
+.passpress-class-admin-card,
+.pp-card {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	width: 100%;
+	min-height: 100%;
+	background: radial-gradient(120% 140% at 100% 0%, rgba(251, 146, 60, 0.12) 0%, transparent 50%),
+		#fff;
+	border: 1px solid var(--pp-card-line);
+	border-radius: 16px;
+	padding: 18px 18px 16px;
+	text-decoration: none;
+	color: inherit;
+	box-shadow: none;
+	text-align: left;
+	font: inherit;
+	cursor: pointer;
+	transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.passpress-plan-admin-card:hover, .passpress-plan-admin-card:focus,
+.passpress-facility-admin-card:hover, .passpress-facility-admin-card:focus,
+.passpress-coupon-admin-card:hover, .passpress-coupon-admin-card:focus,
+.passpress-class-admin-card:hover, .passpress-class-admin-card:focus,
+.pp-card:hover,
+.X-admin-card:focus {
+	border-color: var(--pp-card-accent);
+	box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+	transform: translateY(-1px);
+	color: inherit;
+}
+
+.passpress-plan-admin-card-top,
+.passpress-facility-admin-card-top,
+.passpress-coupon-admin-card-top,
+.passpress-class-admin-card-top,
+.pp-card-top {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 10px;
+	margin-bottom: 0;
+}
+
+.passpress-plan-admin-card-badges,
+.passpress-facility-admin-card-badges,
+.passpress-coupon-admin-card-badges,
+.passpress-class-admin-card-badges,
+.pp-card-badges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.passpress-plan-admin-badge,
+.passpress-facility-admin-badge,
+.passpress-coupon-admin-badge,
+.passpress-class-admin-badge,
+.pp-card-badge {
+	display: inline-block;
+	padding: 4px 8px;
+	border-radius: 999px;
+	font-size: 0.68rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	line-height: 1.2;
+}
+
+.passpress-plan-admin-badge.is-live,
+.passpress-facility-admin-badge.is-live,
+.passpress-coupon-admin-badge.is-live,
+.passpress-class-admin-badge.is-live,
+.pp-card-badge.is-live {
+	background: #eaf7ee;
+	color: #146c34;
+}
+
+.passpress-plan-admin-badge.is-draft,
+.passpress-facility-admin-badge.is-draft,
+.passpress-coupon-admin-badge.is-draft,
+.passpress-class-admin-badge.is-draft,
+.pp-card-badge.is-draft {
+	background: #f1f5f9;
+	color: #475569;
+}
+
+.passpress-plan-admin-title,
+.passpress-facility-admin-title,
+.passpress-coupon-admin-title,
+.passpress-class-admin-title,
+.pp-card-title {
+	margin: 0;
+	font-size: 1.05rem;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	line-height: 1.3;
+	color: var(--pp-card-ink);
+	text-transform: none;
+}
+
+.passpress-plan-admin-details,
+.passpress-facility-admin-details,
+.passpress-coupon-admin-details,
+.passpress-class-admin-details,
+.pp-card-details {
+	display: grid;
+	gap: 8px;
+	margin: 0;
+	padding: 12px 0 0;
+	border-top: 1px solid var(--pp-card-line);
+}
+
+.passpress-plan-admin-details > div,
+.passpress-facility-admin-details > div,
+.passpress-coupon-admin-details > div,
+.passpress-class-admin-details > div,
+.pp-card-details > div {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	align-items: baseline;
+}
+
+.passpress-plan-admin-details dt,
+.passpress-facility-admin-details dt,
+.passpress-coupon-admin-details dt,
+.passpress-class-admin-details dt,
+.pp-card-details dt {
+	margin: 0;
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--pp-card-muted);
+}
+
+.passpress-plan-admin-details dd,
+.passpress-facility-admin-details dd,
+.passpress-coupon-admin-details dd,
+.passpress-class-admin-details dd,
+.pp-card-details dd {
+	margin: 0;
+	font-size: 0.88rem;
+	font-weight: 600;
+	color: var(--pp-card-ink);
+	text-align: right;
+}
+
+.passpress-plan-admin-footer,
+.passpress-facility-admin-footer,
+.passpress-coupon-admin-footer,
+.passpress-class-admin-footer,
+.pp-card-footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	margin-top: auto;
+	padding-top: 12px;
+	border-top: 1px solid var(--pp-card-line);
+	font-size: 0.8rem;
+	text-transform: none;
+	letter-spacing: 0;
+}
+
+.passpress-plan-admin-edit,
+.passpress-facility-admin-edit,
+.passpress-coupon-admin-edit,
+.passpress-class-admin-edit,
+.pp-card-edit {
+	font-weight: 800;
+	color: var(--pp-card-accent-deep);
+}
+
+.passpress-facility-admin-badge.is-type,
+.passpress-coupon-admin-badge.is-type,
+.passpress-class-admin-badge.is-type,
+.pp-card-badge.is-type {
+	background: #fff4ec;
+	color: var(--pp-card-accent-deep);
+}
+
+/* Coupons deliberately absent: coupon cards don't underline their edit
+   affordance on hover today, and this pass doesn't change behaviour. */
+.passpress-plan-admin-card:hover .passpress-plan-admin-edit,
+.passpress-facility-admin-card:hover .passpress-facility-admin-edit,
+.passpress-class-admin-card:hover .passpress-class-admin-edit,
+.pp-card:hover .pp-card-edit {
+	text-decoration: underline;
+}
+
+/* --- Real per-screen differences, preserved exactly --- */
+
+.passpress-class-admin-card {
+	gap: 12px;
+}
+
+.passpress-coupon-admin-title {
+	letter-spacing: 0.06em;
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.passpress-plan-admin-footer {
+	color: var(--pp-card-muted);
+}
+
+.passpress-coupon-admin-footer {
+	color: var(--pp-card-muted);
+}
+
 .passpress-plans-header {
 	display: flex;
 	align-items: center;
@@ -1294,11 +1170,11 @@ body.passpress-modal-open {
 
 .wrap.passpress-wrap.passpress-plans-page,
 .passpress-plans-page {
-	--pp-plans-ink: #0f172a;
+	--pp-plans-ink: #1e293b;
 	--pp-plans-muted: #64748b;
 	--pp-plans-line: #e2e8f0;
-	--pp-plans-accent: #ff875f;
-	--pp-plans-accent-deep: #ff6b3d;
+	--pp-plans-accent: #f97316;
+	--pp-plans-accent-deep: #ea580c;
 	max-width: 90%;
 	padding: 20px;
 	background: #fff;
@@ -1368,103 +1244,14 @@ body.passpress-modal-open {
 	color: #fff !important;
 	border-color: transparent !important;
 }
-
-.passpress-plans-empty {
-	padding: 28px 24px;
-	border: 1px dashed var(--pp-plans-line);
-	border-radius: 16px;
-	background:
-		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.14) 0%, transparent 55%),
-		linear-gradient(180deg, #fffaf8 0%, #ffffff 70%);
-}
-
-.passpress-plans-empty-title {
-	margin: 0 0 8px;
-	font-size: 1.35rem;
-	font-weight: 800;
-	color: var(--pp-plans-ink);
-}
-
 .passpress-plans-empty-cta {
 	margin-top: 16px;
 }
-
-.passpress-plans-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-	gap: 16px;
-}
-
-.passpress-plan-admin-card {
-	display: flex;
-	flex-direction: column;
-	gap: 14px;
-	width: 100%;
-	min-height: 100%;
-	background:
-		radial-gradient(120% 140% at 100% 0%, rgba(255, 155, 122, 0.12) 0%, transparent 50%),
-		#fff;
-	border: 1px solid var(--pp-plans-line);
-	border-radius: 16px;
-	padding: 18px 18px 16px;
-	text-decoration: none;
-	color: inherit;
-	box-shadow: none;
-	text-align: left;
-	font: inherit;
-	cursor: pointer;
-	transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.passpress-plan-admin-card:hover,
-.passpress-plan-admin-card:focus {
-	border-color: var(--pp-plans-accent);
-	box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
-	transform: translateY(-1px);
-	color: inherit;
-}
-
 .passpress-plan-admin-card.is-popular {
-	border-color: #fdba8c;
+	border-color: #fdba74;
 }
-
-.passpress-plan-admin-card-top {
-	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
-	gap: 10px;
-	margin-bottom: 0;
-}
-
-.passpress-plan-admin-card-badges {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 6px;
-}
-
-.passpress-plan-admin-badge {
-	display: inline-block;
-	padding: 4px 8px;
-	border-radius: 999px;
-	font-size: 0.68rem;
-	font-weight: 700;
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
-	line-height: 1.2;
-}
-
-.passpress-plan-admin-badge.is-live {
-	background: #eaf7ee;
-	color: #146c34;
-}
-
-.passpress-plan-admin-badge.is-draft {
-	background: #f1f5f9;
-	color: #475569;
-}
-
 .passpress-plan-admin-badge.is-popular {
-	background: #fff1eb;
+	background: #fff4ec;
 	color: var(--pp-plans-accent-deep);
 }
 
@@ -1475,74 +1262,8 @@ body.passpress-modal-open {
 	white-space: nowrap;
 	letter-spacing: -0.02em;
 }
-
-.passpress-plan-admin-title {
-	margin: 0;
-	font-size: 1.05rem;
-	font-weight: 800;
-	letter-spacing: -0.02em;
-	line-height: 1.3;
-	color: var(--pp-plans-ink);
-	text-transform: none;
-}
-
-.passpress-plan-admin-details {
-	display: grid;
-	gap: 8px;
-	margin: 0;
-	padding: 12px 0 0;
-	border-top: 1px solid var(--pp-plans-line);
-}
-
-.passpress-plan-admin-details > div {
-	display: flex;
-	justify-content: space-between;
-	gap: 12px;
-	align-items: baseline;
-}
-
-.passpress-plan-admin-details dt {
-	margin: 0;
-	font-size: 0.75rem;
-	font-weight: 700;
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
-	color: var(--pp-plans-muted);
-}
-
-.passpress-plan-admin-details dd {
-	margin: 0;
-	font-size: 0.88rem;
-	font-weight: 600;
-	color: var(--pp-plans-ink);
-	text-align: right;
-}
-
-.passpress-plan-admin-footer {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 10px;
-	margin-top: auto;
-	padding-top: 12px;
-	border-top: 1px solid var(--pp-plans-line);
-	font-size: 0.8rem;
-	text-transform: none;
-	letter-spacing: 0;
-	color: var(--pp-plans-muted);
-}
-
 .passpress-plan-admin-sold {
 	font-weight: 600;
-}
-
-.passpress-plan-admin-edit {
-	font-weight: 800;
-	color: var(--pp-plans-accent-deep);
-}
-
-.passpress-plan-admin-card:hover .passpress-plan-admin-edit {
-	text-decoration: underline;
 }
 
 /* New Plan modal */
@@ -1593,7 +1314,7 @@ body.passpress-modal-open {
 }
 
 .passpress-modal-close:hover {
-	color: #0f172a;
+	color: #1e293b;
 	background: #fff;
 }
 
@@ -1633,7 +1354,7 @@ body.passpress-modal-open {
 	font-size: 1.25rem;
 	font-weight: 800;
 	letter-spacing: -0.02em;
-	color: #0f172a;
+	color: #1e293b;
 }
 
 .pp-plan-form {
@@ -1663,7 +1384,7 @@ body.passpress-modal-open {
 .pp-label {
 	font-size: 0.78rem;
 	font-weight: 700;
-	color: #0f172a;
+	color: #1e293b;
 	letter-spacing: 0.02em;
 }
 
@@ -1687,7 +1408,7 @@ body.passpress-modal-open {
 	padding: 0 12px;
 	min-height: 40px;
 	font-size: 0.92rem;
-	color: #0f172a;
+	color: #1e293b;
 	background: #fff;
 	max-width: 100%;
 }
@@ -1722,7 +1443,7 @@ input.pp-input[type="week"] {
 }
 
 textarea.pp-input {
-	color: #0f172a;
+	color: #1e293b;
 	resize: vertical;
 	min-height: 96px;
 	padding: 10px 12px;
@@ -1733,7 +1454,7 @@ textarea.pp-input::placeholder {
 }
 
 select.pp-input {
-	color: #0f172a;
+	color: #1e293b;
 	font-weight: 600;
 	appearance: none;
 	background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2364748b'%3E%3Cpath d='M5.5 7.5l4.5 5 4.5-5z'/%3E%3C/svg%3E") no-repeat right 10px center;
@@ -1744,12 +1465,12 @@ select.pp-input {
 }
 
 #pp_new_plan_type.pp-input {
-	color: #0f172a;
+	color: #1e293b;
 }
 
 .pp-input-narrow {
 	max-width: 110px;
-	color: #0f172a;
+	color: #1e293b;
 	font-weight: 600;
 }
 
@@ -1786,7 +1507,7 @@ select.pp-input {
 }
 
 .pp-input-group-time .pp-input {
-	color: #0f172a;
+	color: #1e293b;
 }
 
 .pp-input-group-sep {
@@ -1799,6 +1520,429 @@ select.pp-input {
 	margin: 2px 0;
 }
 
+/* ============================================================
+ * Business-type import modal (PP_Setup_Wizard::render_modal)
+ * Three steps: the yes/no question, the type picker, the confirm.
+ * ============================================================ */
+
+.passpress-setup-modal .pp-setup-dialog {
+	position: relative;
+	width: 100%;
+	max-width: 620px;
+	padding: 30px 30px 26px;
+}
+
+.pp-setup-step {
+	display: grid;
+	gap: 16px;
+}
+
+/* Author rules beat the UA stylesheet's [hidden]{display:none} even at equal
+   specificity, so the unconditional `display: grid` above would otherwise
+   render all three steps at once regardless of the hidden attribute the JS
+   sets. This selector outranks it (two selectors vs. one), so it wins
+   without needing !important or an inline style toggle. */
+.pp-setup-step[hidden] {
+	display: none;
+}
+
+.pp-setup-mark {
+	justify-self: center;
+	display: grid;
+	place-items: center;
+	width: 56px;
+	height: 56px;
+	border-radius: 999px;
+	background: #fff4ec;
+	color: #ea580c;
+	font-size: 28px;
+}
+
+.pp-setup-mark::before {
+	font-size: 28px;
+}
+
+.pp-setup-eyebrow {
+	margin: 0;
+	font-size: 0.72rem;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: #64748b;
+}
+
+.pp-setup-title {
+	margin: 0;
+	font-size: 1.45rem;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	line-height: 1.25;
+	color: #1e293b;
+}
+
+.pp-setup-step[data-step="1"] {
+	text-align: center;
+	justify-items: center;
+}
+
+.pp-setup-lede {
+	margin: 0;
+	max-width: 48ch;
+	font-size: 0.95rem;
+	line-height: 1.6;
+	color: #475569;
+}
+
+.pp-setup-lede-tight {
+	font-size: 0.9rem;
+}
+
+.pp-setup-benefits {
+	display: grid;
+	gap: 10px;
+	margin: 4px 0 0;
+	padding: 16px 18px;
+	list-style: none;
+	text-align: left;
+	border: 1px solid #e2e8f0;
+	border-radius: 14px;
+	background: #f8fafc;
+}
+
+.pp-setup-benefits li {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 0;
+	font-size: 0.88rem;
+	font-weight: 600;
+	color: #1e293b;
+}
+
+.pp-setup-benefits .dashicons {
+	color: #ea580c;
+}
+
+.pp-setup-actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 10px;
+	margin-top: 6px;
+}
+
+.pp-setup-step[data-step="1"] .pp-setup-actions {
+	justify-content: center;
+}
+
+/* --- step 2: the picker --- */
+
+.pp-setup-toolbar {
+	display: grid;
+	gap: 10px;
+}
+
+.pp-setup-search {
+	position: relative;
+	display: block;
+}
+
+.pp-setup-search .dashicons {
+	position: absolute;
+	top: 50%;
+	left: 10px;
+	margin-top: -10px;
+	color: #94a3b8;
+}
+
+.pp-setup-search input[type="search"] {
+	width: 100%;
+	padding: 9px 12px 9px 34px;
+	border: 1px solid #e2e8f0;
+	border-radius: 10px;
+	font-size: 0.9rem;
+	box-shadow: none;
+}
+
+.pp-setup-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.pp-setup-chip {
+	padding: 6px 12px;
+	border: 1px solid #e2e8f0;
+	border-radius: 999px;
+	background: #fff;
+	font-size: 0.78rem;
+	font-weight: 700;
+	color: #475569;
+	cursor: pointer;
+}
+
+.pp-setup-chip:hover {
+	border-color: #f97316;
+	color: #ea580c;
+}
+
+.pp-setup-chip.is-active {
+	background: #f97316;
+	border-color: #f97316;
+	color: #fff;
+}
+
+.pp-setup-types {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+	gap: 8px;
+	max-height: 46vh;
+	overflow-y: auto;
+	padding: 2px;
+}
+
+.pp-setup-type {
+	display: grid;
+	justify-items: center;
+	align-content: center;
+	gap: 6px;
+	min-height: 92px;
+	padding: 12px 10px;
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
+	background: #fff;
+	text-align: center;
+	font: inherit;
+	cursor: pointer;
+	transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pp-setup-type:hover:not(.is-disabled),
+.pp-setup-type:focus-visible:not(.is-disabled) {
+	border-color: #f97316;
+	box-shadow: 0 8px 20px rgba(15, 23, 42, 0.07);
+	transform: translateY(-1px);
+}
+
+.pp-setup-type-icon {
+	color: #ea580c;
+}
+
+.pp-setup-type-label {
+	font-size: 0.84rem;
+	font-weight: 700;
+	line-height: 1.3;
+	color: #1e293b;
+}
+
+.pp-setup-type.is-disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+	background: #f8fafc;
+}
+
+/* Same [hidden]-vs-author-display fix as .pp-setup-step above — the search
+   and category filters toggle the hidden attribute on tiles that don't match. */
+.pp-setup-type[hidden] {
+	display: none;
+}
+
+.pp-setup-type-flag {
+	font-size: 0.66rem;
+	font-weight: 800;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: #146c34;
+}
+
+.pp-setup-nomatch {
+	margin: 0;
+	padding: 14px;
+	text-align: center;
+	font-size: 0.88rem;
+	color: #64748b;
+}
+
+/* --- step 3: the confirm --- */
+
+.pp-setup-counts {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+	gap: 10px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.pp-setup-counts li {
+	display: grid;
+	gap: 2px;
+	margin: 0;
+	padding: 14px 12px;
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
+	background: #f8fafc;
+	text-align: center;
+}
+
+/* Same [hidden]-vs-author-display fix again — a template with no facilities
+   or no classes (a museum, a golf club) hides that count via [data-pp-count]. */
+.pp-setup-counts li[hidden] {
+	display: none;
+}
+
+.pp-setup-counts strong {
+	font-size: 1.5rem;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	color: #ea580c;
+}
+
+.pp-setup-counts span {
+	font-size: 0.76rem;
+	font-weight: 700;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+	color: #64748b;
+}
+
+.pp-setup-fineprint {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	margin: 0;
+	font-size: 0.83rem;
+	line-height: 1.55;
+	color: #64748b;
+}
+
+.pp-setup-fineprint .dashicons {
+	flex: 0 0 auto;
+	color: #94a3b8;
+}
+
+/* --- the Setup screen's own call to action --- */
+
+.passpress-setup-cta {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	margin-top: 18px;
+	padding: 20px 22px;
+	border: 1px solid #e2e8f0;
+	border-radius: 16px;
+	background: radial-gradient(120% 140% at 0% 0%, rgba(251, 146, 60, 0.14) 0%, transparent 55%),
+		linear-gradient(180deg, #fff8f2 0%, #ffffff 70%);
+}
+
+.passpress-setup-cta-icon {
+	display: grid;
+	place-items: center;
+	flex: 0 0 auto;
+	width: 46px;
+	height: 46px;
+	border-radius: 12px;
+	background: #fff4ec;
+	color: #ea580c;
+}
+
+.passpress-setup-cta-copy {
+	display: grid;
+	gap: 2px;
+	flex: 1 1 auto;
+}
+
+.passpress-setup-cta-copy strong {
+	font-size: 1rem;
+	font-weight: 800;
+	color: #1e293b;
+}
+
+.passpress-setup-cta-copy span {
+	font-size: 0.86rem;
+	color: #64748b;
+}
+
+@media screen and (max-width: 600px) {
+	.passpress-setup-modal .pp-setup-dialog {
+		padding: 22px 18px 20px;
+	}
+
+	.passpress-setup-cta {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}
+
+/* Collapsible "Advanced rules" section inside the plan modal (plan doc §5).
+   A native <details>, so the toggle needs no JavaScript and stays keyboard
+   accessible; the chevron is drawn with a rotated border box. */
+
+.pp-advanced {
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
+	background: #f8fafc;
+}
+
+.pp-advanced-summary {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 12px 38px 12px 14px;
+	cursor: pointer;
+	list-style: none;
+	border-radius: 12px;
+}
+
+.pp-advanced-summary::-webkit-details-marker {
+	display: none;
+}
+
+.pp-advanced-summary::after {
+	content: "";
+	position: absolute;
+	top: 50%;
+	right: 18px;
+	width: 8px;
+	height: 8px;
+	margin-top: -6px;
+	border-right: 2px solid #64748b;
+	border-bottom: 2px solid #64748b;
+	transform: rotate(45deg);
+	transition: transform 0.15s ease;
+}
+
+.pp-advanced[open] > .pp-advanced-summary::after {
+	margin-top: -2px;
+	transform: rotate(-135deg);
+}
+
+.pp-advanced-summary:focus-visible {
+	outline: 2px solid #f97316;
+	outline-offset: 2px;
+}
+
+.pp-advanced-title {
+	font-size: 0.88rem;
+	font-weight: 700;
+	color: #1e293b;
+}
+
+.pp-advanced-hint {
+	font-size: 0.78rem;
+	font-weight: 500;
+	color: #64748b;
+}
+
+.pp-advanced-body {
+	display: grid;
+	gap: 14px;
+	padding: 14px;
+	border-top: 1px solid #e2e8f0;
+}
+
 .pp-checkbox-box {
 	display: flex;
 	align-items: flex-start;
@@ -1808,9 +1952,18 @@ select.pp-input {
 	padding: 12px 14px;
 	font-size: 0.88rem;
 	font-weight: 600;
-	color: #0f172a;
+	color: #1e293b;
 	cursor: pointer;
 	background: #f8fafc;
+}
+
+/* Same [hidden]-vs-author-display fix as .pp-setup-step/.pp-setup-type above.
+   The plan/facility/class/coupon "Live on site" status box is hidden in
+   create mode via PP*Modal's setMode()/toggleModal logic (all four screens'
+   modals share this base class); without this rule it would always render,
+   even before the shared card-grid controller existed (assets/admin/passpress-modal-form.js). */
+.pp-checkbox-box[hidden] {
+	display: none;
 }
 
 .pp-checkbox-box input {
@@ -1842,7 +1995,7 @@ select.pp-input {
 .pp-btn-outline {
 	background: #fff;
 	border: 1px solid #d8dee8;
-	color: #0f172a;
+	color: #1e293b;
 }
 
 .pp-btn-outline:hover {
@@ -1850,14 +2003,14 @@ select.pp-input {
 }
 
 .pp-btn-solid {
-	background: #ff875f;
-	border: 1px solid #ff875f;
+	background: #f97316;
+	border: 1px solid #f97316;
 	color: #fff;
 }
 
 .pp-btn-solid:hover {
-	background: #ff6b3d;
-	border-color: #ff6b3d;
+	background: #ea580c;
+	border-color: #ea580c;
 }
 
 @media screen and (max-width: 782px) {
@@ -1878,11 +2031,11 @@ select.pp-input {
 /* Members page */
 
 .passpress-members-page {
-	--pp-mem-ink: #0f172a;
+	--pp-mem-ink: #1e293b;
 	--pp-mem-muted: #64748b;
 	--pp-mem-line: #e2e8f0;
-	--pp-mem-accent: #ff875f;
-	--pp-mem-accent-deep: #ff6b3d;
+	--pp-mem-accent: #f97316;
+	--pp-mem-accent-deep: #ea580c;
 	max-width: 90%;
 }
 
@@ -1957,7 +2110,7 @@ select.pp-input {
 	justify-content: space-between;
 	gap: 12px;
 	background:
-		radial-gradient(120% 140% at 100% 0%, rgba(255, 155, 122, 0.1) 0%, transparent 55%),
+		radial-gradient(120% 140% at 100% 0%, rgba(251, 146, 60, 0.1) 0%, transparent 55%),
 		#fff;
 	border: 1px solid var(--pp-mem-line);
 	border-radius: 14px;
@@ -1968,7 +2121,7 @@ select.pp-input {
 }
 
 .passpress-stat-tile:hover {
-	border-color: #fdba8c;
+	border-color: #fdba74;
 	box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
 	transform: translateY(-1px);
 	color: inherit;
@@ -2231,7 +2384,7 @@ select.pp-input {
 }
 
 .passpress-members-table tbody tr:hover td {
-	background: #fffaf8;
+	background: #fff8f2;
 }
 
 .passpress-membership-code,
@@ -2247,7 +2400,7 @@ select.pp-input {
 }
 
 .passpress-pin-code {
-	background: #0f172a;
+	background: #1e293b;
 	color: #fff;
 	letter-spacing: 0.12em;
 }
@@ -2271,7 +2424,7 @@ select.pp-input {
 	justify-content: center;
 }
 
-.passpress-avatar-color-0 { background: #0f172a; }
+.passpress-avatar-color-0 { background: #1e293b; }
 .passpress-avatar-color-1 { background: #0d9488; }
 .passpress-avatar-color-2 { background: #ea580c; }
 .passpress-avatar-color-3 { background: #2563eb; }
@@ -2301,7 +2454,7 @@ select.pp-input {
 	display: inline-block;
 	padding: 5px 10px;
 	border-radius: 999px;
-	background: #fff1eb;
+	background: #fff4ec;
 	color: var(--pp-mem-accent-deep);
 	font-size: 0.8rem;
 	font-weight: 700;
@@ -2427,7 +2580,7 @@ select.pp-input {
 }
 
 .passpress-row-menu-panel a:hover {
-	background: #fff1eb;
+	background: #fff4ec;
 	color: var(--pp-mem-accent-deep);
 }
 
@@ -2510,11 +2663,11 @@ select.pp-input {
 /* Facilities page */
 
 .passpress-facilities-page {
-	--pp-fac-ink: #0f172a;
+	--pp-fac-ink: #1e293b;
 	--pp-fac-muted: #64748b;
 	--pp-fac-line: #e2e8f0;
-	--pp-fac-accent: #ff875f;
-	--pp-fac-accent-deep: #ff6b3d;
+	--pp-fac-accent: #f97316;
+	--pp-fac-accent-deep: #ea580c;
 	max-width: 90%;
 }
 
@@ -2577,167 +2730,16 @@ select.pp-input {
 	background: var(--pp-fac-accent-deep);
 	color: #fff;
 }
-
-.passpress-facilities-empty {
-	padding: 28px 24px;
-	border: 1px dashed var(--pp-fac-line);
-	border-radius: 16px;
-	background:
-		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.14) 0%, transparent 55%),
-		linear-gradient(180deg, #fffaf8 0%, #ffffff 70%);
-}
-
-.passpress-facilities-empty-title {
-	margin: 0 0 8px;
-	font-size: 1.35rem;
-	font-weight: 800;
-	color: var(--pp-fac-ink);
-}
-
 .passpress-facilities-empty .passpress-facilities-new-btn {
 	margin-top: 16px;
 }
-
-.passpress-facilities-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-	gap: 16px;
-}
-
-.passpress-facility-admin-card {
-	display: flex;
-	flex-direction: column;
-	gap: 14px;
-	width: 100%;
-	min-height: 100%;
-	background:
-		radial-gradient(120% 140% at 100% 0%, rgba(255, 155, 122, 0.12) 0%, transparent 50%),
-		#fff;
-	border: 1px solid var(--pp-fac-line);
-	border-radius: 16px;
-	padding: 18px 18px 16px;
-	text-align: left;
-	font: inherit;
-	color: inherit;
-	cursor: pointer;
-	transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.passpress-facility-admin-card:hover,
-.passpress-facility-admin-card:focus {
-	border-color: var(--pp-fac-accent);
-	box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
-	transform: translateY(-1px);
-}
-
-.passpress-facility-admin-card-top {
-	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
-	gap: 10px;
-}
-
-.passpress-facility-admin-card-badges {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 6px;
-}
-
-.passpress-facility-admin-badge {
-	display: inline-block;
-	padding: 4px 8px;
-	border-radius: 999px;
-	font-size: 0.68rem;
-	font-weight: 700;
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
-	line-height: 1.2;
-}
-
-.passpress-facility-admin-badge.is-type {
-	background: #fff1eb;
-	color: var(--pp-fac-accent-deep);
-}
-
-.passpress-facility-admin-badge.is-live {
-	background: #eaf7ee;
-	color: #146c34;
-}
-
-.passpress-facility-admin-badge.is-draft {
-	background: #f1f5f9;
-	color: #475569;
-}
-
 .passpress-facility-admin-badge.is-bookable {
 	background: #eef2ff;
 	color: #4338ca;
 }
-
-.passpress-facility-admin-title {
-	margin: 0;
-	font-size: 1.05rem;
-	font-weight: 800;
-	letter-spacing: -0.02em;
-	line-height: 1.3;
-	color: var(--pp-fac-ink);
-}
-
-.passpress-facility-admin-details {
-	display: grid;
-	gap: 8px;
-	margin: 0;
-	padding: 12px 0 0;
-	border-top: 1px solid var(--pp-fac-line);
-}
-
-.passpress-facility-admin-details > div {
-	display: flex;
-	justify-content: space-between;
-	gap: 12px;
-	align-items: baseline;
-}
-
-.passpress-facility-admin-details dt {
-	margin: 0;
-	font-size: 0.75rem;
-	font-weight: 700;
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
-	color: var(--pp-fac-muted);
-}
-
-.passpress-facility-admin-details dd {
-	margin: 0;
-	font-size: 0.88rem;
-	font-weight: 600;
-	color: var(--pp-fac-ink);
-	text-align: right;
-}
-
-.passpress-facility-admin-footer {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 10px;
-	margin-top: auto;
-	padding-top: 12px;
-	border-top: 1px solid var(--pp-fac-line);
-	font-size: 0.8rem;
-}
-
 .passpress-facility-admin-hint {
 	color: var(--pp-fac-muted);
 	font-weight: 600;
-}
-
-.passpress-facility-admin-edit {
-	font-weight: 800;
-	color: var(--pp-fac-accent-deep);
-}
-
-.passpress-facility-admin-card:hover .passpress-facility-admin-edit {
-	text-decoration: underline;
 }
 
 .passpress-facility-modal {
@@ -2773,8 +2775,8 @@ select.pp-input {
 
 .pp-day-chip:has(input:checked),
 .pp-staff-chip:has(input:checked) {
-	border-color: #fdba8c;
-	background: #fff1eb;
+	border-color: #fdba74;
+	background: #fff4ec;
 	color: var(--pp-fac-accent-deep);
 }
 
@@ -2797,11 +2799,11 @@ select.pp-input {
 
 .wrap.passpress-wrap.passpress-coupons-page,
 .passpress-coupons-page {
-	--pp-cpn-ink: #0f172a;
+	--pp-cpn-ink: #1e293b;
 	--pp-cpn-muted: #64748b;
 	--pp-cpn-line: #e2e8f0;
-	--pp-cpn-accent: #ff875f;
-	--pp-cpn-accent-deep: #ff6b3d;
+	--pp-cpn-accent: #f97316;
+	--pp-cpn-accent-deep: #ea580c;
 	max-width: 90%;
 	padding: 20px;
 	background: #fff;
@@ -2869,86 +2871,9 @@ select.pp-input {
 	background: var(--pp-cpn-accent-deep) !important;
 	color: #fff !important;
 }
-
-.passpress-coupons-empty {
-	padding: 28px 24px;
-	border: 1px dashed var(--pp-cpn-line);
-	border-radius: 16px;
-	background:
-		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.14) 0%, transparent 55%),
-		linear-gradient(180deg, #fffaf8 0%, #ffffff 70%);
-}
-
-.passpress-coupons-empty-title {
-	margin: 0 0 8px;
-	font-size: 1.35rem;
-	font-weight: 800;
-	color: var(--pp-cpn-ink);
-}
-
 .passpress-coupons-empty-cta {
 	margin-top: 16px;
 }
-
-.passpress-coupons-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-	gap: 16px;
-}
-
-.passpress-coupon-admin-card {
-	display: flex;
-	flex-direction: column;
-	gap: 14px;
-	width: 100%;
-	min-height: 100%;
-	background:
-		radial-gradient(120% 140% at 100% 0%, rgba(255, 155, 122, 0.12) 0%, transparent 50%),
-		#fff;
-	border: 1px solid var(--pp-cpn-line);
-	border-radius: 16px;
-	padding: 18px 18px 16px;
-	text-decoration: none;
-	color: inherit;
-	box-shadow: none;
-	text-align: left;
-	font: inherit;
-	cursor: pointer;
-	transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.passpress-coupon-admin-card:hover,
-.passpress-coupon-admin-card:focus {
-	border-color: var(--pp-cpn-accent);
-	box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
-	transform: translateY(-1px);
-	color: inherit;
-}
-
-.passpress-coupon-admin-card-top {
-	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
-	gap: 10px;
-}
-
-.passpress-coupon-admin-card-badges {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 6px;
-}
-
-.passpress-coupon-admin-badge {
-	display: inline-block;
-	padding: 4px 8px;
-	border-radius: 999px;
-	font-size: 0.68rem;
-	font-weight: 700;
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
-	line-height: 1.2;
-}
-
 .passpress-coupon-admin-badge.is-active {
 	background: #eaf7ee;
 	color: #146c34;
@@ -2959,21 +2884,6 @@ select.pp-input {
 	color: #b91c1c;
 }
 
-.passpress-coupon-admin-badge.is-live {
-	background: #eaf7ee;
-	color: #146c34;
-}
-
-.passpress-coupon-admin-badge.is-draft {
-	background: #f1f5f9;
-	color: #475569;
-}
-
-.passpress-coupon-admin-badge.is-type {
-	background: #fff1eb;
-	color: var(--pp-cpn-accent-deep);
-}
-
 .passpress-coupon-admin-discount {
 	font-size: 1.15rem;
 	font-weight: 800;
@@ -2981,70 +2891,9 @@ select.pp-input {
 	white-space: nowrap;
 	letter-spacing: -0.02em;
 }
-
-.passpress-coupon-admin-title {
-	margin: 0;
-	font-size: 1.05rem;
-	font-weight: 800;
-	letter-spacing: 0.06em;
-	line-height: 1.3;
-	color: var(--pp-cpn-ink);
-	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-}
-
-.passpress-coupon-admin-details {
-	display: grid;
-	gap: 8px;
-	margin: 0;
-	padding: 12px 0 0;
-	border-top: 1px solid var(--pp-cpn-line);
-}
-
-.passpress-coupon-admin-details > div {
-	display: flex;
-	justify-content: space-between;
-	gap: 12px;
-	align-items: baseline;
-}
-
-.passpress-coupon-admin-details dt {
-	margin: 0;
-	font-size: 0.75rem;
-	font-weight: 700;
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
-	color: var(--pp-cpn-muted);
-}
-
-.passpress-coupon-admin-details dd {
-	margin: 0;
-	font-size: 0.88rem;
-	font-weight: 600;
-	color: var(--pp-cpn-ink);
-	text-align: right;
-}
-
-.passpress-coupon-admin-footer {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 10px;
-	margin-top: auto;
-	padding-top: 12px;
-	border-top: 1px solid var(--pp-cpn-line);
-	font-size: 0.8rem;
-	color: var(--pp-cpn-muted);
-}
-
 .passpress-coupon-admin-usage {
 	font-weight: 600;
 }
-
-.passpress-coupon-admin-edit {
-	font-weight: 800;
-	color: var(--pp-cpn-accent-deep);
-}
-
 .pp-checkbox-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -3078,11 +2927,11 @@ select.pp-input {
 /* Class Sessions page */
 
 .passpress-classes-page {
-	--pp-cls-ink: #0f172a;
+	--pp-cls-ink: #1e293b;
 	--pp-cls-muted: #64748b;
 	--pp-cls-line: #e2e8f0;
-	--pp-cls-accent: #ff875f;
-	--pp-cls-accent-deep: #ff6b3d;
+	--pp-cls-accent: #f97316;
+	--pp-cls-accent-deep: #ea580c;
 	max-width: 90%;
 }
 
@@ -3145,98 +2994,9 @@ select.pp-input {
 	background: var(--pp-cls-accent-deep);
 	color: #fff;
 }
-
-.passpress-classes-empty {
-	padding: 28px 24px;
-	border: 1px dashed var(--pp-cls-line);
-	border-radius: 16px;
-	background:
-		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.14) 0%, transparent 55%),
-		linear-gradient(180deg, #fffaf8 0%, #ffffff 70%);
-}
-
-.passpress-classes-empty-title {
-	margin: 0 0 8px;
-	font-size: 1.35rem;
-	font-weight: 800;
-	color: var(--pp-cls-ink);
-}
-
 .passpress-classes-empty .passpress-classes-new-btn {
 	margin-top: 16px;
 }
-
-.passpress-classes-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-	gap: 16px;
-}
-
-.passpress-class-admin-card {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-	width: 100%;
-	min-height: 100%;
-	background:
-		radial-gradient(120% 140% at 100% 0%, rgba(255, 155, 122, 0.12) 0%, transparent 50%),
-		#fff;
-	border: 1px solid var(--pp-cls-line);
-	border-radius: 16px;
-	padding: 18px 18px 16px;
-	text-align: left;
-	font: inherit;
-	color: inherit;
-	cursor: pointer;
-	transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.passpress-class-admin-card:hover,
-.passpress-class-admin-card:focus {
-	border-color: var(--pp-cls-accent);
-	box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
-	transform: translateY(-1px);
-}
-
-.passpress-class-admin-card-top {
-	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
-	gap: 10px;
-}
-
-.passpress-class-admin-card-badges {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 6px;
-}
-
-.passpress-class-admin-badge {
-	display: inline-block;
-	padding: 4px 8px;
-	border-radius: 999px;
-	font-size: 0.68rem;
-	font-weight: 700;
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
-	line-height: 1.2;
-}
-
-.passpress-class-admin-badge.is-type {
-	background: #fff1eb;
-	color: var(--pp-cls-accent-deep);
-}
-
-.passpress-class-admin-badge.is-live {
-	background: #eaf7ee;
-	color: #146c34;
-}
-
-.passpress-class-admin-badge.is-draft {
-	background: #f1f5f9;
-	color: #475569;
-}
-
 .passpress-class-admin-day {
 	flex: 0 0 auto;
 	font-size: 0.78rem;
@@ -3247,78 +3007,15 @@ select.pp-input {
 	border-radius: 999px;
 	padding: 4px 10px;
 }
-
-.passpress-class-admin-title {
-	margin: 0;
-	font-size: 1.05rem;
-	font-weight: 800;
-	letter-spacing: -0.02em;
-	line-height: 1.3;
-	color: var(--pp-cls-ink);
-}
-
 .passpress-class-admin-time {
 	margin: 0;
 	font-size: 0.95rem;
 	font-weight: 700;
 	color: var(--pp-cls-accent-deep);
 }
-
-.passpress-class-admin-details {
-	display: grid;
-	gap: 8px;
-	margin: 0;
-	padding: 12px 0 0;
-	border-top: 1px solid var(--pp-cls-line);
-}
-
-.passpress-class-admin-details > div {
-	display: flex;
-	justify-content: space-between;
-	gap: 12px;
-	align-items: baseline;
-}
-
-.passpress-class-admin-details dt {
-	margin: 0;
-	font-size: 0.75rem;
-	font-weight: 700;
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
-	color: var(--pp-cls-muted);
-}
-
-.passpress-class-admin-details dd {
-	margin: 0;
-	font-size: 0.88rem;
-	font-weight: 600;
-	color: var(--pp-cls-ink);
-	text-align: right;
-}
-
-.passpress-class-admin-footer {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 10px;
-	margin-top: auto;
-	padding-top: 12px;
-	border-top: 1px solid var(--pp-cls-line);
-	font-size: 0.8rem;
-}
-
 .passpress-class-admin-hint {
 	color: var(--pp-cls-muted);
 	font-weight: 600;
-}
-
-.passpress-class-admin-edit {
-	font-weight: 800;
-	color: var(--pp-cls-accent-deep);
-}
-
-.passpress-class-admin-card:hover .passpress-class-admin-edit {
-	text-decoration: underline;
 }
 
 .passpress-class-modal {
@@ -3343,11 +3040,11 @@ select.pp-input {
 /* Billing History page */
 
 .passpress-billing-page {
-	--pp-bh-ink: #0f172a;
+	--pp-bh-ink: #1e293b;
 	--pp-bh-muted: #64748b;
 	--pp-bh-line: #e2e8f0;
-	--pp-bh-accent: #ff875f;
-	--pp-bh-accent-deep: #ff6b3d;
+	--pp-bh-accent: #f97316;
+	--pp-bh-accent-deep: #ea580c;
 	max-width: 90%;
 }
 
@@ -3394,7 +3091,7 @@ select.pp-input {
 
 .passpress-billing-stat {
 	background:
-		radial-gradient(120% 140% at 100% 0%, rgba(255, 155, 122, 0.1) 0%, transparent 55%),
+		radial-gradient(120% 140% at 100% 0%, rgba(251, 146, 60, 0.1) 0%, transparent 55%),
 		#fff;
 	border: 1px solid var(--pp-bh-line);
 	border-radius: 14px;
@@ -3437,8 +3134,8 @@ select.pp-input {
 	border: 1px dashed var(--pp-bh-line);
 	border-radius: 16px;
 	background:
-		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.14) 0%, transparent 55%),
-		linear-gradient(180deg, #fffaf8 0%, #ffffff 70%);
+		radial-gradient(120% 140% at 0% 0%, rgba(251, 146, 60, 0.14) 0%, transparent 55%),
+		linear-gradient(180deg, #fff8f2 0%, #ffffff 70%);
 }
 
 .passpress-billing-empty-title {
@@ -3485,7 +3182,7 @@ select.pp-input {
 }
 
 .passpress-billing-table tbody tr:hover td {
-	background: #fffaf8;
+	background: #fff8f2;
 }
 
 .passpress-billing-date {
@@ -3516,7 +3213,7 @@ select.pp-input {
 	width: 34px;
 	height: 34px;
 	border-radius: 12px;
-	background: #0f172a;
+	background: #1e293b;
 	color: #fff;
 	font-size: 11px;
 	font-weight: 800;
@@ -3548,7 +3245,7 @@ select.pp-input {
 	display: inline-block;
 	padding: 5px 10px;
 	border-radius: 999px;
-	background: #fff1eb;
+	background: #fff4ec;
 	color: var(--pp-bh-accent-deep);
 	font-size: 0.8rem;
 	font-weight: 700;
@@ -3717,11 +3414,11 @@ select.pp-input {
 /* Visitors page */
 
 .passpress-visitors-page {
-	--pp-vis-ink: #0f172a;
+	--pp-vis-ink: #1e293b;
 	--pp-vis-muted: #64748b;
 	--pp-vis-line: #e2e8f0;
-	--pp-vis-accent: #ff875f;
-	--pp-vis-accent-deep: #ff6b3d;
+	--pp-vis-accent: #f97316;
+	--pp-vis-accent-deep: #ea580c;
 	max-width: 90%;
 }
 
@@ -3888,8 +3585,8 @@ select.pp-input {
 	border: 1px dashed var(--pp-vis-line);
 	border-radius: 16px;
 	background:
-		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.14) 0%, transparent 55%),
-		linear-gradient(180deg, #fffaf8 0%, #ffffff 70%);
+		radial-gradient(120% 140% at 0% 0%, rgba(251, 146, 60, 0.14) 0%, transparent 55%),
+		linear-gradient(180deg, #fff8f2 0%, #ffffff 70%);
 }
 
 .passpress-visitors-empty-title {
@@ -3936,7 +3633,7 @@ select.pp-input {
 }
 
 .passpress-visitors-table tbody tr:hover td {
-	background: #fffaf8;
+	background: #fff8f2;
 }
 
 .passpress-visitors-person {
@@ -3951,7 +3648,7 @@ select.pp-input {
 	width: 34px;
 	height: 34px;
 	border-radius: 12px;
-	background: #0f172a;
+	background: #1e293b;
 	color: #fff;
 	font-size: 11px;
 	font-weight: 800;
@@ -3992,7 +3689,7 @@ select.pp-input {
 }
 
 .passpress-visitors-pin {
-	background: #0f172a;
+	background: #1e293b;
 	color: #fff;
 	letter-spacing: 0.12em;
 }
@@ -4001,7 +3698,7 @@ select.pp-input {
 	display: inline-block;
 	padding: 5px 10px;
 	border-radius: 999px;
-	background: #fff1eb;
+	background: #fff4ec;
 	color: var(--pp-vis-accent-deep);
 	font-size: 0.8rem;
 	font-weight: 700;
@@ -4141,11 +3838,11 @@ select.pp-input {
 /* Activity Log page */
 
 .passpress-activity-page {
-	--pp-act-ink: #0f172a;
+	--pp-act-ink: #1e293b;
 	--pp-act-muted: #64748b;
 	--pp-act-line: #e2e8f0;
-	--pp-act-accent: #ff875f;
-	--pp-act-accent-deep: #ff6b3d;
+	--pp-act-accent: #f97316;
+	--pp-act-accent-deep: #ea580c;
 	max-width: 90%;
 }
 
@@ -4188,8 +3885,8 @@ select.pp-input {
 	border: 1px dashed var(--pp-act-line);
 	border-radius: 16px;
 	background:
-		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.14) 0%, transparent 55%),
-		linear-gradient(180deg, #fffaf8 0%, #ffffff 70%);
+		radial-gradient(120% 140% at 0% 0%, rgba(251, 146, 60, 0.14) 0%, transparent 55%),
+		linear-gradient(180deg, #fff8f2 0%, #ffffff 70%);
 }
 
 .passpress-activity-empty-title {
@@ -4236,7 +3933,7 @@ select.pp-input {
 }
 
 .passpress-activity-table tbody tr:hover td {
-	background: #fffaf8;
+	background: #fff8f2;
 }
 
 .passpress-activity-when {
@@ -4285,8 +3982,8 @@ select.pp-input {
 }
 
 .passpress-activity-event-visitor {
-	background: #fff1eb;
-	color: var(--pp-act-accent-deep);
+	background: #fff4ec;
+	color: #ea580c;
 }
 
 .passpress-activity-event-booking,
@@ -4325,7 +4022,7 @@ select.pp-input {
 	width: 34px;
 	height: 34px;
 	border-radius: 12px;
-	background: #0f172a;
+	background: #1e293b;
 	color: #fff;
 	font-size: 11px;
 	font-weight: 800;
@@ -4351,11 +4048,11 @@ select.pp-input {
 /* Reports page */
 
 .passpress-reports-page {
-	--pp-rep-ink: #0f172a;
+	--pp-rep-ink: #1e293b;
 	--pp-rep-muted: #64748b;
 	--pp-rep-line: #e2e8f0;
-	--pp-rep-accent: #ff875f;
-	--pp-rep-accent-deep: #ff6b3d;
+	--pp-rep-accent: #f97316;
+	--pp-rep-accent-deep: #ea580c;
 	max-width: 90%;
 }
 
@@ -4473,7 +4170,7 @@ select.pp-input {
 	border: 1px solid #d8dee8;
 	border-radius: 10px;
 	padding: 9px 16px;
-	background: #0f172a;
+	background: #1e293b;
 	color: #fff;
 	font-size: 0.88rem;
 	font-weight: 800;
@@ -4592,11 +4289,11 @@ select.pp-input {
 	height: 100%;
 	border-radius: 999px;
 	min-width: 0;
-	background: linear-gradient(90deg, #ff9b7a 0%, var(--pp-rep-accent) 100%);
+	background: linear-gradient(90deg, #fb923c 0%, var(--pp-rep-accent) 100%);
 }
 
 .passpress-reports-bar-fill-growth {
-	background: linear-gradient(90deg, #0f172a 0%, #334155 100%);
+	background: linear-gradient(90deg, #1e293b 0%, #334155 100%);
 }
 
 .passpress-reports-bar-value {
@@ -4668,8 +4365,8 @@ select.pp-input {
 	border: 1px dashed var(--pp-rep-line);
 	border-radius: 16px;
 	background:
-		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.14) 0%, transparent 55%),
-		linear-gradient(180deg, #fffaf8 0%, #ffffff 70%);
+		radial-gradient(120% 140% at 0% 0%, rgba(251, 146, 60, 0.14) 0%, transparent 55%),
+		linear-gradient(180deg, #fff8f2 0%, #ffffff 70%);
 }
 
 .passpress-reports-empty-title {
@@ -4716,7 +4413,7 @@ select.pp-input {
 }
 
 .passpress-reports-table tbody tr:hover td {
-	background: #fffaf8;
+	background: #fff8f2;
 }
 
 .passpress-reports-person {
@@ -4731,7 +4428,7 @@ select.pp-input {
 	width: 34px;
 	height: 34px;
 	border-radius: 12px;
-	background: #0f172a;
+	background: #1e293b;
 	color: #fff;
 	font-size: 11px;
 	font-weight: 800;
@@ -4748,7 +4445,7 @@ select.pp-input {
 	display: inline-block;
 	padding: 5px 10px;
 	border-radius: 999px;
-	background: #fff1eb;
+	background: #fff4ec;
 	color: var(--pp-rep-accent-deep);
 	font-size: 0.8rem;
 	font-weight: 700;
@@ -4838,11 +4535,11 @@ select.pp-input {
 /* Attendance page */
 
 .passpress-attendance-page {
-	--pp-att-ink: #0f172a;
+	--pp-att-ink: #1e293b;
 	--pp-att-muted: #64748b;
 	--pp-att-line: #e2e8f0;
-	--pp-att-accent: #ff875f;
-	--pp-att-accent-deep: #ff6b3d;
+	--pp-att-accent: #f97316;
+	--pp-att-accent-deep: #ea580c;
 	max-width: 90%;
 }
 
@@ -4999,12 +4696,12 @@ select.pp-input {
 	display: block;
 	height: 100%;
 	border-radius: 999px;
-	background: linear-gradient(90deg, #ff9b7a 0%, var(--pp-att-accent) 100%);
+	background: linear-gradient(90deg, #fb923c 0%, var(--pp-att-accent) 100%);
 	min-width: 0;
 }
 
 .passpress-attendance-bar-fill.is-peak {
-	background: linear-gradient(90deg, #0f172a 0%, #334155 100%);
+	background: linear-gradient(90deg, #1e293b 0%, #334155 100%);
 }
 
 .passpress-attendance-peak-row {
@@ -5068,7 +4765,7 @@ select.pp-input {
 	flex: 0 0 auto;
 	padding: 6px 10px;
 	border-radius: 999px;
-	background: #fff1eb;
+	background: #fff4ec;
 	color: var(--pp-att-accent-deep);
 	font-size: 0.75rem;
 	font-weight: 800;
@@ -5080,8 +4777,8 @@ select.pp-input {
 	border: 1px dashed var(--pp-att-line);
 	border-radius: 16px;
 	background:
-		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.14) 0%, transparent 55%),
-		linear-gradient(180deg, #fffaf8 0%, #ffffff 70%);
+		radial-gradient(120% 140% at 0% 0%, rgba(251, 146, 60, 0.14) 0%, transparent 55%),
+		linear-gradient(180deg, #fff8f2 0%, #ffffff 70%);
 }
 
 .passpress-attendance-empty-title {
@@ -5128,7 +4825,7 @@ select.pp-input {
 }
 
 .passpress-attendance-table tbody tr:hover td {
-	background: #fffaf8;
+	background: #fff8f2;
 }
 
 .passpress-attendance-when strong {
@@ -5139,7 +4836,7 @@ select.pp-input {
 	display: inline-block;
 	padding: 5px 10px;
 	border-radius: 999px;
-	background: #fff1eb;
+	background: #fff4ec;
 	color: var(--pp-att-accent-deep);
 	font-size: 0.8rem;
 	font-weight: 700;
@@ -5157,7 +4854,7 @@ select.pp-input {
 	width: 34px;
 	height: 34px;
 	border-radius: 12px;
-	background: #0f172a;
+	background: #1e293b;
 	color: #fff;
 	font-size: 11px;
 	font-weight: 800;
@@ -5214,11 +4911,11 @@ select.pp-input {
 /* Bookings page */
 
 .passpress-bookings-page {
-	--pp-bk-ink: #0f172a;
+	--pp-bk-ink: #1e293b;
 	--pp-bk-muted: #64748b;
 	--pp-bk-line: #e2e8f0;
-	--pp-bk-accent: #ff875f;
-	--pp-bk-accent-deep: #ff6b3d;
+	--pp-bk-accent: #f97316;
+	--pp-bk-accent-deep: #ea580c;
 	max-width: 90%;
 }
 
@@ -5393,8 +5090,8 @@ select.pp-input {
 	border: 1px dashed var(--pp-bk-line);
 	border-radius: 16px;
 	background:
-		radial-gradient(120% 140% at 0% 0%, rgba(255, 155, 122, 0.14) 0%, transparent 55%),
-		linear-gradient(180deg, #fffaf8 0%, #ffffff 70%);
+		radial-gradient(120% 140% at 0% 0%, rgba(251, 146, 60, 0.14) 0%, transparent 55%),
+		linear-gradient(180deg, #fff8f2 0%, #ffffff 70%);
 }
 
 .passpress-bookings-empty-title {
@@ -5441,7 +5138,7 @@ select.pp-input {
 }
 
 .passpress-bookings-table tbody tr:hover td {
-	background: #fffaf8;
+	background: #fff8f2;
 }
 
 .passpress-bookings-session {
@@ -5456,7 +5153,7 @@ select.pp-input {
 	align-self: flex-start;
 	padding: 3px 8px;
 	border-radius: 999px;
-	background: #fff1eb;
+	background: #fff4ec;
 	color: var(--pp-bk-accent-deep);
 	font-size: 0.7rem;
 	font-weight: 800;
@@ -5480,7 +5177,7 @@ select.pp-input {
 	width: 34px;
 	height: 34px;
 	border-radius: 12px;
-	background: #0f172a;
+	background: #1e293b;
 	color: #fff;
 	font-size: 11px;
 	font-weight: 800;
@@ -5687,11 +5384,11 @@ select.pp-input {
 /* Unified Settings page (sidebar + content) */
 
 .passpress-settings-page {
-	--pp-set-ink: #0f172a;
+	--pp-set-ink: #1e293b;
 	--pp-set-muted: #64748b;
 	--pp-set-line: #e2e8f0;
-	--pp-set-accent: #ff875f;
-	--pp-set-accent-deep: #ff6b3d;
+	--pp-set-accent: #f97316;
+	--pp-set-accent-deep: #ea580c;
 	--pp-set-surface: #f8fafc;
 	max-width: 90%;
 }
@@ -5761,7 +5458,7 @@ select.pp-input {
 
 .passpress-settings-sidebar {
 	background:
-		radial-gradient(120% 80% at 0% 0%, rgba(255, 155, 122, 0.12) 0%, transparent 55%),
+		radial-gradient(120% 80% at 0% 0%, rgba(251, 146, 60, 0.12) 0%, transparent 55%),
 		var(--pp-set-surface);
 	border-right: 1px solid var(--pp-set-line);
 	padding: 18px 12px 20px;
@@ -5844,14 +5541,14 @@ select.pp-input {
 
 .passpress-settings-nav-link:hover {
 	background: #fff;
-	border-color: #fdba8c;
+	border-color: #fdba74;
 	color: var(--pp-set-ink);
 }
 
 .passpress-settings-nav-link.is-active {
 	background: #fff;
-	border-color: #fdba8c;
-	box-shadow: 0 8px 18px rgba(255, 107, 61, 0.1);
+	border-color: #fdba74;
+	box-shadow: 0 8px 18px rgba(234, 88, 12, 0.1);
 }
 
 .passpress-settings-nav-link.is-active .dashicons {
@@ -5859,8 +5556,8 @@ select.pp-input {
 }
 
 .passpress-settings-nav-link.is-active .passpress-settings-nav-icon {
-	border-color: #fdba8c;
-	background: #fff1eb;
+	border-color: #fdba74;
+	background: #fff4ec;
 }
 
 .passpress-settings-content {
@@ -5914,7 +5611,7 @@ select.pp-input {
 	border-radius: 14px;
 	padding: 18px 18px 16px;
 	background:
-		radial-gradient(120% 140% at 100% 0%, rgba(255, 155, 122, 0.08) 0%, transparent 50%),
+		radial-gradient(120% 140% at 100% 0%, rgba(251, 146, 60, 0.08) 0%, transparent 50%),
 		#fff;
 }
 
@@ -6076,7 +5773,7 @@ select.pp-input {
 }
 
 .passpress-pm-toggle-btn.is-active {
-	background: #0f172a;
+	background: #1e293b;
 	color: #fff;
 	box-shadow: 0 6px 14px rgba(15, 23, 42, 0.18);
 }
@@ -6104,7 +5801,7 @@ select.pp-input {
 }
 
 .passpress-pm-btn-primary {
-	background: #16213a;
+	background: #181c2b;
 	color: #fff;
 	border: none;
 	border-radius: 5px;
@@ -6122,8 +5819,8 @@ select.pp-input {
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
-	border: 1px solid #16213a;
-	color: #16213a;
+	border: 1px solid #181c2b;
+	color: #181c2b;
 	background: #fff;
 	border-radius: 5px;
 	padding: 6px 14px;
@@ -6135,7 +5832,7 @@ select.pp-input {
 
 .passpress-pm-btn-outline:hover {
 	background: #f6f7f7;
-	color: #16213a;
+	color: #181c2b;
 }
 
 .passpress-pm-toggle-row {
@@ -6219,7 +5916,7 @@ select.pp-input {
 
 .passpress-pm-accordion-header.is-open {
 	background: #eef2ff;
-	color: #16213a;
+	color: #181c2b;
 }
 
 .passpress-pm-accordion-body {
@@ -6438,7 +6135,7 @@ select.pp-input {
 	left: 0;
 	right: 0;
 	height: 4px;
-	background: linear-gradient(90deg, #16213a, #ff5a1f);
+	background: linear-gradient(90deg, #181c2b, #ea580c);
 }
 
 .passpress-pm-confirm-head {
@@ -6496,6 +6193,6 @@ select.pp-input {
 }
 
 .passpress-pm-confirm-actions .passpress-pm-btn-primary {
-	background: #16213a;
+	background: #181c2b;
 	color: #fff;
 }
